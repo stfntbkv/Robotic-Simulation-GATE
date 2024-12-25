@@ -1,0 +1,295 @@
+{
+    "default":{
+        "engine":{
+            "option":{
+                "impratio": 20,
+                "timestamp": 0.01,
+                "density": 1.25,
+                "viscosity": 1.8e-5,
+                "flag":{
+                    "multiccd": "enable"
+                }
+            }
+        }
+    },
+    
+    "select_mahjong_series": {
+        "engine":{
+            "option":{
+                "impratio": 20,
+                "timestamp": 0.01,
+                "density": 1.25,
+                "viscosity": 1.8e-5,
+                "flag":{
+                    "multiccd": "enable"
+                }
+            }
+        }
+    },
+    
+    "select_poker_series":{
+    
+    },
+
+    
+    
+    "select_chemistry_tube_series": {
+        "task":{
+            "asset":{
+                "seen_object":[["CuCl2"], ["CuSO4"], ["FeCl3"], ["KMnO4"]],
+                "unseen_object":[["I2"], ["K2CrO4"]],
+                "seen_init_container":["chemistry_tube_stand"],
+                "unseen_init_container":["chemistry_tube_stand"]
+            }
+        }
+    },
+
+    "select_fruit_series":{
+        "task":{
+            "asset":{
+                "seen_object":["apple", "banana", "orange", "pear"],
+                "unseen_object":["peach", "lemon", "kiwi", "mango"],
+                "seen_container":["plate_seen"],
+                "unseen_container":["plate_unseen"],
+                "seen_init_container":["tray_seen"],
+                "unseen_init_container":["tray_unseen"]
+            }
+        }
+    },
+    
+    "add_condiment_series":{
+        "task":{
+            "asset":{
+                "seen_object":["bbq_sauce", "ketchup", "salt"], 
+                "unseen_object":["salad_dressing", "hotsauce", "sugar"],
+                "seen_container":["pan_seen"],
+                "unseen_container":["pan_unseen"],
+                "seen_init_container":["stove_seen"],
+                "unseen_init_container":["stove_unseen"]  
+            }
+        }
+    },
+    
+    "insert_flower_series":{
+        "task":{
+            "asset":{
+                "seen_object":["rose", "tulip", "chrysanthemum"],
+                "unseen_object":["sunflower", "daisy_flower", "peony"],
+                "seen_container":["vase_seen"],
+                "unseen_container":["vase_unseen"]
+            }
+        }
+    },
+
+    "select_book_series":{
+        "task":{
+            "asset":{
+                "seen_object":[
+                    ["steve_jobs", "the_life_of_samuel_johnson"],
+                    ["a_tale_of_two_cities", "one_hundred_years_of_solitude"],
+                    ["biopolymer_composites_in_electronics", "engineering_biopolymers"],
+                    ["electron_transport_in_quantum_dots", "foundamentals_of_molecular_biology"],
+                    ["contract_law_in_japan", "critical_infrastructure_protection_in_homeland_security", "landmark_cases_in_property_law"],
+                    ["cloud_computing", "cybersecurity", "data_visualization", "flash_mx_bible"],
+                    ["cotton_the_fabric_that_made_the_modern_world", "the_story_of_american_freedom"]
+                  ],
+                "unseen_object":[
+                    ["the_autobiography_of_benjamin_franklin"], 
+                    ["the_adventures_of_huckleberry_finn"],
+                    ["introduction_to_electronics"],
+                    ["government_and_information_rights"],
+                    ["scholars_of_contract_law"],
+                    ["python", "mobile_computing_principles", "opengl", "wi-foo"],
+                    ["the_great_divergence_china_europe_and_the_making_of_the_modern_world_economy"]
+                  ],
+                "seen_init_container":["shelf_seen"],
+                "unseen_init_container":["shelf_unseen"]
+            }
+        }
+        
+    },
+    
+    "select_billiards_series":{
+
+    },
+
+    "select_drink_series":{
+        "task":{
+            "asset":{
+                "seen_object":[["cola"], ["juice_seen"], ["monster", "jumpstart"]],
+                "unseen_object":[["spirit"], ["juice_unseen"], ["redbull"]],
+                "seen_init_container":["fridge_open"],
+                "unseen_init_container":["fridge_open"]
+            }
+        }
+    },
+    
+    "select_toy_series":{
+        "task":{
+            "asset":{
+                "seen_object":[["hawkeye", "ironman", "loki", "spiderman", "vision"],
+                                ["aquaman", "batman", "flashman"],
+                                ["mickey", "donald", "pluto"],
+                                ["buzz_lightyear", "jessie", "alien"],
+                                ["ace", "luffy", "nami", "sanji"]],
+                "unseen_object":[["antman", "doctor_strange", "hulk", "thor", "thanos"],
+                                ["joker", "superman", "wonder_woman"], 
+                                ["minnie", "daisy"],
+                                ["woody", "rex", "slinky_dog"],
+                                ["robin", "zoro", "chopper", "reiju"]],
+                "seen_container":["giftbox_seen"],
+                "unseen_container":["giftbox_unseen"]
+            }
+        }
+    },
+
+    "select_ingredient_series":{
+        "task":{
+            "asset":{
+                "seen_object":["bell_pepper", "broccoli", "carrot", "egg", "fish", "potato", "mushroom"],
+                "unseen_object":["steak", "tomato", "eggplant", "garlic", "onion", "cucumber", "corn"],
+                "seen_container":["cut_board_seen", "plate_seen"],
+                "unseen_container":["cut_board_unseen", "plate_seen"],
+                "seen_init_container":["big_fridge"],
+                "unseen_init_container":["big_fridge"]
+            }
+        }
+    },
+
+    "book_rearrange": {
+        "task":{
+            "asset":{
+                "seen_object":["century17_don_quixote_book", "century18_pride_and_prejudice_book", "century19_boule_de_suif_book", "century20_the_metamorphosis_book", "century21_the_three_body_problem_book"],
+                "unseen_object":["century17_romeo_and_juliet_book", "century18_du_contrat_social_book", "century19_les_miserables_book", "century20_the_old_man_and_the_sea_book", "century21_harry_potter_and_the_chamber_of_secrets_book"],
+                "seen_container":["shelf_seen"],
+                "unseen_container":["shelf_unseen"]
+            }
+        }
+    },
+
+    "cluster_billiards": {
+        "task":{
+            "asset":{
+                "seen_container":["basket_seen"],
+                "unseen_container":["basket_unseen"]
+            }
+        }
+    },
+    "cluster_toy": {
+        "task":{
+            "asset":{
+                "seen_object": [["hawkeye", "ironman", "loki", "spiderman", "vision", "antman", "doctor_strange", "hulk", "thor", "thanos"], 
+                                ["mickey", "donald", "pluto", "minnie", "daisy"], 
+                                ["ace", "luffy", "nami", "sanji", "robin", "zoro", "chopper", "reiju"]],
+                "unseen_object":[["aquaman", "batman", "flashman", "joker", "superman", "wonder_woman"], 
+                                ["buzz_lightyear", "jessie", "alien", "woody", "rex", "slinky_dog"]],
+                "seen_container": ["giftbox_seen"],
+                "unseen_container": ["giftbox_unseen"]
+            }
+        }
+    },
+    "cluster_drink": {
+        "task":{
+            "asset":{
+                "seen_object": [
+                    ["wine", "alcohol"],
+                    ["cola", "spirit"],
+                    ["juice"]
+                ],
+                "unseen_object": [
+                    ["beer"],
+                    ["milk"],
+                    ["monster", "redbull", "jumpstart"]
+                ],
+                "seen_container": ["tray_seen"],
+                "unseen_container": ["tray_unseen"]
+            }
+        }
+    },
+    "cluster_dessert": {
+        "task":{
+            "asset":{
+                "seen_object":[
+                    ["bagel"], 
+                    ["baguette"], 
+                    ["croissant"], 
+                    ["cake"]
+                ],
+                "unseen_object":[
+                    ["hot_dog"], 
+                    ["cupcake"], 
+                    ["donut"]
+                ],
+                "seen_container": ["plate_seen"],
+                "unseen_container": ["plate_unseen"]
+            }
+        }
+    },
+    "cluster_book": {
+        "task":{
+            "asset":{
+                "seen_object":[
+                    ["steve_jobs", "the_life_of_samuel_johnson", "the_autobiography_of_benjamin_franklin"],
+                    ["a_tale_of_two_cities", "one_hundred_years_of_solitude", "the_adventures_of_huckleberry_finn"],
+                    ["biopolymer_composites_in_electronics", "engineering_biopolymers", "introduction_to_electronics"],
+                    ["electron_transport_in_quantum_dots", "foundamentals_of_molecular_biology"]
+                    
+                  ],
+                "unseen_object":[
+                    ["contract_law_in_japan", "critical_infrastructure_protection_in_homeland_security", "landmark_cases_in_property_law", "scholars_of_contract_law"],
+                    ["cloud_computing", "cybersecurity", "data_visualization", "flash_mx_bible",
+                     "python", "mobile_computing_principles", "opengl", "wi-foo"],
+                    ["cotton_the_fabric_that_made_the_modern_world", "the_story_of_american_freedom",
+                     "the_great_divergence_china_europe_and_the_making_of_the_modern_world_economy"]
+                  ],
+                  "seen_container": ["shelf_seen"],
+                  "unseen_container": ["shelf_unseen"]
+            }
+        }
+    },
+    "cluster_ingredient": {
+        "task":{
+            "asset":{
+                "seen_object": [["fish"], 
+                                ["corn"],
+                                ["egg"],
+                                ["broccoli", "cucumber", "bell_pepper"]],
+                "unseen_object": [["steak"], 
+                                ["potato", "sweat_potato"],
+                                ["mushroom"],
+                                ["garlic", "onion"]],
+                "seen_container": ["tray_seen"],
+                "unseen_container": ["tray_unseen"]
+            }
+        }
+    },
+    "select_painting_series": {
+
+    },
+    "hang_picture_on_specific_nail": "benchmark/hang_picture/common.yaml",
+    
+    "texas_holdem": "benchmark/texas_holdem/common.yaml",
+    "texas_holdem_explore": "benchmark/texas_holdem/common.yaml",
+    
+    "cool_drink": "benchmark/select_drink/common.yaml",
+    
+    "friction_qa": "benchmark/physics_qa/common.yaml",
+    "density_qa": "benchmark/physics_qa/common.yaml",
+    "find_unseen_object": "benchmark/find_unseen_object/common.yaml",
+    "set_dining": "benchmark/dining_table_set/common.yaml",
+    "set_dining_lefthand": "benchmark/dining_table_set/common.yaml",
+    
+    "heat_food": "benchmark/heat_food/common.yaml",
+    "rearrange_tube": "benchmark/rearrange_tube/common.yaml",
+    "get_coffee": "benchmark/get_coffee/common.yaml",
+    "hammer_loose_nail":"benchmark/hammer_nail/common.yaml",
+    "assemble_hammer":"benchmark/hammer_nail/common.yaml",
+    "make_juice": "benchmark/make_juice/common.yaml",
+    "cook_dishes": "benchmark/cook_dishes/common.yaml",
+    "hang_picture": "benchmark/hang_picture/common.yaml",
+    "store_food": "benchmark/store_food/common.yaml",
+    "play_mahjong": "benchmark/play_mahjong/common.yaml",
+    
+    
+    "use_seesaw": "benchmark/use_seesaw/common.yaml"
+}
