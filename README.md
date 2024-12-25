@@ -61,6 +61,7 @@ Run this to verify installation successful
 
 ## Recent Work Todo
 - [ ] Manage the left few tasks not released in preview version.
+- [ ] Test the interface of humanoid and dual-arm manipulation.
 - [ ] Organize the functional code sections. 
     - [ ] Reconstruct the efficient, user-friendly, and comprehensive evaluation framework. 
     - [ ] Manage the automatic data augmentation workflow for existing tasks, especially the rewriting the DSL of skill libarary.
