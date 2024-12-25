@@ -95,5 +95,13 @@ python scirpts/eval.py --n-sample 20 --model your_model_script
 
 ## Citation
 ```bibtex
-It looks like the staff are on their Christmas holiday. Please be patient and wait a couple more days.
+@misc{zhang2024vlabenchlargescalebenchmarklanguageconditioned,
+      title={VLABench: A Large-Scale Benchmark for Language-Conditioned Robotics Manipulation with Long-Horizon Reasoning Tasks}, 
+      author={Shiduo Zhang and Zhe Xu and Peiju Liu and Xiaopeng Yu and Yuan Li and Qinghui Gao and Zhaoye Fei and Zhangyue Yin and Zuxuan Wu and Yu-Gang Jiang and Xipeng Qiu},
+      year={2024},
+      eprint={2412.18194},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO},
+      url={https://arxiv.org/abs/2412.18194}, 
+}
 ```
