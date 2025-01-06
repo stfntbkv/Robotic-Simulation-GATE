@@ -1,6 +1,6 @@
 {
     "apartment_0":{
-        "xml_path":"apartment_0/futuristic_room/futuristic_room.xml.xml",
+        "xml_path":"apartment_0/futuristic_room/futuristic_room.xml",
         "candidate_pos":[[2, 0, 0], [2, 1.5, 0], [3.2, 1.5, 0]]
     },
     "apartment_1":{
@@ -35,6 +35,10 @@
         "xml_path":"kitchen_2/kitchen.xml",
         "candidate_pos":[[0, 0, 0], [-2, -1, 0], [-2, 1.5, 0]]
     },
+    "wall_0":{
+        "xml_path":"kitchen_2/kitchen.xml",
+        "candidate_pos":[[0, -3.65, 0]]
+    },
     "lab_0":{
         "xml_path":"lab_0/lab.xml",
         "candidate_pos":[[0, 2.4, 0], [2, 2.4, 0]]
@@ -44,7 +48,7 @@
         "candidate_pos":[[2, 2, 0], [6, 2, 0], [-4, -2.5, 0]]
     },
     "living_room_0":{
-        "xml_path":"living_room_0/living_room.xml",
+        "xml_path":"living_room_0/livingroom.xml",
         "candidate_pos":[[0, 0, 0], [-2, 3.5, 0], [-2, -2.5, 0]]
     },
     "medical_room_1":{
@@ -61,6 +65,6 @@
     },
     "studyroom_0":{
         "xml_path":"studyroom_0/studyroom.xml",
-        "candidate_pos":[[0 ,0, 0], [-1, 1, 0], [-1, -2, 0]]
+        "candidate_pos":[[0 ,0, 0], [-1, 1, 0], [-1, -1, 0],[-1.5, -1, 0], [-1.5, 1, 0]]
     }
 }

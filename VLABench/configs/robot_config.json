@@ -3,10 +3,12 @@
         "xml_path":"franka_emika_panda/panda.xml",
         "position":[0, -0.4, 0.78],
         "euler":[0, 0, 1.57],
-        "qpos":[0, -1.04, 0, -2.56, 0, 1.55, -2.32, 0.04, 0.04]
+        "default_qpos":[0, -1.04, 0, -2.56, 0, 1.55, -2.32, 0.04, 0.04]
     },
     "xarm":{
-        "qpos":[0, -0.668, 0, 0.55, 0, 1.2, 0, 0],
-        "xml_path":"xarm7/xarm7.xml"
+        "xml_path":"xarm7/xarm7.xml",
+        "position":[0, -0.4, 0.78],
+        "euler":[0, 0, 1.57],
+        "qpos":[0, -0.668, 0, 0.55, 0, 1.2, 0, 0]
     }
 }

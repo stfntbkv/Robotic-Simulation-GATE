@@ -27,7 +27,21 @@ def get_object_list(xml_dir, all=True, seen=True):
     split_xml_paths = [xml_path.split("assets/")[-1] for xml_path in xml_paths]
     return sorted(split_xml_paths)
 
-    
+name2config = {
+    "select_mahjong_series": ["select_mahjong", "select_mahjong_spatial", "select_unique_type_mahjong", "select_mahjong_semantic"],
+    "select_poker_series": ["select_poker", "select_poker_spatial", "select_nth_largest_poker", "select_poker_semantic"],
+    "select_chemistry_tube_series": ["select_chemistry_tube", "select_chemistry_tube_spatial", "select_chemistry_tube_common_sense", "select_chemistry_tube_semantic"],
+    "select_fruit_series": ["select_fruit", "select_fruit_spatial", "select_fruit_common_sense", "select_fruit_semantic"],
+    "add_condiment_series": ["add_condiment", "add_condiment_spatial", "add_condiment_common_sense", "add_condiment_semantic"],
+    "insert_flower_series": ["insert_flower", "insert_flower_spatial", "insert_flower_common_sense", "insert_flower_semantic", "insert_bloom_flower"],
+    "select_book_series": ["select_book", "select_book_spatial", "select_specific_type_book", "select_book_semantic"],
+    "select_billiards_series": ["select_billiards", "select_billiards_spatial", "select_billiards_common_sense", "select_billiards_semantic"],
+    "select_drink_series": ["select_drink", "select_drink_spatial", "select_drink_common_sense", "select_drink_semantic"],
+    "select_toy_series": ["select_toy", "select_toy_spatial", "select_toy_common_sense", "select_toy_semantic"],
+    "select_ingredient_series": ["select_ingredient", "select_ingredient_spatial", "select_ingredient_common_sense", "select_ingredient_semantic"],
+    "select_painting_series":["select_painting", "put_box_on_painting", "select_painting_semantic"],
+}
+
 name2class_xml = {
     # containers/receptacles
     "basket":[components.CommonContainer, get_object_list(os.path.join(xml_root, "obj/meshes/containers/basket"))],

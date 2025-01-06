@@ -13,7 +13,7 @@ scene_id = scene_url.split("/d/")[1].split("/")[0]
 def download_assets():
     target_path = os.path.join(os.getenv("VLABENCH_ROOT"), "assets")
     zip_path = os.path.join(target_path, "obj.zip")
-    gdown.download(f"https://drive.google.com/uc?id={asset_id}", "assets.zip", quiet=False)
+    gdown.download(f"https://drive.google.com/uc?id={asset_id}", zip_path, quiet=False)
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
         zip_ref.extractall(target_path)
     os.remove(zip_path)

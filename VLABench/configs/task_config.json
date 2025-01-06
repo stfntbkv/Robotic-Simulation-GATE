@@ -2,10 +2,11 @@
     "default":{
         "engine":{
             "option":{
-                "impratio": 20,
-                "timestamp": 0.01,
+                "impratio": 10,
+                "timestep": 1e-3,
                 "density": 1.25,
                 "viscosity": 1.8e-5,
+                "integrator": "implicitfast",
                 "flag":{
                     "multiccd": "enable"
                 }
@@ -16,23 +17,48 @@
     "select_mahjong_series": {
         "engine":{
             "option":{
-                "impratio": 20,
-                "timestamp": 0.01,
-                "density": 1.25,
-                "viscosity": 1.8e-5,
-                "flag":{
-                    "multiccd": "enable"
+                "impratio": 20
+            }
+        },
+        "task":{
+            "asset":{
+                "seen_container":["placemat"],
+                "unseen_container":["placemat"]
+            },
+            "components":[
+                {
+                    "name": "table",
+                    "xml_path": "obj/meshes/table/table.xml",
+                    "class": "Table",
+                    "randomness": {
+                        "texture": false
+                    }
                 }
+            ],
+            "scene":{
+                "name":"living_room_0"
             }
         }
     },
     
     "select_poker_series":{
-    
+        "task":{
+            "components":[
+                {
+                    "name": "table",
+                    "xml_path": "obj/meshes/table/table.xml",
+                    "class": "Table",
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name":"living_room_0"
+            }
+        }
     },
 
-    
-    
     "select_chemistry_tube_series": {
         "task":{
             "asset":{
@@ -40,12 +66,26 @@
                 "unseen_object":[["I2"], ["K2CrO4"]],
                 "seen_init_container":["chemistry_tube_stand"],
                 "unseen_init_container":["chemistry_tube_stand"]
+            },
+            "components":[
+                {
+                    "name": "table",
+                    "xml_path": "obj/meshes/table/table.xml",
+                    "class": "Table",
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name": "lab_1"
             }
         }
     },
 
     "select_fruit_series":{
         "task":{
+            "ngrid": [10, 10],
             "asset":{
                 "seen_object":["apple", "banana", "orange", "pear"],
                 "unseen_object":["peach", "lemon", "kiwi", "mango"],
@@ -53,6 +93,19 @@
                 "unseen_container":["plate_unseen"],
                 "seen_init_container":["tray_seen"],
                 "unseen_init_container":["tray_unseen"]
+            },
+            "components":[
+                {
+                    "name": "table",
+                    "xml_path": "obj/meshes/table/table.xml",
+                    "class": "Table",
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name": "studyroom_0"
             }
         }
     },
@@ -63,9 +116,21 @@
                 "seen_object":["bbq_sauce", "ketchup", "salt"], 
                 "unseen_object":["salad_dressing", "hotsauce", "sugar"],
                 "seen_container":["pan_seen"],
-                "unseen_container":["pan_unseen"],
-                "seen_init_container":["stove_seen"],
-                "unseen_init_container":["stove_unseen"]  
+                "unseen_container":["pan_unseen"]
+            },
+            "components":[
+                {
+                    "name": "counter",
+                    "xml_path": "obj/meshes/counters/counter_0/counter.xml",
+                    "class": "Counter",
+                    "position": [0.53, 0, 0],
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name": "kitchen_2"
             }
         }
     },
@@ -77,6 +142,19 @@
                 "unseen_object":["sunflower", "daisy_flower", "peony"],
                 "seen_container":["vase_seen"],
                 "unseen_container":["vase_unseen"]
+            },
+            "components":[
+                {
+                    "name": "table",
+                    "xml_path": "obj/meshes/table/table.xml",
+                    "class": "Table",
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name": "bedroom_0"
             }
         }
     },
@@ -104,28 +182,67 @@
                   ],
                 "seen_init_container":["shelf_seen"],
                 "unseen_init_container":["shelf_unseen"]
+            },
+            "components":[
+                {
+                    "name": "table",
+                    "xml_path": "obj/meshes/table/table.xml",
+                    "class": "Table",
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name": "studyroom_0"
             }
         }
         
     },
     
     "select_billiards_series":{
-
+        "robot":{
+            "position": [0, -0.4, 0.6]
+        },
+        "task":{
+            "ngrid": [10, 10],
+            "workspace": [-0.3, 0.3, -0.1, 0.3, 0.65, 1.2],
+            "random_ignored_entities": ["billinards_table"],
+            "scene":{
+                "name": "studyroom_0"
+            }
+        }
     },
 
     "select_drink_series":{
         "task":{
+            "random_ignored_entities": ["table"],
             "asset":{
                 "seen_object":[["cola"], ["juice_seen"], ["monster", "jumpstart"]],
                 "unseen_object":[["spirit"], ["juice_unseen"], ["redbull"]],
                 "seen_init_container":["fridge_open"],
                 "unseen_init_container":["fridge_open"]
+            },
+            "components":[
+                {
+                    "name": "table",
+                    "xml_path": "obj/meshes/table/table.xml",
+                    "class": "Table",
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+                ],
+            "scene":{
+                    "name": "studyroom_0"
             }
         }
     },
     
     "select_toy_series":{
         "task":{
+            "ngrid": [4, 4],
+            "workspace": [-0.35, 0.3, -0.2, 0.2, 0.8, 1],
             "asset":{
                 "seen_object":[["hawkeye", "ironman", "loki", "spiderman", "vision"],
                                 ["aquaman", "batman", "flashman"],
@@ -139,11 +256,27 @@
                                 ["robin", "zoro", "chopper", "reiju"]],
                 "seen_container":["giftbox_seen"],
                 "unseen_container":["giftbox_unseen"]
+            },
+            "components":[
+                {
+                    "name": "table",
+                    "xml_path": "obj/meshes/table/table.xml",
+                    "class": "Table",
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name": "studyroom_0"
             }
         }
     },
 
     "select_ingredient_series":{
+        "robot":{
+            "position":[-0.2, -0.4, 0.4]
+        },
         "task":{
             "asset":{
                 "seen_object":["bell_pepper", "broccoli", "carrot", "egg", "fish", "potato", "mushroom"],
@@ -152,6 +285,58 @@
                 "unseen_container":["cut_board_unseen", "plate_seen"],
                 "seen_init_container":["big_fridge"],
                 "unseen_init_container":["big_fridge"]
+            },
+            "components":[
+                {
+                    "name": "counter",
+                    "xml_path": "obj/meshes/counters/counter_0/counter.xml",
+                    "class": "Counter",
+                    "position": [-0.8, 0.5, 0],
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name": "kitchen_2"
+            }
+        }
+    },
+
+    "select_painting_series": {
+        "task":{
+            "components":[
+            {
+                "name": "table",
+                "xml_path": "obj/meshes/table/table.xml",
+                "class": "Table",
+                "randomness": {
+                    "texture": false
+                }
+            }
+            ],
+            "scene":{
+                "name": "studyroom_0"
+            }
+        }
+    },
+
+    "hang_picture_on_specific_nail": {
+        "task":{
+            "components":[
+                {
+                    "name": "counter",
+                    "xml_path": "obj/meshes/counters/counter_0/counter.xml",
+                    "class": "Counter",
+                    "position": [0, 0, 0],
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name": "wall_0",
+                "orientation": [0, 0, -1.57]
             }
         }
     },
@@ -163,20 +348,51 @@
                 "unseen_object":["century17_romeo_and_juliet_book", "century18_du_contrat_social_book", "century19_les_miserables_book", "century20_the_old_man_and_the_sea_book", "century21_harry_potter_and_the_chamber_of_secrets_book"],
                 "seen_container":["shelf_seen"],
                 "unseen_container":["shelf_unseen"]
+            },
+            "components":[
+                {
+                    "name": "table",
+                    "xml_path": "obj/meshes/table/table.xml",
+                    "class": "Table",
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name": "studyroom_0"
             }
         }
     },
 
     "cluster_billiards": {
         "task":{
+            "ngrid": [4, 4],
+            "workspace": [-0.15, 0.15, -0.1, 0.2, 0.8, 1.5],
             "asset":{
                 "seen_container":["basket_seen"],
                 "unseen_container":["basket_unseen"]
+            },
+            "components":[
+                {
+                    "name": "table",
+                    "xml_path": "obj/meshes/table/table.xml",
+                    "class": "Table",
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name": "studyroom_0"
             }
         }
     },
+
     "cluster_toy": {
         "task":{
+            "ngrid": [4, 4],
+            "workspace": [-0.1, 0.1, -0.15, 0.3, 0.8, 1],
             "asset":{
                 "seen_object": [["hawkeye", "ironman", "loki", "spiderman", "vision", "antman", "doctor_strange", "hulk", "thor", "thanos"], 
                                 ["mickey", "donald", "pluto", "minnie", "daisy"], 
@@ -185,11 +401,27 @@
                                 ["buzz_lightyear", "jessie", "alien", "woody", "rex", "slinky_dog"]],
                 "seen_container": ["giftbox_seen"],
                 "unseen_container": ["giftbox_unseen"]
+            },
+            "components":[
+                {
+                    "name": "table",
+                    "xml_path": "obj/meshes/table/table.xml",
+                    "class": "Table",
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name": "studyroom_0"
             }
         }
     },
+
     "cluster_drink": {
         "task":{
+            "ngrid": [5, 5],
+            "workspace": [-0.1, 0.1, -0.1, 0.2, 0.8, 1],
             "asset":{
                 "seen_object": [
                     ["wine", "alcohol"],
@@ -203,11 +435,27 @@
                 ],
                 "seen_container": ["tray_seen"],
                 "unseen_container": ["tray_unseen"]
+            },
+            "components":[
+                {
+                    "name": "table",
+                    "xml_path": "obj/meshes/table/table.xml",
+                    "class": "Table",
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name": "studyroom_0"
             }
         }
     },
+
     "cluster_dessert": {
         "task":{
+            "ngrid": [4, 4],
+            "workspace": [-0.15, 0.15 , -0.1, 0.1, 0.8, 1],
             "asset":{
                 "seen_object":[
                     ["bagel"], 
@@ -222,11 +470,27 @@
                 ],
                 "seen_container": ["plate_seen"],
                 "unseen_container": ["plate_unseen"]
+            },
+            "components":[
+                {
+                    "name": "table",
+                    "xml_path": "obj/meshes/table/table.xml",
+                    "class": "Table",
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name": "studyroom_0"
             }
         }
     },
+
     "cluster_book": {
         "task":{
+            "ngrid": [4, 4],
+            "workspace": [-0.3, 0.3, -0.2, 0.1, 0.8, 1],
             "asset":{
                 "seen_object":[
                     ["steve_jobs", "the_life_of_samuel_johnson", "the_autobiography_of_benjamin_franklin"],
@@ -244,11 +508,27 @@
                   ],
                   "seen_container": ["shelf_seen"],
                   "unseen_container": ["shelf_unseen"]
+            },
+            "components":[
+                {
+                    "name": "table",
+                    "xml_path": "obj/meshes/table/table.xml",
+                    "class": "Table",
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name": "studyroom_0"
             }
         }
     },
-    "cluster_ingredient": {
+
+    "cluster_ingredients": {
         "task":{
+            "ngrid": [4, 4],
+            "workspace": [-0.15, 0.15 , -0.1, 0.1, 0.8, 1],
             "asset":{
                 "seen_object": [["fish"], 
                                 ["corn"],
@@ -260,16 +540,44 @@
                                 ["garlic", "onion"]],
                 "seen_container": ["tray_seen"],
                 "unseen_container": ["tray_unseen"]
+            },
+            "components":[
+                {
+                    "name": "table",
+                    "xml_path": "obj/meshes/table/table.xml",
+                    "class": "Table",
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name": "studyroom_0"
             }
         }
     },
-    "select_painting_series": {
 
+    "texas_holdem_series": {
+        "task":{
+            "asset":{
+                "seen_container":["placemat_seen"],
+                "unseen_container":["placemat_unseen"]
+            },
+            "components":[
+                {
+                    "name": "table",
+                    "xml_path": "obj/meshes/table/table.xml",
+                    "class": "Table",
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name": "living_room_0"
+            }
+        }
     },
-    "hang_picture_on_specific_nail": "benchmark/hang_picture/common.yaml",
-    
-    "texas_holdem": "benchmark/texas_holdem/common.yaml",
-    "texas_holdem_explore": "benchmark/texas_holdem/common.yaml",
     
     "cool_drink": "benchmark/select_drink/common.yaml",
     
