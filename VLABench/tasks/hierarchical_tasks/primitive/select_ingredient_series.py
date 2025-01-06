@@ -8,10 +8,10 @@ from VLABench.utils.utils import flatten_list
 @register.add_config_manager("select_ingredient")
 class SelectIngredientConfigManager(BenchTaskConfigManager):
     def __init__(self, 
-                 config,
+                 task_name,
                  num_objects = [3, 4],
                  **kwargs):
-        super().__init__(config, num_objects, **kwargs)
+        super().__init__(task_name, num_objects, **kwargs)
         self.z_position = [0.83, 1.13]
 
     def load_containers(self, target_container):
@@ -110,12 +110,12 @@ class SelectIngredientSpatialTask(SelectIngredientTask, SpatialMixin):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
-@register.add_task("select_ingredient_common_sense", CommonSenseReasoningMixin)
-class SelectIngredientCommonSenseTask(LM4ManipBaseTask):
+@register.add_task("select_ingredient_common_sense")
+class SelectIngredientCommonSenseTask(SelectIngredientTask, CommonSenseReasoningMixin):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("select_ingredient_semantic")
-class SelectIngredientSemanticTask(LM4ManipBaseTask, SemanticMixin):
+class SelectIngredientSemanticTask(SelectIngredientTask, SemanticMixin):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)

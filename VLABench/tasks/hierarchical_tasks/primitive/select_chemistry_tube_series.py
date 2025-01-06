@@ -12,10 +12,10 @@ relative_row_pos = [-0.05, 0.05]
 @register.add_config_manager("select_chemistry_tube")
 class SelectChemistryTubeConfigManager(BenchTaskConfigManager):
     def __init__(self, 
-                 config,
-                 num_objects = [2, 3],
+                 task_name,
+                 num_objects=[2, 3],
                  **kwargs):
-        super().__init__(config, num_objects, **kwargs)
+        super().__init__(task_name, num_objects, **kwargs)
     
     def load_init_containers(self, init_container):
         init_container_config = self.get_entity_config(init_container, position=[random.uniform(-0.2, 0.2), random.uniform(0, 0.2), 0.8], randomness=None)
@@ -107,10 +107,10 @@ class SelectChemistryTubeCommonSenseConfigManager(SelectChemistryTubeConfigManag
 @register.add_config_manager("select_chemistry_tube_spatial")
 class SelectChemistryTubeSpatialConfigManager(SelectChemistryTubeConfigManager):
     def __init__(self, 
-                 config,
-                 num_objects = [4, 5],
+                 task_name,
+                 num_objects=[4, 5],
                  **kwargs):
-        super().__init__(config, num_objects, **kwargs)
+        super().__init__(task_name, num_objects, **kwargs)
         
     def load_objects(self, target_entity):
         objects = []
@@ -164,7 +164,7 @@ class SelectChemistryTubeTask(LM4ManipBaseTask):
         """
         Attach the nametag to the tubestand.
         """
-        super().build_from_config(config, eval)
+        super().build_from_config(eval)
         for key in list(self.entities.keys()):
             if "tag" in key:
                 nametag = self.entities[key]

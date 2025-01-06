@@ -2,7 +2,7 @@ import numpy as np
 import random
 from VLABench.tasks.dm_task import LM4ManipBaseTask, SpatialMixin, SemanticMixin, CommonSenseReasoningMixin
 from VLABench.tasks.config_manager import BenchTaskConfigManager
-from LM4manipBench.utils.register import register
+from VLABench.utils.register import register
 
 @register.add_config_manager("select_toy")
 class SelectToyConfigManager(BenchTaskConfigManager):    

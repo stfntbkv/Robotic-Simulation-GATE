@@ -11,11 +11,11 @@ BOOK_TYPE = ["biographies", "fiction", "biotechnology", "physics", "law", "compu
 @register.add_config_manager("select_book")
 class SelectBookConfigManager(BenchTaskConfigManager):
     def __init__(self, 
-                 config,
-                 num_objects = [3, 4],
+                 task_name,
+                 num_objects=[3, 4],
                  **kwargs):
         """select the book with specific name"""
-        super().__init__(config, num_objects, **kwargs)
+        super().__init__(task_name, num_objects, **kwargs)
     
     def load_init_containers(self, init_container):
         if init_container is not None:
@@ -82,12 +82,12 @@ class SelectSpecificTypeBookConfigManager(SelectBookConfigManager):
 @register.add_config_manager("select_book_spatial")
 class SelectBookSpatialConfigManager(SelectBookConfigManager):
     def __init__(self, 
-                 config,
+                 task_name,
                  num_objects = [5, 6],
                  z_position = [0.15, 0.45],
                  **kwargs):
         self.z_position = z_position
-        super().__init__(config, num_objects, **kwargs)
+        super().__init__(task_name, num_objects, **kwargs)
     
     def load_objects(self, target_entity):
         self.config["task"]["components"][-1]["subentities"] = []

@@ -2,8 +2,8 @@ import random
 import numpy as np
 import os
 import json
-from LM4manipBench.configs.constant import name2class_xml
-from LM4manipBench.utils.utils import flatten_list, grid_sample
+from VLABench.configs.constant import name2class_xml, name2config
+from VLABench.utils.utils import flatten_list, grid_sample, find_key_by_value
 
 DEFAULT_RABDOMNESS = dict(
     pos=[0.02, 0.02, 0],
@@ -44,7 +44,8 @@ class BenchTaskConfigManager():
         # load additional config from task_config.json
         with open(os.path.join(os.getenv("VLABENCH_ROOT"), "configs/task_config.json"), "r") as f:
             configs = json.load(f)
-        config = configs.get(task_name, None)
+        config = configs.get("default", {})
+        config.update(configs.get(find_key_by_value(name2config, task_name), None))
         if config is None: 
             raise ValueError(f"Task {task_name} is invalid. Check the valid ones task_config.json file.")
         self.config.update(config)
@@ -52,12 +53,13 @@ class BenchTaskConfigManager():
             self.config["task"]["components"] = []
         # init assets config
         self.num_objects = num_objects
-        self.seen_object = self.config["task"]["asset"].get("seen_object", None)
-        self.unseen_object = self.config["task"]["asset"].get("unseen_object", None)
-        self.seen_container = self.config["task"]["asset"].get("seen_container", None)
-        self.unseen_container = self.config["task"]["asset"].get("unseen_container", None)
-        self.seen_init_container = self.config["task"]["asset"].get("seen_init_container", None)
-        self.unseen_init_container = self.config["task"]["asset"].get("unseen_init_container", None)
+        if "asset" not in self.config["task"]: self.config["task"]["asset"] = {}
+        for attr in["seen_object", "unseen_object", "seen_container", "unseen_container", "seen_init_container", "unseen_init_container"]:
+            if attr not in self.config["task"]["asset"]:
+                value = kwargs[attr] if attr in kwargs else None
+            else:
+                value = self.config["task"]["asset"][attr]                     
+            setattr(self, attr, value)
         
         self.kwargs = kwargs
         if isinstance(self.num_objects, list):

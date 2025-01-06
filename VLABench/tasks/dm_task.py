@@ -27,34 +27,19 @@ class LM4ManipBaseTask(composer.Task):
                  eval=False,
                  random_init=True,
                  **kwargs):
-        if not hasattr(self, "config_manager_cls"):
-            # TODO: remove try and except
-            try:
-                self.config_manager_cls = register.load_config_manager(task_name)
-            except:
-                self.config_manager_cls = None
-                print("No config manager found")
         self.task_name = task_name
-        self.asset_path = os.path.join(os.path.dirname(__file__), "../assets")
-        model_path = f"envs/{task_name}.xml"
-        model_path = os.path.join(self.asset_path, model_path)
-        if not os.path.exists(model_path):
-            model_path = model_path.replace(f"{task_name}", "empty")
-        
-        self._arena = composer.Arena(xml_path=model_path)
+        self.config_manager = register.load_config_manager(task_name)(task_name)
+        self.asset_path = os.path.join(os.getenv("VLABENCH_ROOT"), "assets")        
+        self._arena = composer.Arena(xml_path=os.path.join(self.asset_path, "env/default.xml"))
         self._robot = robot
         self.attach_entity(robot)
         self._task_observables = {}
         
-        # Configure variators
-        self._mjcf_variator = variation.MJCFVariator()
-        self._physics_variator = variation.PhysicsVariator()
-        # self._build_observables()
+        # FIXME fix the loading way
         config = kwargs.get("config", None) 
         self.entities = dict()
         self.distractors = dict()
         self.random_init = random_init
-        # FIXME fix the loading way
         if config is not None:
             self.random_ignored_entities = config["task"].get("random_ignored_entities", ["table"])
             self.ngrid = config["task"].get("ngrid", None)
@@ -63,10 +48,8 @@ class LM4ManipBaseTask(composer.Task):
             self.random_ignored_entities = ["table"]
             self.ngrid = None
             self.workspace = [-0.3, 0.3, -0.2, 0.3, 0.75, 1.5]
-        if config is not None:
-            self.build_from_config(config, eval)
-        else:
-            self.build_default_scene()
+        
+        self.build_from_config(eval)
         self.reset_camera_views()
     
     def reset_camera_views(self, index=2):
@@ -105,9 +88,6 @@ class LM4ManipBaseTask(composer.Task):
                 entity.init_pos[:2] = point
         return super().initialize_episode(physics, random_state)
     
-    def initialize_episode_mjcf(self, random_state):
-        self._mjcf_variator.apply_variations(random_state)
-    
     def get_reward(self, physics):
         return 0
     
@@ -134,29 +114,36 @@ class LM4ManipBaseTask(composer.Task):
         entity.detach()
         self.entities.pop(entity.mjcf_model.model)
     
-    def build_from_config(self, config, eval=False):
-        if hasattr(self, "config_manager_cls"):
-            self.config_manager = self.config_manager_cls(config)
-            if eval: config = self.config_manager.get_unseen_task_config()
-            else: config = self.config_manager.get_seen_task_config() 
+    def build_from_config(self, eval=False):
+        """
+        Load configurations from the config file and build the task.
+        Configuration includes：
+            - options and parameters of mujoco physics engine
+            - load scene by configuration
+            - entity configuration
+        """
+        if eval: config = self.config_manager.get_unseen_task_config()
+        else: config = self.config_manager.get_seen_task_config() 
         if isinstance(config, dict):
             self.config = config
         elif isinstance(config, str):
             with open(config, "r") as f:
                 self.config = yaml.safe_load(f)
+        # load engine config
+        self.set_engine_config(self.config["engine"])
+        # load scene and entities
         if self.config["task"].get("scene", None) is not None:
             self.load_scene_from_config(config["task"]["scene"]) 
         for entity_config in self.config["task"]["components"]:
             self.load_entity_from_config(entity_config)
+        # build instrutions
         if self.config["task"].get("instructions", None) is not None:
             self.instructions = self.config["task"]["instructions"]
         else:
             self.instructions = ""
+        # build conditions
         self.init_conditions()
         self.random_ignored_entities.extend(self.config["task"].get("random_ignored_entities", []))
-    
-    def build_default_scene(self):
-        pass
 
     def init_conditions(self):
         if self.config["task"].get("conditions", None) is not None:
@@ -180,8 +167,30 @@ class LM4ManipBaseTask(composer.Task):
             conditions.append(condition)
         self.conditions = ConditionSet(conditions)
         return True
-        
+    
+    def set_engine_config(self, config):
+        """
+        Recursively sets attributes from a nested dictionary to mujoco engine attributes.
+        """
+
+        def set_recursive_attr(obj, config):
+            for key, value in config.items():
+                if isinstance(value, dict):
+                    if hasattr(obj, key):
+                        nested_obj = getattr(obj, key)
+                        set_recursive_attr(nested_obj, value)
+                    else:
+                        setattr(obj, key, type(obj)())
+                        set_recursive_attr(getattr(obj, key), value)
+                else:
+                    setattr(obj, key, value)
+                    
+        set_recursive_attr(self._arena.mjcf_model, config)
+         
     def load_scene_from_config(self, config):
+        """
+        Build the scene from the configuration dictionary
+        """
         scene = Scene(**config)
         self.attach_entity(scene)
         self.scene = scene
@@ -293,8 +302,8 @@ class PressButtonTask(LM4ManipBaseTask):
     This type of tasks can be easily expanded with previous vision-language QA datasets, 
         to evaluate the capability retention of VLA-based VLMs. 
     """
-    def build_from_config(self, config, eval=False):
-        super().build_from_config(config, eval)
+    def build_from_config(self, eval=False):
+        super().build_from_config(eval)
         for key in list(self.entities.keys()):
             if "button" in key:
                 button = self.entities[key]
@@ -331,7 +340,7 @@ class ClusterTask(LM4ManipBaseTask):
         self.conditions = OrCondition(condition_sets)
         return True
 
-class SpatialMixin(LM4ManipBaseTask):
+class SpatialMixin:
     """
     Base class for task focusing on assessing spatial perception and understanding.
     This class provides methods to generate spatial relations between entities.
@@ -343,7 +352,7 @@ class SpatialMixin(LM4ManipBaseTask):
         super().build_from_config(config, eval)
         self.generate_spatial_relation()
 
-class CommonSenseReasoningMixin(LM4ManipBaseTask):
+class CommonSenseReasoningMixin:
     """
     Base class for task focusing on assessing common sense reasoning and world knowlegde application ability.
     This class provides methods to generate common sense reasoning questions.
@@ -355,7 +364,7 @@ class CommonSenseReasoningMixin(LM4ManipBaseTask):
         super().build_from_config(config, eval)
         self.generate_common_sense_reasoning_question()
     
-class SemanticMixin(LM4ManipBaseTask):
+class SemanticMixin:
     """
     Base class for task focusing on assessing semantic understanding and reasoning ability.
     This class provides methods to generate semantic understanding questions.
@@ -366,8 +375,3 @@ class SemanticMixin(LM4ManipBaseTask):
     def build_from_config(self, config, eval=False):
         super().build_from_config(config, eval)
         self.generate_semantic_understanding_question()
-    
-        
-    
-    
-        

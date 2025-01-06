@@ -7,14 +7,14 @@ from VLABench.configs.constant import name2class_xml
 
 SHAKER_INGRADIENTS = ["salt", "sugar"]
 
-register.add_config_manager("add_condiment")
+@register.add_config_manager("add_condiment")
 class AddCondimentConfigManager(BenchTaskConfigManager):
     def __init__(self,
-                 config,
+                 seen_object,
                  num_objects=[3, 4],
                  **kwargs
                  ):
-        super().__init__(config, num_objects, **kwargs)
+        super().__init__(seen_object, num_objects, **kwargs)
     
     def load_containers(self, target_container):
         stove_config = self.get_entity_config("stove", position=[0.1, 0, 0], randomness=None)
@@ -32,7 +32,7 @@ class AddCondimentConfigManager(BenchTaskConfigManager):
             pour=dict(
                 target_entity=target_entity
             ),
-            above_platform=dict(
+            above=dict(
                 target_entity=target_entity,
                 platform=target_container
             )
@@ -71,12 +71,12 @@ class AddCondimentTask(LM4ManipBaseTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
     
-    def build_from_config(self, config, eval=False):
+    def build_from_config(self, eval=False):
         """
         attach the dished to the pan and fix the nametag of shakers to worldframe 
         for reasonable and stable visual display.
         """
-        super().build_from_config(config, eval)
+        super().build_from_config(eval)
         for key in list(self.entities.keys()):
             if "pan" in key:
                 pan = self.entities[key]

@@ -95,7 +95,7 @@ python scirpts/eval.py --n-sample 20 --model your_model_script
 
 ## Citation
 ```bibtex
-@misc{zhang2024vlabenchlargescalebenchmarklanguageconditioned,
+@misc{zhang2024vlabench,
       title={VLABench: A Large-Scale Benchmark for Language-Conditioned Robotics Manipulation with Long-Horizon Reasoning Tasks}, 
       author={Shiduo Zhang and Zhe Xu and Peiju Liu and Xiaopeng Yu and Yuan Li and Qinghui Gao and Zhaoye Fei and Zhangyue Yin and Zuxuan Wu and Yu-Gang Jiang and Xipeng Qiu},
       year={2024},

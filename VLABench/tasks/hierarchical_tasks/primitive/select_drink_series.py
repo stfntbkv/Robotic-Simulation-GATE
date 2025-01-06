@@ -10,10 +10,10 @@ class SelectDrinkConfigManager(BenchTaskConfigManager):
     Take out the specific drink from the fridge. 
     """
     def __init__(self, 
-                 config,
+                 task_name,
                  num_objects = [2],
                  **kwargs):
-        super().__init__(config, num_objects, **kwargs)
+        super().__init__(task_name, num_objects, **kwargs)
     
     def load_objects(self, target_entity):
         objects = []
@@ -151,11 +151,11 @@ class SelectDrinkTask(LM4ManipBaseTask):
     def __init__(self, task_name, robot, eval=False, **kwargs):
        super().__init__(task_name, robot, eval, **kwargs)
 
-    def build_from_config(self, config, eval=False):
+    def build_from_config(self, eval=False):
         """
         Attach the fridge to the arena for reasonable and stable visual display.
         """
-        super().build_from_config(config, eval)
+        super().build_from_config(eval)
         for key, entity in self.entities.items():
             if "fridge" in key:
                 entity.detach()

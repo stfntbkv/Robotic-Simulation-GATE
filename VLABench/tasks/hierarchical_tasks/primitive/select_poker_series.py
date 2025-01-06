@@ -16,10 +16,10 @@ value2int = {value: i + 2 for i, value in enumerate(VALUES)}
 @register.add_config_manager("select_poker")
 class SelectPokerConfigManager(BenchTaskConfigManager):
     def __init__(self,
-                 config,
+                 task_name,
                  num_objects=[3, 4],
                  **kwargs):
-        super().__init__(config, num_objects, **kwargs)
+        super().__init__(task_name, num_objects, **kwargs)
     
     def get_seen_task_config(self):
         return self.get_task_config(None, None, None)
@@ -71,10 +71,7 @@ class SelectPokerConfigManager(BenchTaskConfigManager):
         self.config["task"]["conditions"] = condition_config
     
 @register.add_config_manager("select_nth_largest_poker")
-class SelectNthLargestPokerConfigManager(SelectPokerConfigManager):
-    def __init__(self, config, **kwargs):
-        super().__init__(config, **kwargs)
-    
+class SelectNthLargestPokerConfigManager(SelectPokerConfigManager):    
     def load_objects(self, **kwargs):
         values = random.sample(VALUES, self.num_object)
         value2ints = [value2int[value] for value in values]
@@ -115,10 +112,7 @@ class SelectNthLargestPokerConfigManager(SelectPokerConfigManager):
         self.config["task"]["instructions"] = instruction
 
 @register.add_config_manager("select_poker_spatial")
-class SelectPokerSpatialConfigManager(SelectPokerConfigManager):
-    def __init__(self, config, **kwargs):
-        super().__init__(config, **kwargs)
-    
+class SelectPokerSpatialConfigManager(SelectPokerConfigManager):    
     def load_objects(self, **kwargs):
         cards = random.sample(CARDS, self.num_object)
         self.target_card = random.choice(cards) # tuple: (value, suite)

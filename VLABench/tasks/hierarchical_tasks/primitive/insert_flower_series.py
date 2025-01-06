@@ -7,10 +7,10 @@ from VLABench.tasks.config_manager import BenchTaskConfigManager
 @register.add_config_manager("insert_flower")
 class InsertFlowerConfigManager(BenchTaskConfigManager):
     def __init__(self,
-                 config,
+                 seen_object,
                  num_objects=[3],
                  **kwargs):
-        super().__init__(config, num_objects, **kwargs)
+        super().__init__(seen_object, num_objects, **kwargs)
     
     def load_containers(self, target_container):
         super().load_containers(target_container)
@@ -92,12 +92,12 @@ class InsertFlowerTask(LM4ManipBaseTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
         
-    def build_from_config(self, config, eval=False):
+    def build_from_config(self, eval=False):
         """
         Attach the vase for stable interaction.
         """
         # FIXME delete the re-attachment of the vase for more realistic interaction
-        super().build_from_config(config, eval)
+        super().build_from_config(eval)
         for key, entity in self.entities.items():
             if "vase" in key:
                 entity.detach()

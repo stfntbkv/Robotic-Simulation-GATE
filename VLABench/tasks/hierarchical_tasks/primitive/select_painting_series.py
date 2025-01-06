@@ -14,10 +14,10 @@ class SelectPaintingConfigManager(PressButtonConfigManager):
     seen_style = ['Romanticism', 'Realism', 'Rococo', 'Baroque', 'Symbolism', 'Minimalism', 'Post-Impressionism', 'Surrealism', 'Ukiyo-e']
     unseen_style = ['Academicism', 'Expressionism', 'Impressionism', 'Neoclassicism', 'Art Nouveau', 'Cubism']
     def __init__(self, 
-                 config,
+                 task_name,
                  num_objects = [3],
                  **kwargs):
-        super().__init__(config, num_objects, **kwargs)
+        super().__init__(task_name, num_objects, **kwargs)
     
     def get_seen_task_config(self):  # to choose target style and all loaded styles
         target_style = random.choice(self.seen_style)
@@ -65,12 +65,12 @@ class SelectPaintingConfigManager(PressButtonConfigManager):
 @register.add_config_manager("put_box_on_painting")
 class PutBoxOnPaintingConfigManager(BenchTaskConfigManager):
     def __init__(self, 
-                 config, 
+                 task_name, 
                  num_objects=3, 
                  **kwargs):
-        with open(os.path.join(os.getenv("VLABENCH_ROOT"), "configs/objects/painting.json"), "r") as f:
+        with open(os.path.join(os.getenv("VLABENCH_ROOT"), "configs/task_related/painting.json"), "r") as f:
             paintings = json.load(f)
-        super().__init__(config, num_objects, paintings[::2], paintings[1::2], **kwargs)
+        super().__init__(task_name, num_objects, seen_object=paintings[::2], unseen_object=paintings[1::2], **kwargs)
 
     def get_instruction(self, target_entity, **kwargs):
         instruction = [f"Please put the box on the {target_entity}."]
@@ -126,7 +126,9 @@ class HangPictureConfigManager(BenchTaskConfigManager):
                  task_name,
                  num_objects = [2],
                  **kwargs):
-        super().__init__(task_name, num_objects, **kwargs)
+        with open(os.path.join(os.getenv("VLABENCH_ROOT"), "configs/task_related/painting.json"), "r") as f:
+            paintings = json.load(f)
+        super().__init__(task_name, num_objects, seen_object=paintings[::2], unseen_object=paintings[1::2], **kwargs)
     
     def load_objects(self, target_entity):
         paintings = []
@@ -178,8 +180,8 @@ class SelectPaintingTask(PressButtonTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
     
-    def build_from_config(self, config, eval=False):
-        super().build_from_config(config, eval)
+    def build_from_config(self, eval=False):
+        super().build_from_config(eval)
         for key, entity in self.entities.items():
             if key not in ["table", "button0", "button1", "button2", "target_box"]:
                 entity.detach()
@@ -209,8 +211,8 @@ class HangPictureTask(LM4ManipBaseTask):
         super().__init__(task_name, robot=robot, **kwargs)
         self.should_terminate = False
         
-    def build_from_config(self, config, eval=False):
-        super().build_from_config(config, eval)
+    def build_from_config(self, eval=False):
+        super().build_from_config(eval)
         for key in list(self.entities.keys()):
             if "nail" in key:
                 nail = self.entities[key]

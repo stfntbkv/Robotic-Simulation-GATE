@@ -12,10 +12,10 @@ MAHJONGS = [(value, type) for value in VALUES for type in ["man", "sou", "pin"]]
 @register.add_config_manager("select_mahjong")
 class SelectMahjongConfigManager(BenchTaskConfigManager):
     def __init__(self, 
-                 config,
+                 task_name,
                  num_objects = [6, 7],
                  **kwargs):
-        super().__init__(config, num_objects, seen_object=MAHJONGS[::2], unseen_object=MAHJONGS[::2], **kwargs)
+        super().__init__(task_name, num_objects, seen_object=MAHJONGS[::2], unseen_object=MAHJONGS[::2], **kwargs)
     
     def load_containers(self, target_container):
         container_config = self.get_entity_config(target_container, position=[random.uniform(-0.2, 0.2), random.uniform(0.2, 0.3), 0.8])
@@ -142,23 +142,19 @@ class SelectUniqueTypeMahjongConfigManager(SelectMahjongConfigManager):
 @register.add_task("select_mahjong")
 class SelectMahjongTask(LM4ManipBaseTask):
     def __init__(self, task_name, robot, **kwargs):
-        self.config_manager_cls = register.load_config_manager("select_mahjong")
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("select_mahjong_spatial")
 class SelectMahjongSpatialTask(LM4ManipBaseTask, SpatialMixin):
     def __init__(self, task_name, robot, **kwargs):
-        self.config_manager_cls = register.load_config_manager("select_mahjong_spatial")
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("select_mahjong_semantic")
 class SelectMahjongSemanticTask(LM4ManipBaseTask, SemanticMixin):
     def __init__(self, task_name, robot, **kwargs):
-        self.config_manager_cls = register.load_config_manager("select_mahjong_semantic")
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("select_unique_type_mahjong")
 class SelectUniqueTypeMahjongTask(LM4ManipBaseTask, CommonSenseReasoningMixin):
     def __init__(self, task_name, robot, **kwargs):
-        self.config_manager_cls = register.load_config_manager("select_unique_type_mahjong")
         super().__init__(task_name, robot=robot, **kwargs)

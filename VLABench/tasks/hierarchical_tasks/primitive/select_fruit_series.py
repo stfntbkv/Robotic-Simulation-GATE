@@ -7,11 +7,14 @@ from VLABench.utils.utils import flatten_list, grid_sample
 @register.add_config_manager("select_fruit")
 class SelectFruitConfigManager(BenchTaskConfigManager):
     def __init__(self, 
-                 config,
+                 task_name,
                  num_objects=[3, 4],
                  **kwargs):
-        super().__init__(config, num_objects, **kwargs) 
-                  
+        super().__init__(task_name, num_objects, **kwargs) 
+    
+    def load_init_containers(self, init_container):
+        pass
+    
     def get_instruction(self, target_entity, target_container, **kwargs):
         instruction = [f"Put the {target_entity} into the {target_container}"]
         self.config["task"]["instructions"] = instruction
@@ -33,7 +36,7 @@ class SelectFruitCommonSeneseConfigManager(SelectFruitConfigManager):
         self.config["task"]["instructions"] = instruction
 
 @register.add_config_manager("select_fruit_spatial")
-class SelectFruitSpatialConfigManager(SelectFruitConfigManager):
+class SelectFruitSpatialConfigManager(LM4ManipBaseTask):
     def load_objects(self, target_entity):
         # init container add subentities
         self.config["task"]["components"][-1]["subentities"] = []

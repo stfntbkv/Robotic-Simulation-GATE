@@ -23,10 +23,10 @@ reachable_holes2natural_language = {
 @register.add_config_manager("select_billiards")
 class SelectBilliardsConfigManager(BenchTaskConfigManager):
     def __init__(self, 
-                 config,
-                 num_objects = [4, 5],
+                 task_name,
+                 num_objects=[4, 5],
                  **kwargs):
-        super().__init__(config, num_objects, seen_object=BILLIARDS[::2], unseen_object=BILLIARDS[1::2], **kwargs)
+        super().__init__(task_name, num_objects, seen_object=BILLIARDS[::2], unseen_object=BILLIARDS[1::2], **kwargs)
     
     def load_containers(self, **kwargs):
         billiards_table = self.get_entity_config("billiards_table",
@@ -77,12 +77,10 @@ class SelectBilliardsSpatialConfigManager(SelectBilliardsConfigManager):
 @register.add_config_manager("select_billiards_common_sense")
 class SelectBilliardsCommonSenseConfigManager(SelectBilliardsConfigManager):
     def __init__(self, 
-                 config, 
+                 task_name, 
                  num_objects=[4, 5], 
-                 seen_object=SNOOKER[::2], 
-                 unseen_object=SNOOKER[1::2], 
                  **kwargs):
-        super().__init__(config, num_objects, seen_object, unseen_object, **kwargs)
+        super().__init__(task_name, num_objects, seen_object=SNOOKER[::2], unseen_object=SNOOKER[1::2], **kwargs)
     
     def load_objects(self, target_entity):
         objects = [target_entity]
