@@ -1,8 +1,8 @@
 import numpy as np
 import math
 from dm_control import composer
-from LM4manipBench.utils.utils import euler_to_quaternion, expand_mask
-from LM4manipBench.utils.depth2cloud import rotMatList2NPRotMat, quat2Mat, posRotMat2Mat, PointCloudGenerator
+from VLABench.utils.utils import euler_to_quaternion, expand_mask
+from VLABench.utils.depth2cloud import rotMatList2NPRotMat, quat2Mat, posRotMat2Mat, PointCloudGenerator
 
 class LM4ManipDMEnv(composer.Environment):
     def __init__(self, reset_wait_step=100, **kwargs):

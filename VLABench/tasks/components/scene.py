@@ -15,23 +15,24 @@ class Scene(composer.Entity):
         
     def _build(self, *args, **kwargs):
         scene_name = kwargs.get("name", None)
-        with open(os.path.join(os.getenv("VLABENCH_ROOT"), "configs/scene_config"), "r") as f:
+        with open(os.path.join(os.getenv("VLABENCH_ROOT"), "configs/scene_config.json"), "r") as f:
             all_scene_config = json.load(f)
         if scene_name is None or scene_name not in all_scene_config:
             scene_name = random.choice(list(all_scene_config.keys()))
         
         self.scene_config = all_scene_config[scene_name]
+        self.scene_config.update(**kwargs)
         assert isinstance(self.scene_config, dict), "scene_config must be a dictionary"
         # load offset pose to world frame
         self.init_pos = self.scene_config.get("position", [0, 0, 0])
-        self.init_quat = kwargs.get("orientation", [1, 0, 0, 0]) 
+        self.init_quat = self.scene_config.get("orientation", [1, 0, 0, 0]) 
         if len(self.init_quat) == 3:
             self.init_quat = euler_to_quaternion(*self.init_quat)
         self.candidate_pos = self.scene_config.get("candidate_pos", None)
         
         # other initialization
-        self.randomness = kwargs.get("randomness", None)
-        self.floor_textures = kwargs.get("floor_textures", FLOOR_TEXTURE)
+        self.randomness = self.scene_config.get("randomness", None)
+        self.floor_textures = self.scene_config.get("floor_textures", FLOOR_TEXTURE)
         # build the scene from the xml file
         self._mjcf_model = mjcf.from_path(os.path.join(self.scene_asset_root, self.scene_config["xml_path"]))
         self._mjcf_model.model = scene_name

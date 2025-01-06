@@ -177,6 +177,10 @@ def pcd_has_overlap(pcd1, pcd2, distance_threshold=0.05):
     return iou
 
 def distance(p1, p2):
+    if not isinstance(p1, np.ndarray):
+        p1 = np.array(p1)
+    if not isinstance(p2, np.ndarray):
+        p2 = np.array(p2)
     return np.linalg.norm(p1 - p2)
 
 def farthest_first_sampling(points, k):
@@ -367,30 +371,37 @@ def expand_mask(masks, kernel_size=3, iterations=1):
     
 
 
-def pcd_filtering(pcd):
-    # DBSCAN 聚类
-    # eps: 两个点被视为邻居的最大距离
-    # min_samples: 至少需要多少个点来构成一个密集簇
-    dbscan = DBSCAN(eps=0.05, min_samples=10)
+def pcd_filtering(pcd, eps=0.05, min_samples=10):
+    """
+    DBSCAN clustering
+    params:
+        eps: The maximum distance two points can be considered neighbors.
+        min_samples: The minimum number of points required to form a dense cluster.
+    """
+    dbscan = DBSCAN(eps=eps, min_samples=min_samples)
     labels = dbscan.fit_predict(pcd)
-
-    # 统计每个簇中的点的数量
     unique_labels, counts = np.unique(labels, return_counts=True)
 
-    # 忽略噪声点（噪声点的标签为 -1）
+    # ignore noise points
     if -1 in unique_labels:
         noise_index = np.where(unique_labels == -1)[0][0]
         unique_labels = np.delete(unique_labels, noise_index)
         counts = np.delete(counts, noise_index)
 
-    # 找到包含最多点的簇
     max_cluster_label = unique_labels[np.argmax(counts)]
-
-    # 选出最密集簇的点
     most_dense_cluster = pcd[labels == max_cluster_label]
     return most_dense_cluster
 
-
+def find_key_by_value(dictionary, target_value):
+    """
+    Given a dictionary and the corresponding value, find the key that contains the target value
+    """
+    for key, value in dictionary.items():
+        if isinstance(value, list) and target_value in value:
+            return key
+        elif not isinstance(value, list) and value == target_value:
+            return key
+    return target_value
 
 if __name__ == "__main__":
     # quat = compute_rotation_quaternion([0, 0, 1], [0, 0, 0])
