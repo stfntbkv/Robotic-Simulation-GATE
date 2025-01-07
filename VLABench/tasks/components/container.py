@@ -197,7 +197,7 @@ class ContainerWithDrawer(CommonContainer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.drawers = []
-        for body in self.bodys:
+        for body in self.bodies:
             if "drawer" in body.name:
                 self.drawers.append(body)
         self.n_drawer = len(self.drawers)    

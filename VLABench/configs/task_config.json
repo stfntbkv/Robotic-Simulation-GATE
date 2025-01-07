@@ -579,13 +579,97 @@
         }
     },
     
-    "cool_drink": "benchmark/select_drink/common.yaml",
+    "set_dining_table_series":{
+        "task":{
+            "asset":{
+                "seen_object": ["knife", "fork", "spoon", "chopstick"],
+                "unseen_object": ["knife", "fork", "spoon", "chopstick"],
+                "seen_container":["placemat_seen"],
+                "unseen_container":["placemat_unseen"], 
+                "seen_init_container":["knifeholder_seen"],
+                "unseen_init_container":["knifeholder_unseen"]
+            },
+            "components":[
+                {
+                    "name": "table",
+                    "xml_path": "obj/meshes/table/table.xml",
+                    "class": "Table",
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name": "living_room_0"
+            }
+        }   
+    },
+
+    "find_unseen_object":{
+        "robot":{
+            "position": [0, -0.7, 0.7]
+        },
+        "task":{
+            "ngrid": [5, 5],
+            "workspace": [-0.2, 0.2, -0.45, -0.3, 0.8, 1.5],
+            "random_ignored_entities": ["table"],
+            "asset":{
+                "seen_object": [["cola", "spirit", "jumpstart"], 
+                ["apple", "banana", "orange", "pear"],
+                ["bagged_food", "bar"]
+                ],
+                "unseen_object": [["redbull", "monster"],
+                ["peach", "lemon", "kiwi", "mango"],
+                ["canned_food", "chips"]
+                ],
+                "seen_init_container": ["cabinet_seen"],
+                "unseen_init_container": ["cabinet_unseen"]
+            },
+            "components":[
+                {
+                    "name": "table",
+                    "xml_path": "obj/meshes/table/table.xml",
+                    "class": "Table",
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name": "store_0"
+            }
+        }   
+    },
+
+    "cool_drink_series": {
+        "task":{
+            "ngrid": [5, 5],
+            "random_ignored_entities": ["table"],
+            "workspace": [0.2, 0.4, -0.2, 0.2, 0.8, 2],
+            "asset":{
+                "seen_object":[["cola", "spirit"], ["juice"], ["monster", "jumpstart"]],
+                "unseen_object":[["cola", "spirit"], ["juice"], ["redbull"]],
+                "seen_init_container":["small_fridge"],
+                "unseen_init_container":["small_fridge"] 
+            },
+            "components":[
+                {
+                    "name": "table",
+                    "xml_path": "obj/meshes/table/table.xml",
+                    "class": "Table",
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name": "living_room_0"
+            }
+        }
+    },
     
     "friction_qa": "benchmark/physics_qa/common.yaml",
     "density_qa": "benchmark/physics_qa/common.yaml",
-    "find_unseen_object": "benchmark/find_unseen_object/common.yaml",
-    "set_dining": "benchmark/dining_table_set/common.yaml",
-    "set_dining_lefthand": "benchmark/dining_table_set/common.yaml",
     
     "heat_food": "benchmark/heat_food/common.yaml",
     "rearrange_tube": "benchmark/rearrange_tube/common.yaml",

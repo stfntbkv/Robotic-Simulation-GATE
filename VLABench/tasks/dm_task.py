@@ -8,9 +8,9 @@ from dm_control import composer
 from dm_control.composer import variation
 from VLABench.utils.register import register
 from VLABench.tasks.condition import ConditionSet, OrCondition
-from VLABench.utils.utils import grid_sample, quaternion_multiply, euler_to_quaternion
+from VLABench.utils.utils import grid_sample, find_key_by_value
 from VLABench.tasks.components.scene import Scene
-from VLABench.configs.constant import name2class_xml
+from VLABench.configs.constant import name2class_xml, name2config
 from VLABench.tasks.components.entity import Entity
 
 with open(os.path.join(os.getenv("VLABENCH_ROOT"), "configs/camera_config.json"), "r") as f:
@@ -30,7 +30,7 @@ class LM4ManipBaseTask(composer.Task):
         self.task_name = task_name
         self.config_manager = register.load_config_manager(task_name)(task_name)
         self.asset_path = os.path.join(os.getenv("VLABENCH_ROOT"), "assets")        
-        self._arena = composer.Arena(xml_path=os.path.join(self.asset_path, "env/default.xml"))
+        self._arena = composer.Arena(xml_path=os.path.join(self.asset_path, "base/default.xml"))
         self._robot = robot
         self.attach_entity(robot)
         self._task_observables = {}
