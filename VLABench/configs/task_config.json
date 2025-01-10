@@ -668,20 +668,326 @@
         }
     },
     
-    "friction_qa": "benchmark/physics_qa/common.yaml",
-    "density_qa": "benchmark/physics_qa/common.yaml",
+    "physical_qa_series":{
+
+    },
+
+    "heat_food_series": {
+        "task":{
+            "asset":{
+                "seen_object": ["cooked_food"],
+                "unseen_object": ["croissant", "bagel"],
+                "seen_container": ["microwave_seen"],
+                "unseen_container": ["microwave_unseen"],
+                "seen_init_container": ["tray_seen"],
+                "unseen_init_container": ["tray_unseen"]
+            },
+            "components":[
+                {
+                    "name": "table",
+                    "xml_path": "obj/meshes/table/table.xml",
+                    "class": "Table",
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name": "kitchen_2",
+                "orientation": [0, 0, 1.57]
+            }
+        }
+    },
+
+    "rearrange_tube":{
+        "task":{
+            "asset":{
+                "seen_object": [["CuCl2"], ["CuSO4"], ["FeCl3"], ["KMnO4"]] ,
+                "unseen_object": [["I2"], ["K2CrO4"]],
+                "seen_container": ["chemistry_tube_stand"],
+                "unseen_container": ["chemistry_tube_stand"],
+                "seen_init_container": ["chemistry_tube_stand"],
+                "unseen_init_container": ["chemistry_tube_stand"]
+            },
+            "components":[
+                {
+                    "name": "table",
+                    "xml_path": "obj/meshes/table/table.xml",
+                    "class": "Table",
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name": "lab_1"
+            }
+        }
+    },
+
+    "take_chemistry_experiment":{
+        "task":{
+            "asset":{
+                "seen_container": ["flask"],
+                "unseen_container": ["flask"],
+                "seen_init_container": ["chemistry_tube_stand"],
+                "unseen_init_container": ["chemistry_tube_stand"]
+            },
+            "components":[
+                {
+                    "name": "table",
+                    "xml_path": "obj/meshes/table/table.xml",
+                    "class": "Table",
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name": "lab_1"
+            }
+        }
+    },
+
+    "get_coffee_series":{
+        "task":{
+            "asset":{
+                "seen_object":["mug_seen"],
+                "unseen_object":["mug_unseen"],
+                "seen_container":["coffee_machine"],
+                "unseen_container":["coffee_machine"]
+            },
+            "components":[
+                {
+                    "name": "table",
+                    "xml_path": "obj/meshes/table/table.xml",
+                    "class": "Table",
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name": "living_room_0"
+            }
+        }
+    },
+
+    "hammer_nail_series":{
+        "task":{
+            "components":[
+                {
+                    "name": "counter",
+                    "xml_path": "obj/meshes/counters/counter_0/counter.xml",
+                    "class": "Counter",
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name": "wall_0",
+                "orientation": [0, 0, -1.57]
+            }
+        }
+    },
     
-    "heat_food": "benchmark/heat_food/common.yaml",
-    "rearrange_tube": "benchmark/rearrange_tube/common.yaml",
-    "get_coffee": "benchmark/get_coffee/common.yaml",
-    "hammer_loose_nail":"benchmark/hammer_nail/common.yaml",
-    "assemble_hammer":"benchmark/hammer_nail/common.yaml",
-    "make_juice": "benchmark/make_juice/common.yaml",
-    "cook_dishes": "benchmark/cook_dishes/common.yaml",
-    "hang_picture": "benchmark/hang_picture/common.yaml",
-    "store_food": "benchmark/store_food/common.yaml",
-    "play_mahjong": "benchmark/play_mahjong/common.yaml",
+    "make_juice_series": {
+        "task":{
+            "ngrid": [10, 10],
+            "workspace": [0, 0.3, -0.2, 0.2, 0.8, 1.5],
+            "asset":{
+                "seen_object":["apple", "banana", "orange", "pear"],
+                "unseen_object":["peach", "lemon", "kiwi", "mango"],
+                "seen_container":["juicer"],
+                "unseen_container":["juicer"]
+            },
+            "components":[
+                {
+                    "name": "table",
+                    "xml_path": "obj/meshes/table/table.xml",
+                    "class": "Table",
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name": "living_room_0"
+            }
+        }
+    },
     
-    
-    "use_seesaw": "benchmark/use_seesaw/common.yaml"
+    "cook_dishes": {
+        "robot":{
+            "position": [-0, -0.3, 0.78]
+        },
+        "task":{
+            "workspace": [0, 0.3, 0.0, 0.3, 0.8, 1],
+            "ngrid": [4, 4],
+            "asset":{
+                "seen_container": ["plate_seen"],
+                "unseen_container": ["plate_unseen"]
+            },
+            "components":[
+                {
+                    "name": "counter",
+                    "xml_path": "obj/meshes/counters/counter_0/counter.xml",
+                    "class": "Counter",
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name":"kitchen_2"
+            }
+        }
+    },
+
+    "store_food": {
+        "robot":{
+            "position": [-0.2, -0.5, 0.4]
+        },
+        "task":{
+            "asset":{
+                "seen_object":["bread", "ingredient"],
+                "unseen_object":["dessert", "fruit"],
+                "seen_container":["big_fridge"],
+                "unseen_container":["big_fridge"]
+            },
+            "components":[
+                {
+                    "name": "counter",
+                    "xml_path": "obj/meshes/counters/counter_0/counter.xml",
+                    "class": "Counter",
+                    "position": [-0.8, 0.5, 0],
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name":"kitchen_2"
+            }
+        }
+    },
+
+    "play_mahjong": {
+        "task":{
+            "components":[
+                {
+                    "name": "table",
+                    "xml_path": "obj/meshes/table/table.xml",
+                    "class": "Table",
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name": "living_room_0"
+            }
+        }
+    },
+
+    "seesaw_series": {
+        "task":{
+            "asset":{
+                "seen_object":["apple", "strawberry", "orange", "pear"],
+                "unseen_object":["peach", "lemon", "kiwi"]
+            },
+            "components":[
+                {
+                    "name": "table",
+                    "xml_path": "obj/meshes/table/table.xml",
+                    "class": "Table",
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name": "lab_1"
+            }
+        }
+    },
+
+    "play_math_game": {
+        "task":{
+            "ngrid": [2, 6],
+            "workspace": [-0.3, 0.3, 0.1, 0.3, 0.8, 1],
+            "asset":{
+                "seen_container": ["placemat_seen"],
+                "unseen_container": ["placemat_unseen"]
+            },
+            "components":[
+                {
+                    "name": "table",
+                    "xml_path": "obj/meshes/table/table.xml",
+                    "class": "Table",
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name": "living_room_0"
+            }
+        }
+    },
+
+    "set_study_table_series": {
+        "task":{
+            "asset":{
+                "seen_object":[
+                    ["steve_jobs", "the_life_of_samuel_johnson"],
+                    ["a_tale_of_two_cities", "one_hundred_years_of_solitude"],
+                    ["biopolymer_composites_in_electronics", "engineering_biopolymers"],
+                    ["electron_transport_in_quantum_dots", "foundamentals_of_molecular_biology"],
+                    ["contract_law_in_japan", "critical_infrastructure_protection_in_homeland_security", "landmark_cases_in_property_law"],
+                    ["cloud_computing", "cybersecurity", "data_visualization", "flash_mx_bible"],
+                    ["cotton_the_fabric_that_made_the_modern_world", "the_story_of_american_freedom"]
+                  ],
+                "unseen_object":[
+                    ["the_autobiography_of_benjamin_franklin"], 
+                    ["the_adventures_of_huckleberry_finn"],
+                    ["introduction_to_electronics"],
+                    ["government_and_information_rights"],
+                    ["scholars_of_contract_law"],
+                    ["python", "mobile_computing_principles", "opengl", "wi-foo"],
+                    ["the_great_divergence_china_europe_and_the_making_of_the_modern_world_economy"]
+                  ],
+                "seen_init_container":["shelf_seen"],
+                "unseen_init_container":["shelf_unseen"]
+            },
+            "components":[
+                {
+                    "name": "table",
+                    "xml_path": "obj/meshes/table/table.xml",
+                    "class": "Table",
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name": "studyroom_0"
+            }
+        }
+    },
+
+    "play_snooker": {
+        "robot":{
+            "position": [0, -0.4, 0.6]
+        },
+        "task":{
+            "ngrid": [10, 10],
+            "workspace": [-0.3, 0.3, -0.1, 0.3, 0.65, 1.2],
+            "random_ignored_entities": ["billinards_table"],
+            "scene":{
+                "name": "studyroom_0"
+            }
+        }
+    }
 }

@@ -26,10 +26,10 @@ def get_inside_euler(obj):
 @register.add_config_manager("find_unseen_object")
 class FindUnseenObjectConfigManager(BenchTaskConfigManager):
     def __init__(self, 
-                 config,
+                 task_name,
                  num_objects = [4, 5],
                  **kwargs):
-        super().__init__(config, num_objects, **kwargs)
+        super().__init__(task_name, num_objects, **kwargs)
     
     def load_init_containers(self, init_container):
         super().load_init_containers(init_container)
@@ -104,8 +104,8 @@ class FindUnseenObjectTask(LM4ManipBaseTask):
     def __init__(self, task_name, robot, random_init=False, **kwargs):
         super().__init__(task_name, robot=robot, random_init=random_init, **kwargs)
     
-    def build_from_config(self, config, eval=False):
-        super().build_from_config(config, eval)
+    def build_from_config(self, eval=False):
+        super().build_from_config(eval)
         for key, entity in self.entities.items():
             if "cabinet" in key:
                 entity.detach()

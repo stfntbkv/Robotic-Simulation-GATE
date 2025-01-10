@@ -88,12 +88,12 @@ class RearrangeTubeConfigManager(BenchTaskConfigManager):
             on_position=dict(
                 entities=entities,
                 positions=entities_pos,
-                offset=0.05
+                tolerance_distance=0.05
             )
         )
         self.config["task"]["conditions"] = condition_config
 
-register.add_task("rearrange_tube")
+@register.add_task("rearrange_tube")
 class RearrangeTubeTask(SelectChemistryTubeTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)

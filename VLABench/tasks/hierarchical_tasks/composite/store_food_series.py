@@ -18,7 +18,7 @@ class StoreFoodConfigManager(BenchTaskConfigManager):
     
     def load_containers(self, target_container):
         super().load_containers(target_container)
-        self.config["task"]["components"][-1]["position"] = [0, 0.5, 0]
+        self.config["task"]["components"][-1]["position"] = [0.1, 0.5, 0]
     
     def get_seen_task_config(self):
         target_entities = [random.choice(self.seen_object) for _ in range(random.choice([1, 2]))]

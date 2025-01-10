@@ -80,9 +80,9 @@ class BookRearrangeTask(LM4ManipBaseTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name=task_name, robot=robot, **kwargs)        
     
-    def build_from_config(self, config, eval=False):
+    def build_from_config(self, eval=False):
         for key, entity in self.entities.items():
             if "shelf" in key:
                 entity.detach()
                 self._arena.attach(entity)
-        return super().build_from_config(config, eval)
+        return super().build_from_config(eval)

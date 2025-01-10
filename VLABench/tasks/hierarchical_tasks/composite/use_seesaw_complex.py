@@ -8,10 +8,10 @@ from VLABench.tasks.components import RandomGeom
 @register.add_config_manager("complex_seesaw_use")
 class UseSeeSawComplexConfigManager(BenchTaskConfigManager):
     def __init__(self,
-                 config,
-                 num_objects = [2, 3],
+                 task_name,
+                 num_objects=[2, 3],
                  **kwargs):
-        super().__init__(config, num_objects, **kwargs)
+        super().__init__(task_name, num_objects, **kwargs)
     
     def get_task_config(self, target_entity, target_container, init_container, **kwargs):
         self.target_entity, self.target_container, self.init_container = target_entity, "seesaw", init_container

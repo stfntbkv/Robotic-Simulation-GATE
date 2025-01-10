@@ -9,10 +9,10 @@ from VLABench.tasks.hierarchical_tasks.mahjong_utils import *
 @register.add_config_manager("play_mahjong")
 class PlayMahjongConfigManager(BenchTaskConfigManager):
     def __init__(self,
-                 config,
+                 task_name,
                  num_objects=3,
                  **kwargs):
-        super().__init__(config, num_objects, **kwargs)
+        super().__init__(task_name, num_objects, **kwargs)
     
     def get_seen_task_config(self):
         return self.get_task_config(None, None, None)

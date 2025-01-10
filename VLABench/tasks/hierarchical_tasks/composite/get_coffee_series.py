@@ -7,11 +7,11 @@ from VLABench.tasks.dm_task import LM4ManipBaseTask
 @register.add_config_manager("get_coffee")
 class GetCoffeeConfigManager(BenchTaskConfigManager):
     def __init__(self,
-                 config,
+                 task_name,
                  num_objects=[1],
                  **kwargs
                  ):
-        super().__init__(config, num_objects, **kwargs)
+        super().__init__(task_name, num_objects, **kwargs)
 
     def get_condition_config(self, target_entity, target_container, **kwargs):
         condition_config = dict(
@@ -72,7 +72,7 @@ class GetCoffeeWithSugarConfigManager(GetCoffeeConfigManager):
                 target_entity="sugar"
             ),
             contain=dict(
-                entities=["mug"],
+                entities=[self.target_entity],
                 container="bottom"
             )
         )
@@ -95,9 +95,9 @@ class GetCoffeeWithMilkConfigManager(GetCoffeeConfigManager):
             pour=dict(
                 target_entity="milk"
             ),
-            above_platform=dict(
-                target_entity="milk",
-                platform="bottom"
+            contain=dict(
+                entities=[self.target_entity],
+                container="bottom"
             )
         )
         self.config["task"]["conditions"] = condition_config
@@ -107,8 +107,8 @@ class GetCoffeeTask(LM4ManipBaseTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
     
-    def build_from_config(self, config, eval=False):
-        super().build_from_config(config, eval)
+    def build_from_config(self, eval=False):
+        super().build_from_config(eval)
         for key, entity in self.entities.items():
             if "coffee_machine" in key:
                 entity.detach()

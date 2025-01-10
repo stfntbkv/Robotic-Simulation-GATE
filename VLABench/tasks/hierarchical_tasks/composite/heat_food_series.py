@@ -74,8 +74,8 @@ class HeatFoodTask(LM4ManipBaseTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
-    def build_from_config(self, config, eval=False):    
-        super().build_from_config(config, eval)
+    def build_from_config(self, eval=False):    
+        super().build_from_config(eval)
         for key, entity in self.entities.items():
                 if "microwave" in key:
                     entity.detach()

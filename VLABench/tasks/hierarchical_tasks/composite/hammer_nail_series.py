@@ -99,10 +99,10 @@ class AssembleHammerConfigManager(BenchTaskConfigManager):
 @register.add_config_manager("hammer_nail_and_hang_picture")
 class HammerNailandHangPicture(HangPictureConfigManager):
     def __init__(self, 
-                 config,
-                 num_objects = [2],
+                 task_name,
+                 num_objects=[2],
                  **kwargs):
-        super().__init__(config, num_objects, **kwargs)
+        super().__init__(task_name, num_objects, **kwargs)
     
     def load_objects(self, target_entity):
         paintings = []
@@ -151,8 +151,8 @@ class HammerLooseNailTask(LM4ManipBaseTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
-    def build_from_config(self, config, eval=False):
-        super().build_from_config(config, eval)
+    def build_from_config(self, eval=False):
+        super().build_from_config(eval)
         for key in list(self.entities.keys()):
             if "nail" in key:
                 nail = self.entities[key]
@@ -164,8 +164,8 @@ class AssembleHammerTask(LM4ManipBaseTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
     
-    def build_from_config(self, config, eval=False):
-        super().build_from_config(config, eval)
+    def build_from_config(self, eval=False):
+        super().build_from_config(eval)
         nail = self.entities["nail"]
         nail.detach() # delete the free joint of nail
         self._arena.attach(nail)

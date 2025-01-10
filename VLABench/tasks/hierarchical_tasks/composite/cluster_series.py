@@ -2,7 +2,7 @@ import numpy as np
 import random
 from VLABench.tasks.dm_task import ClusterTask
 from VLABench.tasks.config_manager import ClusterConfigManager
-from VLABench.tasks.hierarchical_tasks.primitive.select_billiards_series import BILLIARDS
+from VLABench.tasks.hierarchical_tasks.primitive.select_billiards_series import SOLID, STRIPED
 from VLABench.utils.register import register
 from VLABench.utils.utils import grid_sample
 
@@ -77,7 +77,7 @@ class ClusterBilliardsConfigManager(ClusterConfigManager):
                  task_name,
                  num_objects=2,
                  **kwargs):
-        super().__init__(task_name, num_objects, BILLIARDS, BILLIARDS, **kwargs)      
+        super().__init__(task_name, num_objects, seen_object=[SOLID[::2], STRIPED[::2]], unseen_object=[SOLID[1::2], STRIPED[1::2]], **kwargs)      
 
     def load_containers(self, target_container):
         super().load_containers(target_container)
@@ -142,7 +142,7 @@ class ClusterDessertConfigManager(ClusterConfigManager):
         for index in range(-2*self.num_objects, 0):
             self.config["task"]["components"][index]["position"][-1] = 0.85
 
-register.add_config_manager("cluster_drink")
+@register.add_config_manager("cluster_drink")
 class ClusterDrinkConfigManager(ClusterConfigManager):
     def __init__(self, 
                  task_name,
@@ -178,12 +178,12 @@ class ClusterBookTask(ClusterTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot, **kwargs)
     
-    def build_from_config(self, config, eval=False):
+    def build_from_config(self, eval=False):
         for key, entity in self.entities.items():
             if "shelf" in key:
                 entity.detach()
                 self._arena.attach(entity)
-        return super().build_from_config(config, eval)
+        return super().build_from_config(eval)
 
 @register.add_task("cluster_billiards")
 class ClusterBilliardsTask(ClusterTask):

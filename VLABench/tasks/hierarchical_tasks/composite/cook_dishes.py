@@ -15,10 +15,10 @@ class CookDishesConfigManager(BenchTaskConfigManager):
                  num_objects=[4, 5],
                  **kwargs
                  ):
-        with open(os.path.join(os.getenv("VLABENCH_ROOT"), "configs/task_related/recipes.json"), "r") as f:
+        with open(os.path.join(os.getenv("VLABENCH_ROOT"), "configs/task_related/recipe.json"), "r") as f:
             recipes = json.load(f)
-        self.seen_recipes = recipes[::2]
-        self.unseen_recipes = recipes[1::2]
+        self.seen_recipes = recipes["train"]
+        self.unseen_recipes = recipes["eval"]
         super().__init__(task_name, num_objects, **kwargs)
 
     def get_seen_task_config(self):

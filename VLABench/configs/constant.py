@@ -44,6 +44,12 @@ name2config = {
     "texas_holdem_series":["texas_holdem", "texas_holdem_explore"],
     "set_dining_table_series":["set_dining_table", "set_dining_left_hand", "set_dining_chopstick"],
     "cool_drink_series":["cool_drink", "take_out_cool_drink"],
+    "heat_food_series":["heat_food"],
+    "get_coffee_series":["get_coffee", "get_coffee_with_sugar", "get_coffee_with_milk"],
+    "hammer_nail_series":["hammer_loose_nail", "assemble_hammer", "hammer_nail_and_hang_picture"],
+    "make_juice_series":["make_juice"],
+    "seesaw_series":["simple_seesaw_use", "complex_seesaw_use"],
+    "set_study_table_series":["set_study_table"],
 }
 
 name2class_xml = {

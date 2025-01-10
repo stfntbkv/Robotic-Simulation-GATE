@@ -9,9 +9,11 @@ from VLABench.tasks.hierarchical_tasks.composite.make_juice_series import *
 from VLABench.tasks.hierarchical_tasks.composite.play_mahjong import *
 from VLABench.tasks.hierarchical_tasks.composite.play_math_game import *
 from VLABench.tasks.hierarchical_tasks.composite.play_snooker import *
+from VLABench.tasks.hierarchical_tasks.composite.play_poker_series import *
 from VLABench.tasks.hierarchical_tasks.composite.rearrange_book_series import *
 from VLABench.tasks.hierarchical_tasks.composite.rearrange_chemistry_tube import *
 from VLABench.tasks.hierarchical_tasks.composite.set_dining_table_series import *
 from VLABench.tasks.hierarchical_tasks.composite.set_study_table import *
 from VLABench.tasks.hierarchical_tasks.composite.store_food_series import *
 from VLABench.tasks.hierarchical_tasks.composite.use_seesaw_complex import *
+from VLABench.tasks.hierarchical_tasks.composite.take_chemistry_experiment import *

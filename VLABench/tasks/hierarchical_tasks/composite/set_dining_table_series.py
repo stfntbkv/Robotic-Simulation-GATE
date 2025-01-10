@@ -101,8 +101,8 @@ class DiningSetTask(LM4ManipBaseTask):
     def reset_camera_views(self, index=1):
         return super().reset_camera_views(index)
     
-    def build_from_config(self, config, eval=False):
-        super().build_from_config(config, eval)
+    def build_from_config(self, eval=False):
+        super().build_from_config(eval)
         for key, entity in self.entities.items():
             if "placemat" in key:
                 entity.detach()

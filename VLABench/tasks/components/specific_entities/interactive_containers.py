@@ -85,13 +85,7 @@ class Juicer(CommonContainer):
             self._is_pressed = False
             return False
     
-    def after_substep(self, physics, random_state):
-        if self.is_activate(physics): self.show_fluid(physics)
-        else: self.hidden_fluid(physics)
-    
     def initialize_episode(self, physics, random_state):
-        if self.is_activate(physics): self.show_fluid(physics)
-        else: self.hidden_fluid(physics)
         return super().initialize_episode(physics, random_state)
     
     def is_pressed(self):

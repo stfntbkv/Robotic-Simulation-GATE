@@ -5,19 +5,19 @@ from VLABench.utils.register import register
 from VLABench.tasks.config_manager import BenchTaskConfigManager
 from VLABench.tasks.dm_task import LM4ManipBaseTask
 from VLABench.utils.utils import grid_sample
-from VLABench.utils.utils import name2class_xml
+from VLABench.configs.constant import name2class_xml
 
-@register.add_config_manager("math_game")
+@register.add_config_manager("play_math_game")
 class MathGameConfigManager(BenchTaskConfigManager):
     def __init__(self, 
-                 config,
+                 task_name,
                  num_obejcts=[5, 6],
                  **kwargs):
         with open(os.path.join(os.getenv("VLABENCH_ROOT"), "configs/task_related/math.json"), "r") as f:
             self.all_questions = json.load(f)
         self.seen_question_id = list(self.all_questions.keys())[::2]
         self.unseen_question_id = list(self.all_questions.keys())[1::2]
-        super().__init__(config, num_obejcts, **kwargs)
+        super().__init__(task_name, num_obejcts, **kwargs)
     
     def compute_target_numbers(self, answer):
         assert isinstance(answer, str)
@@ -85,7 +85,7 @@ class MathGameConfigManager(BenchTaskConfigManager):
         )
         self.config["task"]["conditions"] = condition_config
 
-@register.add_task("math_game") 
+@register.add_task("play_math_game") 
 class MathGameTask(LM4ManipBaseTask):
     def __init__(self, task_name, robot, random_init=False, **kwargs):
         super().__init__(task_name, robot=robot, random_init=random_init, **kwargs)
