@@ -7,7 +7,7 @@ import h5py
 import numpy as np
 import json
 from datetime import datetime
-from LM4manipBench.utils.utils import quaternion_to_euler
+from VLABench.utils.utils import quaternion_to_euler
 
 def process_observations(observations:List[Dict])->Dict:
     """

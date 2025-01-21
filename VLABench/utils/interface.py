@@ -7,9 +7,9 @@ import time
 import open3d as o3d
 from functools import partial
 from pynput.keyboard import Key, Listener
-from LM4manipBench.utils.utils import euler_to_quaternion, quaternion_to_euler
-from LM4manipBench.utils.depth2cloud import *
-from LM4manipBench.utils.data_utils import save_single_data
+from VLABench.utils.utils import euler_to_quaternion, quaternion_to_euler
+from VLABench.utils.depth2cloud import *
+from VLABench.utils.data_utils import save_single_data
 
 def adaptive_stack(images, columns):
     """
@@ -96,6 +96,8 @@ class Interface:
             point_cloud_points=[],
             point_cloud_colors=[],
         ) #TODO： depth
+        self.quit = False
+        self.log_menu()
     
     def reset_step(self):
         self.delta_pos = np.zeros(3)
@@ -269,3 +271,18 @@ class Interface:
             conbimed_point_cloud += pc
         pcd_downsampled = conbimed_point_cloud.voxel_down_sample(voxel_size=0.001)
         return pcd_downsampled
+    
+    def close(self):
+        cv2.destroyAllWindows()
+    
+    def log_menu(self):
+        print("="*30, "Operation Menu", "="*30)
+        print("Press 'w', 's', 'a', 'd', 'i', 'k' to move the robot along y, x, z axis.")
+        print("Press ',', '.' to rotate the robot along raw axis.")
+        print("Press 'n', 'm' to rotate the robot along pitch axis.")
+        print("Press 'j', 'l' to rotate the robot along yaw axis.")
+        print("Press 'space' to grasp.")
+        print("Press 'backspace' to delete the last step.")
+        print("Press 'enter' to reset.")
+        print("Press 'esc' to quit.")
+        print("="*80)
