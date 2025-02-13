@@ -3,9 +3,9 @@ Skill Library for data generation.
 """
 import numpy as np
 import random
-from LM4manipBench.utils.utils import find_keypoint_and_prepare_grasp, distance, quaternion_to_euler, quaternion_from_axis_angle, quaternion_multiply
-from LM4manipBench.algorithms.motion_planning.rrt import rrt_motion_planning
-from LM4manipBench.algorithms.utils import interpolate_path, qauternion_slerp
+from VLABench.utils.utils import find_keypoint_and_prepare_grasp, distance, quaternion_to_euler, quaternion_from_axis_angle, quaternion_multiply
+from VLABench.algorithms.motion_planning.rrt import rrt_motion_planning
+from VLABench.algorithms.utils import interpolate_path, qauternion_slerp
 
 PRIOR_EULERS = [[np.pi, 0, np.pi/2], # face down, horizontal
                 [np.pi, 0, 0], # face down, vertical
@@ -33,11 +33,13 @@ class SkillLib:
         Return:
             observations: list of observations
             waypoints: list of waypoints
-            success: bool, whether the task is successful
+            stage_success: bool, whether the stage is successful
+            task_success: bool, whether the task is successful
         """
         observations = []
         waypoints = []
-        success = False
+        stage_success = False
+        task_success = False
         for i, (point, quat) in enumerate(zip(points, quats)):
             action = env.robot.get_qpos_from_ee_pos(physics=env.physics, pos=point, quat=quat)[:7]
             action = np.concatenate([action, gripper_state])
@@ -45,19 +47,21 @@ class SkillLib:
             for _ in range(max_n_substep):
                 timestep = env.step(action)
                 if timestep.last():
-                    success = True
+                    task_success = True
                     break
                 current_qpos = np.array(env.task.robot.get_qpos(env.physics)).reshape(-1)
                 if np.max(current_qpos - np.array(action[:7])) < tolerance \
                     and np.min(current_qpos - np.array(action[:7])) > -tolerance:
                   break
-            if success:
+            if task_success:
                 break
             obs = env.get_observation()
             observations.append(obs)
             waypoints.append(waypoint) 
         assert len(observations) == len(waypoints), f"observations and waypoints should have the same length, {len(observations)} and {len(waypoints)}"
-        return observations, waypoints, success
+        if distance(points[-1], env.robot.get_end_effector_pos(env.physics)) < tolerance:
+            stage_success = True
+        return observations, waypoints, stage_success, task_success
             
     @staticmethod
     def moveto(env, 
@@ -70,7 +74,7 @@ class SkillLib:
         start_pos, start_quat = env.robot.get_end_effector_pos(env.physics), env.robot.get_end_effector_quat(env.physics)
         observations = [env.get_observation()]
         waypoints = []
-        success = False
+        task_success = False
         gripper_closed = env.robot.get_ee_open_state(env.physics)
         if gripper_state is None:
             if gripper_closed: gripper_state = np.zeros(2)
@@ -93,7 +97,7 @@ class SkillLib:
         interplate_path, interplate_quat = interpolate_path(np.array(motion_planning_path), 
                                                             np.array(quats_in_path), 
                                                             target_velocity)
-        new_obs, new_waypoints, success = SkillLib.step_trajectory(env, 
+        new_obs, new_waypoints, stage_success, task_success = SkillLib.step_trajectory(env, 
                                                                    interplate_path, 
                                                                    interplate_quat, 
                                                                    gripper_state,
@@ -102,7 +106,7 @@ class SkillLib:
         waypoints.extend(new_waypoints)
         observations.pop(-1)
         assert len(observations) == len(waypoints), f"observations and waypoints should have the same length, {len(observations)} and {len(waypoints)}"
-        return observations, waypoints, success
+        return observations, waypoints, stage_success, task_success
     
     @staticmethod
     def pick(env, 
@@ -168,28 +172,31 @@ class SkillLib:
         
         interplate_path, interplate_quat = interpolate_path(path, quats_in_path, target_velocity)
         waypoints = []
-        success = False
+        stage_success = False
+        task_success = False
         observations = [env.get_observation()]
         # move along the interplated path
         gripper_state = np.ones(2) * 0.04
-        new_obs, new_waypoints, success = SkillLib.step_trajectory(env, 
+        new_obs, new_waypoints, _, task_success = SkillLib.step_trajectory(env, 
                                                                    interplate_path, 
                                                                    interplate_quat, 
                                                                    gripper_state,
                                                                    **kwargs)
         observations.extend(new_obs)
         waypoints.extend(new_waypoints)
-        if success:
+        if task_success:
             observations.pop(-1)
-            return observations, waypoints, success
+            return observations, waypoints, True, task_success
         # grasp
-        new_obs, new_waypoints, success = SkillLib.close_gripper(env)
+        new_obs, new_waypoints, _, task_success = SkillLib.close_gripper(env)
         observations.extend(new_obs)
         waypoints.extend(new_waypoints)
         
         observations.pop(-1)
         assert len(observations) == len(waypoints), f"observations and waypoints should have the same length, {len(observations)} and {len(waypoints)}"
-        return observations, waypoints, success
+        if env.task.entities[target_entity_name].is_grasped(env.physics, env.robot):
+            stage_success = True
+        return observations, waypoints, stage_success, task_success
     
     @staticmethod
     def place(env, 
@@ -250,25 +257,29 @@ class SkillLib:
         interplate_path, interplate_quat = interpolate_path(path, quats)   
         observations= [env.get_observation()]
         waypoints = []
-        success = False
-        new_obs, new_waypoints, success = SkillLib.step_trajectory(env, 
+        stage_success = True
+        task_success = False
+        new_obs, new_waypoints, _, task_success = SkillLib.step_trajectory(env, 
                                                                 interplate_path, 
                                                                 interplate_quat, 
                                                                 np.zeros(2))
         observations.extend(new_obs)
         waypoints.extend(new_waypoints)
-        if success:
+        if task_success:
             observations.pop(-1)
             assert len(observations) == len(waypoints), f"observations and waypoints should have the same length, {len(observations)} and {len(waypoints)}"
-            return observations, waypoints, success
+            return observations, waypoints, True, task_success
         # grasp
-        new_obs, new_waypoints, success = SkillLib.open_gripper(env)
+        new_obs, new_waypoints, _, task_success = SkillLib.open_gripper(env)
         observations.extend(new_obs)
         waypoints.extend(new_waypoints)
         
         observations.pop(-1)   
         assert len(observations) == len(waypoints), f"observations and waypoints should have the same length, {len(observations)} and {len(waypoints)}"
-        return observations, waypoints, success
+        for entity in env.task.entities.values():
+            if hasattr(entity, "is_grasped") and entity.is_grasped(env.physics, env.robot):
+                stage_success = False
+        return observations, waypoints, stage_success, task_success
     
     @staticmethod
     def open_door(env, 
@@ -294,14 +305,15 @@ class SkillLib:
         # rotation_anchor = env.physics.bind(door_joint).xanchor
         observations = [env.get_observation()]
         waypoints = []
-        success = False
+        stage_success = False
+        task_success = False
         for i in range(len(trajectory)):
             rot_quat = quaternion_from_axis_angle(rotation_axis, -0.1*(i+1))
             new_quat = quaternion_multiply(start_quat, rot_quat)
             trajectory_quats.append(new_quat)
         # init_qpos = np.array(env.robot.get_qpos(env.physics)).reshape(-1)
         interplate_path, interplate_quat = interpolate_path(trajectory, trajectory_quats)
-        new_obs, new_waypoints, success = SkillLib.step_trajectory(env,
+        new_obs, new_waypoints, _, task_success = SkillLib.step_trajectory(env,
                                                             interplate_path, 
                                                             interplate_quat, 
                                                             np.zeros(2))
@@ -313,14 +325,16 @@ class SkillLib:
             action = np.concatenate([qpos, np.ones(2)*(0.04/10)*(i+1)])
             timestep = env.step(action)
             if timestep.last():
-                success = True
+                task_success = True
                 break
             obs = env.get_observation()
             observations.append(obs)
             waypoints.append(np.concatenate([pos, quaternion_to_euler(quat), np.ones(2)*0.04]))
         observations.pop(-1)
         assert len(observations) == len(waypoints), f"observations and waypoints should have the same length, {len(observations)} and {len(waypoints)}"
-        return observations, waypoints, success
+        if env.entities[target_container_name].is_open(env.physics):
+            stage_success = True
+        return observations, waypoints, stage_success, task_success
     
     @staticmethod
     def close_door(env, target_container_name, gripper_state=np.zeros(2)):
@@ -332,11 +346,12 @@ class SkillLib:
         
         observations = [env.get_observation()]
         waypoints = []
-        success = False
+        stage_success = False
+        task_success = False
         if len(trajectory) == 0:
-             return observations, waypoints, success
+             return observations, waypoints, True, task_success
         interplate_path, interplate_quat = interpolate_path(trajectory, trajectory_quats)
-        obs, new_waypoints, success = SkillLib.step_trajectory(env,
+        obs, new_waypoints, _, task_success = SkillLib.step_trajectory(env,
                                                             interplate_path, 
                                                             interplate_quat, 
                                                             gripper_state)
@@ -344,7 +359,9 @@ class SkillLib:
         waypoints.extend(new_waypoints)
         observations.pop(-1)
         assert len(observations) == len(waypoints), f"observations and waypoints should have the same length, {len(observations)} and {len(waypoints)}"
-        return observations, waypoints, success
+        if env.entities[target_container_name].is_close(env.physics):
+            stage_success = True
+        return observations, waypoints, stage_success, task_success
     
     @staticmethod
     def open_drawer(env, 
@@ -359,28 +376,30 @@ class SkillLib:
         """
         observations = [env.get_observation()]
         waypoints = []
-        success = False
+        stage_success = False
+        task_success = False
         target_container = env.task.entities[target_container_name]
         # grasp handle
-        new_obs, new_waypoints, success_ = SkillLib.pick(env, target_container_name, prior_eulers=pick_prior_eulers, specific_keypoint=drawer_id)
+        new_obs, new_waypoints, _, success_ = SkillLib.pick(env, target_container_name, prior_eulers=pick_prior_eulers, specific_keypoint=drawer_id)
         
         observations.extend(new_obs)
         waypoints.extend(new_waypoints)
-        success = success or success_
+        task_success = task_success or success_
         # open drawer   
         start_pos, start_quat = env.robot.get_end_effector_pos(env.physics), env.robot.get_end_effector_quat(env.physics)
         trajectory = target_container.get_drawer_open_trajectory(env.physics, drawer_id)
         trajectory_quats = [start_quat for _ in range(len(trajectory))]
         trajectory, trajectory_quats = interpolate_path(trajectory, trajectory_quats)
-        new_obs, new_waypoints, success_ = SkillLib.step_trajectory(env, trajectory, trajectory_quats, np.zeros(2))
+        new_obs, new_waypoints, _, success_ = SkillLib.step_trajectory(env, trajectory, trajectory_quats, np.zeros(2))
         
         observations.extend(new_obs)
         waypoints.extend(new_waypoints)
-        success = success or success_
+        task_success = task_success or success_
         observations.pop(-1)
         
         assert len(observations) == len(waypoints), f"observations and waypoints should have the same length, {len(observations)} and {len(waypoints)}"
-        return observations, waypoints, success
+        # TODO check the drawer state
+        return observations, waypoints, True, task_success
     
     @staticmethod
     def press(env, target_pos, target_quat=None, move_vector=[0, 0, 0.1], max_n_substep=100): #TODO move vector to determine the press direction
@@ -402,11 +421,11 @@ class SkillLib:
             waypoints.append(np.concatenate([env.robot.get_end_effector_pos(env.physics),
                                              quaternion_to_euler(env.robot.get_end_effector_quat(env.physics)),
                                              gripper_state]))
-        new_obs, new_waypoints, success = SkillLib.moveto(env, target_pos, target_quat, max_n_substep=max_n_substep)
+        new_obs, new_waypoints, stage_success, task_success = SkillLib.moveto(env, target_pos, target_quat, max_n_substep=max_n_substep)
         observations.extend(new_obs)
         waypoints.extend(new_waypoints)
         assert len(observations) == len(waypoints), f"observations and waypoints should have the same length, {len(observations)} and {len(waypoints)}"
-        return observations, waypoints, success
+        return observations, waypoints, stage_success, task_success
     
     @staticmethod
     def pull(env, target_pos=None, target_quat=None, gripper_state=None, pull_distance=0.3):
@@ -419,12 +438,12 @@ class SkillLib:
         interplate_path, interplate_quat = interpolate_path([start_pos, target_pos], [np.array(start_quat), np.array(target_quat)])
         observations = [env.get_observation()]
         waypoints = []
-        success = False
+        task_success = False
         if gripper_state is None:
             gripper_closed = env.robot.get_ee_open_state(env.physics)
             if gripper_closed: gripper_state = np.zeros(2)
             else: gripper_state = np.ones(2) * 0.04
-        new_obs, new_waypoints, success = SkillLib.step_trajectory(env, 
+        new_obs, new_waypoints, stage_success, task_success = SkillLib.step_trajectory(env, 
                                                            interplate_path, 
                                                            interplate_quat, 
                                                            gripper_state)
@@ -432,12 +451,12 @@ class SkillLib:
         waypoints.extend(new_waypoints)
         observations.pop(-1)
         assert len(observations) == len(waypoints), f"observations and waypoints should have the same length, {len(observations)} and {len(waypoints)}"
-        return observations, waypoints, success
+        return observations, waypoints, stage_success, task_success
     
     @staticmethod
     def push(env, target_pos=None, target_quat=None, gripper_state=None, push_distance=0.3):
-        obs, waypoints, success = SkillLib.pull(env, target_pos, target_quat, gripper_state, -push_distance)
-        return obs, waypoints, success
+        obs, waypoints, stage_success, task_success = SkillLib.pull(env, target_pos, target_quat, gripper_state, -push_distance)
+        return obs, waypoints, stage_success, task_success
     
     @staticmethod
     def pour(env, target_delta_qpos=np.pi, target_q_velocity=np.pi/40, n_repeat_step=2, tolerance=0.01):
@@ -445,7 +464,8 @@ class SkillLib:
         Common pour function.
         """
         waypoints = []
-        success = False
+        stage_success = False
+        task_success = False
         observations = [env.get_observation()]
         
         init_qpos = np.array(env.robot.get_qpos(env.physics))
@@ -460,7 +480,7 @@ class SkillLib:
             for _ in range(n_repeat_step):
                 timestep = env.step(action)
                 if timestep.last():
-                    success = True
+                    task_success = True
                     break
                 current_qpos = np.array(env.task.robot.get_qpos(env.physics)).reshape(-1)
                 if np.max(current_qpos - np.array(action[:7])) < tolerance \
@@ -472,11 +492,11 @@ class SkillLib:
             obs = env.get_observation()
             observations.append(obs)
             waypoints.append(waypoint)
-            if success:
+            if task_success:
                 break
         observations.pop(-1)
         assert len(observations) == len(waypoints), f"observations and waypoints should have the same length, {len(observations)} and {len(waypoints)}"
-        return observations, waypoints, success
+        return observations, waypoints, True, task_success
         
     @staticmethod
     def lift(env, target_pos=None, target_quat=None, gripper_state=None, lift_height=0.3):
@@ -495,7 +515,7 @@ class SkillLib:
             gripper_closed = env.robot.get_ee_open_state(env.physics)
             if gripper_closed: gripper_state = np.zeros(2)
             else: gripper_state = np.ones(2) * 0.04
-        obs, new_waypoints, success = SkillLib.step_trajectory(env, 
+        obs, new_waypoints, stage_success, task_success = SkillLib.step_trajectory(env, 
                                                            interplate_path, 
                                                            interplate_quat, 
                                                            gripper_state)
@@ -503,14 +523,13 @@ class SkillLib:
         waypoints.extend(new_waypoints)
         observations.pop(-1)
         assert len(observations) == len(waypoints), f"observations and waypoints should have the same length, {len(observations)} and {len(waypoints)}"
-        return observations, waypoints, success
+        return observations, waypoints, stage_success, task_success
     
     @staticmethod
     def reset(env, max_n_substep=200, tolerance=0.01):
         init_qpos = env.task.robot.default_qpos
         observations = [env.get_observation()]
         waypoints = []
-        success = False
         for _ in range(max_n_substep):
             action = np.array(init_qpos)
             env.step(action)
@@ -525,11 +544,11 @@ class SkillLib:
                 break
         observations.pop(-1)
         assert len(observations) == len(waypoints), f"observations and waypoints should have the same length, {len(observations)} and {len(waypoints)}"
-        return observations, waypoints, success
+        return observations, waypoints, True, False
         
     
     @staticmethod
-    def close_gripper(env, repeat=2):
+    def close_gripper(env, repeat=10):
         qpos = np.array(env.robot.get_qpos(env.physics)).reshape(-1)
         observations = [env.get_observation()]
         waypoints = []
@@ -555,21 +574,22 @@ class SkillLib:
             
         observations.pop(-1)
         assert len(observations) == len(waypoints), f"observations and waypoints should have the same length, {len(observations)} and {len(waypoints)}"
-        return observations, waypoints, success
+        return observations, waypoints, True, success
     
     @staticmethod
-    def open_gripper(env, repeat=2):
+    def open_gripper(env, repeat=10):
         qpos = np.array(env.robot.get_qpos(env.physics)).reshape(-1)
         observations = [env.get_observation()]
         waypoints = []
-        success = False
+        task_success = False
+        stage_success = False
         for i in range(10):
             gripper_state = np.ones(2) * (i+1)/10 * 0.04
             action = np.concatenate([qpos, gripper_state])
             for _ in range(repeat):
                 timestep = env.step(action)
                 if timestep.last():
-                    success = True
+                    task_success = True
                     obs = env.get_observation()
                     observations.append(obs)
                     waypoints.append(np.concatenate([env.robot.get_end_effector_pos(env.physics),
@@ -581,11 +601,13 @@ class SkillLib:
                                              quaternion_to_euler(env.robot.get_end_effector_quat(env.physics)),
                                              gripper_state]))
             if timestep.last():
-                success = True
+                task_success = True
                 break
         observations.pop(-1)
         assert len(observations) == len(waypoints), f"observations and waypoints should have the same length, {len(observations)} and {len(waypoints)}"
-        return observations, waypoints, success
+        if env.robot.get_ee_open_state(env.physics):
+            stage_success = True
+        return observations, waypoints, stage_success, task_success
     
     @staticmethod
     def flip(env, gripper_state=None, target_q_velocity=np.pi/40, max_n_substep=30, tolerance=0.01):
@@ -635,30 +657,33 @@ class SkillLib:
         # rotation_anchor = env.physics.bind(door_joint).xanchor
         observations = [env.get_observation()]
         waypoints = []
-        success = False
+        stage_success = False
+        task_success = False
         for i in range(len(trajectory)):
             rot_quat = quaternion_from_axis_angle(rotation_axis, 0.04*(i+1))
             new_quat = quaternion_multiply(start_quat, rot_quat)
             trajectory_quats.append(new_quat)
         # init_qpos = np.array(env.robot.get_qpos(env.physics)).reshape(-1)
         interplate_path, interplate_quat = interpolate_path(trajectory, trajectory_quats)
-        new_obs, new_waypoints, success = SkillLib.step_trajectory(env,
+        new_obs, new_waypoints, _, task_success = SkillLib.step_trajectory(env,
                                                             interplate_path, 
                                                             interplate_quat, 
                                                             np.zeros(2))
         observations.extend(new_obs)
         waypoints.extend(new_waypoints)
-        if success:
+        if task_success:
             observations.pop(-1)
             assert len(observations) == len(waypoints), f"observations and waypoints should have the same length, {len(observations)} and {len(waypoints)}"
-            return observations, waypoints, success
+            return observations, waypoints, task_success
         
-        new_obs, new_waypoints, success = SkillLib.open_gripper(env)
+        new_obs, new_waypoints, task_success = SkillLib.open_gripper(env)
         observations.extend(new_obs)
         waypoints.extend(new_waypoints)
         observations.pop(-1)
         assert len(observations) == len(waypoints), f"observations and waypoints should have the same length, {len(observations)} and {len(waypoints)}"
-        return observations, waypoints, success
+        if env.task.entities[target_entity_name].is_open(env.physics):
+            stage_success = True
+        return observations, waypoints, stage_success, task_success
     
     @staticmethod
     def wait(env, wait_time=100, gripper_state=None):
@@ -670,12 +695,12 @@ class SkillLib:
             else: gripper_state = np.ones(2) * 0.04
         observations = [env.get_observation()]
         waypoints = []
-        success = False
+        task_success = False
         for _ in range(wait_time):
             action = np.concatenate([current_qpos, gripper_state])
             timestep = env.step(action)
             if timestep.last():
-                success = True
+                task_success = True
                 break
             obs = env.get_observation()
             observations.append(obs)
@@ -684,12 +709,12 @@ class SkillLib:
                                              gripper_state]))
         observations.pop(-1)
         assert len(observations) == len(waypoints), f"observations and waypoints should have the same length, {len(observations)} and {len(waypoints)}"
-        return observations, waypoints, success
+        return observations, waypoints, True, task_success
 
     @staticmethod
     def move_offset(env, offset, target_quat=None, gripper_state=None):
         start_pos, start_quat = env.robot.get_end_effector_pos(env.physics), env.robot.get_end_effector_quat(env.physics)
         target_pos = np.array(start_pos) + np.array(offset)
         if target_quat is None: target_quat = start_quat
-        observations, waypoints, success = SkillLib.moveto(env, target_pos, target_quat, gripper_state=gripper_state)
-        return observations, waypoints, success
+        observations, waypoints, stage_success, task_success = SkillLib.moveto(env, target_pos, target_quat, gripper_state=gripper_state)
+        return observations, waypoints, stage_success, task_success
