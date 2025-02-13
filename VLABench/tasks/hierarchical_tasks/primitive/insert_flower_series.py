@@ -1,8 +1,9 @@
 import random
 import numpy as np
-from VLABench.tasks.dm_task import LM4ManipBaseTask, SpatialMixin, SemanticMixin, CommonSenseReasoningMixin
+from VLABench.tasks.dm_task import *
 from VLABench.utils.register import register
 from VLABench.tasks.config_manager import BenchTaskConfigManager
+from VLABench.utils.utils import euler_to_quaternion
 
 @register.add_config_manager("insert_flower")
 class InsertFlowerConfigManager(BenchTaskConfigManager):
@@ -102,6 +103,17 @@ class InsertFlowerTask(LM4ManipBaseTask):
             if "vase" in key:
                 entity.detach()
                 self._arena.attach(entity)
+    
+    def get_expert_skill_sequence(self, physics):
+        target_place_point = self.entities[self.target_container].get_place_point(physics)
+        skill_sequence = [
+            partial(SkillLib.pick, target_entity_name=self.target_entity),
+            partial(SkillLib.lift, target_quat=euler_to_quaternion(-np.pi/2, -np.pi/2, 0)),
+            partial(SkillLib.moveto, target_pos=target_place_point, target_quat=euler_to_quaternion(-np.pi/2, -np.pi/2, 0)),
+            partial(SkillLib.lift, lift_height=-0.2)
+        ]
+        return skill_sequence
+        
 
 @register.add_task("insert_flower_common_sense")
 class InsertFlowerCommonSenseTask(InsertFlowerTask, CommonSenseReasoningMixin):

@@ -1,7 +1,7 @@
 import random
 import numpy as np
 from VLABench.utils.register import register
-from VLABench.tasks.dm_task import LM4ManipBaseTask, SpatialMixin, SemanticMixin, CommonSenseReasoningMixin
+from VLABench.tasks.dm_task import *
 from VLABench.tasks.config_manager import BenchTaskConfigManager
 from VLABench.configs.constant import name2class_xml
 
@@ -57,6 +57,7 @@ class SelectMahjongConfigManager(BenchTaskConfigManager):
             )
         )
         self.config["task"]["conditions"] = condition_config
+        self.target_entity = f"{target_entity[0]}_{target_entity[1]}"
         
 @register.add_config_manager("select_mahjong_spatial")
 class SelectMahjongSpatialConfigManager(SelectMahjongConfigManager):
@@ -143,18 +144,25 @@ class SelectUniqueTypeMahjongConfigManager(SelectMahjongConfigManager):
 class SelectMahjongTask(LM4ManipBaseTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
+    
+    def get_expert_skill_sequence(self, physics):
+        skill_sequence = [
+            partial(SkillLib.pick, target_entity_name=self.target_entity, prior_eulers=[[-np.pi, 0, np.pi]]),
+            partial(SkillLib.place, target_container_name=self.target_container), 
+        ]
+        return skill_sequence
 
 @register.add_task("select_mahjong_spatial")
-class SelectMahjongSpatialTask(LM4ManipBaseTask, SpatialMixin):
+class SelectMahjongSpatialTask(SelectMahjongTask, SpatialMixin):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("select_mahjong_semantic")
-class SelectMahjongSemanticTask(LM4ManipBaseTask, SemanticMixin):
+class SelectMahjongSemanticTask(SelectMahjongTask, SemanticMixin):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("select_unique_type_mahjong")
-class SelectUniqueTypeMahjongTask(LM4ManipBaseTask, CommonSenseReasoningMixin):
+class SelectUniqueTypeMahjongTask(SelectMahjongTask, CommonSenseReasoningMixin):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)

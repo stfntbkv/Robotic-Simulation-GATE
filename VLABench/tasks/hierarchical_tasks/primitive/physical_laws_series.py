@@ -40,3 +40,10 @@ class ReflectionQATask(PressButtonTask):
 class SimpleSeesawUseTask(LM4ManipBaseTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot, **kwargs)
+
+@register.add_task("simple_cuestick_use")
+class SimpleCueStickUseTask(LM4ManipBaseTask):
+    def __init__(self, task_name, robot, **kwargs):
+        super().__init__(task_name, robot, **kwargs)
+
+# @register.add_task("simple_pulley_use")

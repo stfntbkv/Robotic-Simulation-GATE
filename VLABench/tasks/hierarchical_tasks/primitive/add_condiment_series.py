@@ -1,5 +1,5 @@
 import random
-from VLABench.tasks.dm_task import LM4ManipBaseTask, SpatialMixin, SemanticMixin, CommonSenseReasoningMixin
+from VLABench.tasks.dm_task import *
 from VLABench.utils.register import register
 from VLABench.tasks.config_manager import BenchTaskConfigManager
 from VLABench.utils.utils import flatten_list
@@ -89,6 +89,16 @@ class AddCondimentTask(LM4ManipBaseTask):
                 dishes = self.entities[key]
                 dishes.detach()
                 pan.attach(dishes)
+    
+    def get_expert_skill_sequence(self, physics):
+        target_pos = np.array(self.entities[self.target_entity].get_xpos(physics)) + np.array([0, 0, 0.2])
+        skill_sequence = [
+            partial(SkillLib.pick, target_entity_name=self.target_entity, prior_eulers=[[-np.pi/2, -np.pi/2, np.pi/2]]),
+            partial(SkillLib.lift, lift_height=0.2, gripper_state=np.zeros(2)),
+            partial(SkillLib.moveto, target_pos=target_pos),
+            partial(SkillLib.pour)
+        ]
+        return skill_sequence
 
 @register.add_config_manager("add_condiment_spatial")
 class AddCondimentSpatialConfigManager(AddCondimentConfigManager):

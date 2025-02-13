@@ -1,7 +1,7 @@
 import random
 import numpy as np
 from VLABench.utils.register import register
-from VLABench.tasks.dm_task import LM4ManipBaseTask, SpatialMixin, SemanticMixin, CommonSenseReasoningMixin
+from VLABench.tasks.dm_task import *
 from VLABench.tasks.config_manager import BenchTaskConfigManager
 from VLABench.configs.constant import name2class_xml
 from VLABench.tasks.components import Poker, CardHolder
@@ -157,23 +157,26 @@ class SelectPokerSemanticConfigManager(SelectPokerConfigManager):
 @register.add_task("select_poker")
 class SelectPokerTask(LM4ManipBaseTask):
     def __init__(self, task_name, robot, **kwargs):
-        self.config_manager_cls = register.load_config_manager("select_poker")
         super().__init__(task_name, robot=robot, **kwargs)
 
+    def get_expert_skill_sequence(self, physics):
+        skill_sequence = [
+            partial(SkillLib.pick, target_entity_name=self.target_entity, prior_eulers=[[-np.pi, 0, 0]]),
+            partial(SkillLib.lift, ), 
+        ]
+        return skill_sequence
+    
 @register.add_task("select_nth_largest_poker")
-class SelectNthLargestPokerTask(LM4ManipBaseTask, CommonSenseReasoningMixin):
+class SelectNthLargestPokerTask(SelectPokerTask, CommonSenseReasoningMixin):
     def __init__(self, task_name, robot, **kwargs):
-        self.config_manager_cls = register.load_config_manager("select_nth_largest_poker")
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("select_poker_spatial")
-class SelectpokerSpatialTask(LM4ManipBaseTask, SpatialMixin):
+class SelectpokerSpatialTask(SelectPokerTask, SpatialMixin):
     def __init__(self, task_name, robot, **kwargs):
-        self.config_manager_cls = register.load_config_manager("select_poker_spatial")
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("select_poker_semantic")
-class SelectPokerSemanticTask(LM4ManipBaseTask, SemanticMixin):
+class SelectPokerSemanticTask(SelectPokerTask, SemanticMixin):
     def __init__(self, task_name, robot, **kwargs):
-        self.config_manager_cls = register.load_config_manager("select_poker_semantic")
         super().__init__(task_name, robot=robot, **kwargs)

@@ -2,7 +2,7 @@ import random
 import os
 import json
 import numpy as np
-from VLABench.tasks.dm_task import PressButtonTask, LM4ManipBaseTask
+from VLABench.tasks.dm_task import *
 from VLABench.tasks.config_manager import BenchTaskConfigManager, PressButtonConfigManager
 from VLABench.utils.register import register
 from VLABench.utils.utils import flatten_list
@@ -194,6 +194,13 @@ class SelectPaintingTask(PressButtonTask):
 class PutBoxOnPaintingTask(SelectPaintingTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
+    
+    def get_expert_skill_sequence(self, physics):
+        skill_sequence = [
+            partial(SkillLib.pick, target_entity_name="target_box"),
+            partial(SkillLib.place, target_container_name=self.target_container), 
+        ]
+        return skill_sequence
 
 @register.add_task("select_painting_by_style")
 class SelectPaintingByStyleTask(SelectPaintingTask):

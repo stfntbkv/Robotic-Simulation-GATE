@@ -1,6 +1,6 @@
 import random
 import numpy as np
-from VLABench.tasks.dm_task import LM4ManipBaseTask, SpatialMixin, SemanticMixin, CommonSenseReasoningMixin
+from VLABench.tasks.dm_task import *
 from VLABench.tasks.config_manager import BenchTaskConfigManager
 from VLABench.utils.register import register
 from VLABench.utils.utils import flatten_list
@@ -104,6 +104,17 @@ class SelectIngredientSemantic(SelectIngredientConfigManager):
 class SelectIngredientTask(LM4ManipBaseTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
+    
+    def get_expert_skill_sequence(self, physics):
+        target_container_pos = np.array(self.entities[self.target_container].get_place_point(physics))
+        skill_sequence = [
+            partial(SkillLib.pick, target_entity_name=self.target_entity, prior_eulers=[[-np.pi,  1.1, -np.pi/2]]), # prior orientation is 
+            partial(SkillLib.lift, gripper_state=np.ones(2) * 0.008, lift_height=0.05),
+            partial(SkillLib.pull, gripper_state=np.ones(2) * 0.008),
+            partial(SkillLib.moveto, target_pos=target_container_pos - np.array([0, 0.3, 0]), gripper_state=np.zeros(2)),
+            partial(SkillLib.place, target_container_name=self.target_container),
+        ]
+        return skill_sequence
 
 @register.add_task("select_ingredient_spatial")
 class SelectIngredientSpatialTask(SelectIngredientTask, SpatialMixin):

@@ -1,6 +1,6 @@
 import numpy as np
 import random
-from VLABench.tasks.dm_task import LM4ManipBaseTask, SpatialMixin, SemanticMixin, CommonSenseReasoningMixin
+from VLABench.tasks.dm_task import *
 from VLABench.tasks.config_manager import BenchTaskConfigManager
 from VLABench.utils.register import register
 
@@ -71,6 +71,15 @@ class SelectToySemanticConfigManager(SelectToyConfigManager):
 class SelectToyTask(LM4ManipBaseTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot, **kwargs)
+    
+    def get_expert_skill_sequence(self, physics):
+        grasppoint = np.array(self.entities[self.target_entity].get_grasped_keypoints(physics)[-1])
+        skill_sequence = [
+            partial(SkillLib.pick, target_entity_name=self.target_entity, target_pos=grasppoint - np.array([0, 0, 0.02]), prior_eulers=[[-np.pi, 0, 0]]),
+            partial(SkillLib.lift, lift_height=0.3, gripper_state=np.zeros(2)),
+            partial(SkillLib.place, target_container_name=self.target_container)
+        ]
+        return skill_sequence
 
 @register.add_task("select_toy_spatial")
 class SelectToySpatialTask(SelectToyTask, SpatialMixin):

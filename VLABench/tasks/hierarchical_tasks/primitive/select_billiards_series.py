@@ -1,6 +1,6 @@
 import random
 from VLABench.utils.register import register
-from VLABench.tasks.dm_task import LM4ManipBaseTask, SpatialMixin, SemanticMixin, CommonSenseReasoningMixin
+from VLABench.tasks.dm_task import *
 from VLABench.tasks.config_manager import BenchTaskConfigManager
 
 SOLID = ["solid_1", "solid_2", "solid_3", "solid_4", "solid_5", "solid_6", "solid_7"]
@@ -114,23 +114,26 @@ class SelectBilliardsSemanticConfigManager(SelectBilliardsConfigManager):
 @register.add_task("select_billiards")
 class SelectBilliardsTask(LM4ManipBaseTask):
     def __init__(self, task_name, robot, **kwargs):
-        self.config_manager_cls = register.load_config_manager("select_billiards")
         super().__init__(task_name, robot=robot, **kwargs)
+    
+    def get_expert_skill_sequence(self, physics):
+        skill_sequence = [
+            partial(SkillLib.pick, target_entity_name=self.target_entity),
+            partial(SkillLib.place, target_container_name=self.target_container), 
+        ]
+        return skill_sequence
 
 @register.add_task("select_billiards_spatial")
-class SelectBilliardsSpatialTask(LM4ManipBaseTask, SpatialMixin):
+class SelectBilliardsSpatialTask(SelectBilliardsTask, SpatialMixin):
     def __init__(self, task_name, robot, **kwargs):
-        self.config_manager_cls = register.load_config_manager("select_billiards_spatial")
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("select_billiards_common_sense")
-class SelectBilliardsCommonSenseTask(LM4ManipBaseTask, CommonSenseReasoningMixin):
+class SelectBilliardsCommonSenseTask(SelectBilliardsTask, CommonSenseReasoningMixin):
     def __init__(self, task_name, robot, **kwargs):
-        self.config_manager_cls = register.load_config_manager("select_billiards_common_sense")
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("select_billiards_semantic")
-class SelectBilliardsSemanticTask(LM4ManipBaseTask, SemanticMixin):
+class SelectBilliardsSemanticTask(SelectBilliardsTask, SemanticMixin):
     def __init__(self, task_name, robot, **kwargs):
-        self.config_manager_cls = register.load_config_manager("select_billiards_semantic")
         super().__init__(task_name, robot=robot, **kwargs)

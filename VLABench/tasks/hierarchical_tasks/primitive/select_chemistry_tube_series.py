@@ -1,6 +1,6 @@
 import random
 import numpy as np
-from VLABench.tasks.dm_task import LM4ManipBaseTask, SpatialMixin, SemanticMixin, CommonSenseReasoningMixin 
+from VLABench.tasks.dm_task import *
 from VLABench.tasks.config_manager import BenchTaskConfigManager
 from VLABench.utils.register import register
 from VLABench.configs.constant import name2class_xml
@@ -170,6 +170,13 @@ class SelectChemistryTubeTask(LM4ManipBaseTask):
                 nametag = self.entities[key]
                 nametag.detach()
                 nametag.parent_entity.attach(nametag)
+    
+    def get_expert_skill_sequence(self, physics):
+        skill_sequence = [
+            partial(SkillLib.pick, target_entity_name=self.target_entity),
+            partial(SkillLib.lift)
+        ]
+        return skill_sequence
             
 @register.add_task("select_chemistry_tube_common_sense")
 class SelectChemistryTubeCommonSenseTask(SelectChemistryTubeTask, CommonSenseReasoningMixin):

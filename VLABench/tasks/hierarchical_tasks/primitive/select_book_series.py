@@ -1,6 +1,6 @@
 import random
 import numpy as np
-from VLABench.tasks.dm_task import LM4ManipBaseTask, SpatialMixin, SemanticMixin, CommonSenseReasoningMixin
+from VLABench.tasks.dm_task import *
 from VLABench.tasks.config_manager import BenchTaskConfigManager
 from VLABench.utils.register import register
 from VLABench.utils.utils import flatten_list
@@ -134,6 +134,13 @@ class SelectBookTask(LM4ManipBaseTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
+    def get_expert_skill_sequence(self, physics):
+        skill_sequence = [
+            partial(SkillLib.pick, target_entity_name=self.target_entity, prior_eulers=[[-np.pi/2, -np.pi/2, 0]]),
+            partial(SkillLib.pull, )
+        ]
+        return skill_sequence
+    
 @register.add_task("select_specific_type_book")
 class SelectSpecificTypeBookTask(SelectBookTask, CommonSenseReasoningMixin):
     def __init__(self, task_name, robot, **kwargs):

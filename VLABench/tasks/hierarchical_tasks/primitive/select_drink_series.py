@@ -1,5 +1,5 @@
 import random
-from VLABench.tasks.dm_task import LM4ManipBaseTask, SpatialMixin, SemanticMixin, CommonSenseReasoningMixin
+from VLABench.tasks.dm_task import *
 from VLABench.tasks.config_manager import BenchTaskConfigManager
 from VLABench.utils.register import register
 from VLABench.utils.utils import flatten_list
@@ -160,7 +160,15 @@ class SelectDrinkTask(LM4ManipBaseTask):
             if "fridge" in key:
                 entity.detach()
                 self._arena.attach(entity)
-                
+    
+    def get_expert_skill_sequence(self, physics):
+        skill_sequence = [
+            partial(SkillLib.pick, target_entity_name=self.target_entity, prior_eulers=[[-np.pi/2, -np.pi/2, 0]]),
+            partial(SkillLib.lift, gripper_state=np.zeros(2), lift_height=0.1),
+            partial(SkillLib.pull, pull_distance=0.3),
+        ]
+        return skill_sequence
+
 @register.add_task("select_drink_common_sense")
 class SelectDrinkCommonSenseTask(SelectDrinkTask, CommonSenseReasoningMixin):
     def __init__(self, task_name, robot, **kwargs):
