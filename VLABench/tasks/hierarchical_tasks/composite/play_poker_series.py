@@ -2,11 +2,12 @@ import random
 import numpy as np
 from VLABench.utils.register import register
 from VLABench.tasks.config_manager import BenchTaskConfigManager
-from VLABench.tasks.dm_task import LM4ManipBaseTask
+from VLABench.tasks.dm_task import *
 from VLABench.configs.constant import name2class_xml
 from VLABench.tasks.components import CardHolder, Poker
 from VLABench.tasks.hierarchical_tasks.poker_utils import *
 from VLABench.tasks.condition import ConditionSet, ContainCondition
+from VLABench.utils.utils import euler_to_quaternion
 
 @register.add_config_manager("texas_holdem")
 class TexasHoldemConfigManager(BenchTaskConfigManager):
@@ -96,6 +97,10 @@ class PokerPlayTask(LM4ManipBaseTask):
             self.pokers.append(entity)
         return entity
     
+    @property
+    def target_entities(self):
+        return self.target_entities
+    
     def init_conditions(self):
         self.target_entities = dict()
         rank, target_cards = get_largest_combination([(poker.name.split('_')[0], poker.name.split('_')[2]) for poker in self.pokers])
@@ -121,6 +126,21 @@ class PokerPlayTask(LM4ManipBaseTask):
     def should_terminate_episode(self, physics):
         terminal = self.conditions.is_met(physics)
         return terminal
+    
+    def get_expert_skill_sequence(self, physics):
+        if isinstance(self.target_entities, dict):
+            target_entities = list(self.target_entities.keys())
+        else:
+            target_entities = self.target_entities
+
+        skill_sequence = []
+        for entity in target_entities:
+            skill_sequence.extend([
+                partial(SkillLib.pick, target_entity_name=entity, prior_eulers=[[-np.pi, 0, 0]]),
+                partial(SkillLib.lift, gripper_state=np.zeros(2), lift_height=0.1),
+                partial(SkillLib.place, target_container_name="target_container"),
+            ])
+        return skill_sequence
 
 @register.add_task("texas_holdem_explore")
 class PokerPlayExploreTask(PokerPlayTask):
@@ -144,3 +164,27 @@ class PokerPlayExploreTask(PokerPlayTask):
         on_condition = ContainCondition(entities=entities, 
                                         container=self.entities.get("target_container", None))
         self.conditions = ConditionSet([on_condition])
+    
+    def get_expert_skill_sequence(self, physics):
+        skill_sequence = []
+        if isinstance(self.target_entities, dict):
+            target_entities = list(self.target_entities.keys())
+        else:
+            target_entities = self.target_entities
+        facing_down_entity = [entity for entity in self.entities.keys() if "face_down" in entity]
+        for entity in facing_down_entity:
+            skill_sequence.extend([
+                partial(SkillLib.pick, target_entity_name=entity, prior_eulers=[[np.pi*6/7, 0, 0]]),
+                partial(SkillLib.lift, target_quat=euler_to_quaternion(-np.pi*0.8, 0, 0), gripper_state=np.zeros(2), lift_height=0.1),
+            ])
+            if entity in target_entities: # remove the facing down poker to avoid duplicate actions
+                target_entities.remove(entity)
+        
+        for entity in target_entities:
+            skill_sequence.extend([
+                partial(SkillLib.pick, target_entity_name=entity, prior_eulers=[[-np.pi, 0, 0]]),
+                partial(SkillLib.lift, gripper_state=np.zeros(2), lift_height=0.1),
+                partial(SkillLib.place, target_container_name="target_container"),
+            ])
+        return skill_sequence
+        

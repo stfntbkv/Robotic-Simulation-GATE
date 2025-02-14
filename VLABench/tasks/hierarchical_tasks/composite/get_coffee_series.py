@@ -2,7 +2,8 @@ import random
 import numpy as np
 from VLABench.utils.register import register
 from VLABench.tasks.config_manager import BenchTaskConfigManager
-from VLABench.tasks.dm_task import LM4ManipBaseTask
+from VLABench.tasks.dm_task import *
+from VLABench.utils.utils import euler_to_quaternion
 
 @register.add_config_manager("get_coffee")
 class GetCoffeeConfigManager(BenchTaskConfigManager):
@@ -121,6 +122,22 @@ class GetCoffeeTask(LM4ManipBaseTask):
             return True
         else:
             return False
+    
+    def get_expert_skill_sequence(self, physics):
+        grasppoint = self.entities[self.target_entity].get_grasped_keypoints(physics)[-1]
+        placepoint = np.array(self.entities[self.target_container].get_place_point(physics)[-1])
+        start_button_pos = np.array(self.entities[self.target_container].get_start_button_pos(physics))
+        skill_sequence = [
+            partial(SkillLib.pick, target_entity_name=self.target_entity, target_pos=np.array(grasppoint)+np.array([0., 0.02, 0]), target_quat=euler_to_quaternion(-np.pi/2, -np.pi/2, 0)),
+            partial(SkillLib.lift, lift_height=0.1, gripper_state=np.zeros(2)),
+            partial(SkillLib.moveto, target_pos=placepoint + np.array([0.0, -0.1, 0]), gripper_state=np.zeros(2)),
+            partial(SkillLib.push, gripper_state=np.zeros(2), push_distance=0.07),
+            partial(SkillLib.pull, gripper_state=np.ones(2)*0.04, pull_distance=0.2),
+            partial(SkillLib.lift, lift_height=0.2, target_quat=euler_to_quaternion(-np.pi, 0, np.pi/2)),
+            partial(SkillLib.press, target_pos=start_button_pos, target_quat=euler_to_quaternion(-np.pi, 0, -np.pi/2)),
+            partial(SkillLib.wait, wait_time=20),
+        ]
+        return skill_sequence
         
 @register.add_task("get_coffee_with_sugar")
 class GetCoffeeWithSugarTask(GetCoffeeTask):
@@ -140,7 +157,41 @@ class GetCoffeeWithSugarTask(GetCoffeeTask):
         else:
             return False 
     
+    def get_expert_skill_sequence(self, physics):
+        skill_sequence = super().get_expert_skill_sequence(physics)
+        # add sugar motions
+        init_box_pos = np.array(self.entities["bottom"].get_xpos(physics))
+        grasppoint = self.entities[self.target_entity].get_grasped_keypoints(physics)[-1]
+        sugar_grasp_point = self.entities["sugar"].get_grasped_keypoints(physics)[-1]
+        skill_sequence.extend([
+            partial(SkillLib.reset, ),
+            partial(SkillLib.pick, target_entity_name=self.target_entity, target_pos=np.array(grasppoint)+np.array([0., 0.02, 0]), target_quat=euler_to_quaternion(-np.pi/2, -np.pi/2, 0)),
+            partial(SkillLib.lift, lift_height=0.01, gripper_state=np.zeros(2)),
+            partial(SkillLib.place, target_container_name="bottom", target_pos=init_box_pos+np.array([0, 0, 0.1]), target_quat=euler_to_quaternion(-np.pi/2, -np.pi/2, 0)),
+            partial(SkillLib.pick, target_entity_name="sugar", target_pos=np.array(sugar_grasp_point)+np.array([0, 0, 0.05]), target_quat=euler_to_quaternion(-np.pi/2, -np.pi/2, 0)),
+            partial(SkillLib.moveto, target_pos=init_box_pos + np.array([0.03, 0, 0.23]), gripper_state=np.zeros(2)),
+            partial(SkillLib.pour, target_delta_qpos=-np.pi, target_q_velocity=-np.pi/40)
+        ])
+        return skill_sequence
+    
 @register.add_task("get_coffee_with_milk")
 class GetCoffeeWithMilkTask(GetCoffeeWithSugarTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
+    
+    def get_expert_skill_sequence(self, physics):
+        skill_sequence = super().get_expert_skill_sequence(physics)
+        # add milk motions
+        init_box_pos = np.array(self.entities["bottom"].get_xpos(physics))
+        grasppoint = self.entities[self.target_entity].get_grasped_keypoints(physics)[-1]
+        sugar_grasp_point = self.entities["sugar"].get_grasped_keypoints(physics)[-1]
+        skill_sequence.extend([
+            partial(SkillLib.reset, ),
+            partial(SkillLib.pick, target_entity_name=self.target_entity, target_pos=np.array(grasppoint)+np.array([0., 0.02, 0]), target_quat=euler_to_quaternion(-np.pi/2, -np.pi/2, 0)),
+            partial(SkillLib.lift, lift_height=0.01, gripper_state=np.zeros(2)),
+            partial(SkillLib.place, target_container_name="bottom", target_pos=init_box_pos+np.array([0, 0, 0.1]), target_quat=euler_to_quaternion(-np.pi/2, -np.pi/2, 0)),
+            partial(SkillLib.pick, target_entity_name="sugar", target_pos=np.array(sugar_grasp_point)+np.array([0, 0, 0.05]), target_quat=euler_to_quaternion(-np.pi/2, -np.pi/2, 0)),
+            partial(SkillLib.moveto, target_pos=init_box_pos + np.array([0.03, 0, 0.23]), gripper_state=np.zeros(2)),
+            partial(SkillLib.pour, target_delta_qpos=-np.pi, target_q_velocity=-np.pi/40)
+        ])
+        return skill_sequence

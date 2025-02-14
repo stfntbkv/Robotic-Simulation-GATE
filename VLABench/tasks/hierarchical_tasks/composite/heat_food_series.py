@@ -2,7 +2,8 @@ import random
 import numpy as np
 from VLABench.utils.register import register
 from VLABench.tasks.config_manager import BenchTaskConfigManager
-from VLABench.tasks.dm_task import LM4ManipBaseTask
+from VLABench.tasks.dm_task import *
+from VLABench.utils.utils import euler_to_quaternion
 
 @register.add_config_manager("heat_food")
 class HeatFoodConfigManager(BenchTaskConfigManager):
@@ -87,6 +88,25 @@ class HeatFoodTask(LM4ManipBaseTask):
         is_active = self.entities[self.config_manager.target_container].is_activate(physics)
         success = condition_met and is_closed and is_active
         return success
+
+    def get_expert_skill_sequence(self, physics):
+        target_container_pos = self.entities[self.target_container].get_xpos(physics)
+        start_button_pos = np.array(self.entities[self.target_container].get_start_button_pos(physics))
+        skill_sequence = [
+            partial(SkillLib.pick, target_entity_name=self.target_container, prior_eulers=[[-np.pi, 0, np.pi/2]]), 
+            partial(SkillLib.open_door, target_container_name=self.target_container), 
+            partial(SkillLib.lift, gripper_state=np.ones(2)*0.04, lift_height=0.1),
+            partial(SkillLib.pull, gripper_state=np.ones(2)*0.04, target_quat=euler_to_quaternion(-np.pi, 0, -np.pi/2), pull_distance=0.15),
+            partial(SkillLib.pick, target_entity_name=self.target_entity, prior_eulers=[[-np.pi, 0, np.pi/2]]),
+            partial(SkillLib.moveto, target_pos=[target_container_pos[0] - 0.1, target_container_pos[1] - 0.2, target_container_pos[2]+0.1], target_quat=euler_to_quaternion(-np.pi*3/4, 0, 0), gripper_state=np.zeros(2)),
+            partial(SkillLib.place, target_container_name=self.target_container, target_quat=euler_to_quaternion(-np.pi*3/4, 0, 0)),
+            partial(SkillLib.pull, gripper_state=np.ones(2)*0.04),
+            partial(SkillLib.lift, gripper_state=np.ones(2)*0.04, lift_height=0.3),
+            partial(SkillLib.pick, target_entity_name=self.target_container, prior_eulers=[[-np.pi, 0, 0]]),
+            partial(SkillLib.close_door, target_container_name=self.target_container),
+            partial(SkillLib.press, target_pos=start_button_pos, target_quat=euler_to_quaternion(-np.pi/2, -np.pi/2, 0), move_vector=[0, -0.2, 0]),
+        ]
+        return skill_sequence
         
 @register.add_task("plug_cord_and_heat_food")
 class PlugCordAndHeatFoodTask(HeatFoodTask):

@@ -2,9 +2,9 @@ import random
 import numpy as np
 from VLABench.utils.register import register
 from VLABench.tasks.config_manager import BenchTaskConfigManager
-from VLABench.tasks.dm_task import LM4ManipBaseTask
+from VLABench.tasks.dm_task import *
 from VLABench.tasks.hierarchical_tasks.primitive.select_painting_series import HangPictureConfigManager, HangPictureTask
-from VLABench.utils.utils import flatten_list
+from VLABench.utils.utils import flatten_list, euler_to_quaternion
 from VLABench.configs.constant import name2class_xml
 
 @register.add_config_manager("hammer_loose_nail")
@@ -193,3 +193,22 @@ class AssembleHammerTask(LM4ManipBaseTask):
 class HammerNailandHangPictureTask(HangPictureTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
+    
+    def get_expert_skill_sequence(self, physics):
+        nail_pos = np.array(self.entities[self.entities["nail"]].get_xpos(physics))
+        target_entity = f"{self.target_entity.lower()}_painting"
+        grasppoint= np.array(self.entities[target_entity].get_grasped_keypoints(physics)[-1])
+        skill_sequence = [
+            partial(SkillLib.pick, target_entity_name="hammer", prior_eulers=[[-np.pi, 0, 0]]),
+            partial(SkillLib.lift, lift_height=0.15, gripper_state=np.zeros(2)),
+            partial(SkillLib.pull, pull_distance=0.1, gripper_state=np.zeros(2)),
+            partial(SkillLib.moveto, target_pos=nail_pos+np.array([0.03, -0.2, -0.1]), target_quat=euler_to_quaternion(-np.pi/2, np.pi/2, np.pi/2), gripper_state=np.zeros(2)),
+            partial(SkillLib.push, push_distance=0.15, gripper_state=np.zeros(2)),
+            partial(SkillLib.place, target_container_name="counter", target_pos=np.array([0, 0.25, 0.8]), target_quat=euler_to_quaternion(-np.pi, 0, 0)),
+            partial(SkillLib.lift, lift_height=0.1),
+            partial(SkillLib.pick, target_entity_name=target_entity, target_pos=grasppoint+np.array([0, 0.01, 0.]), target_quat=euler_to_quaternion(-np.pi, 0, 0)),
+            partial(SkillLib.lift, gripper_state=np.zeros(2)),
+            partial(SkillLib.moveto, target_pos=nail_pos+np.array([0.01, -0.1, 0.02]), target_quat=euler_to_quaternion(-np.pi/2, 0, 0), gripper_state=np.zeros(2)),
+            partial(SkillLib.push, push_distance=0.1, target_quat=euler_to_quaternion(-np.pi/2, 0, 0), gripper_state=np.zeros(2))
+        ]
+        return skill_sequence

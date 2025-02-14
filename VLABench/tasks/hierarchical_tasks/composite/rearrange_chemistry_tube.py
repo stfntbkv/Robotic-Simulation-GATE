@@ -1,9 +1,11 @@
 import random
 import numpy as np
+from functools import partial
 from VLABench.utils.register import register
 from VLABench.tasks.config_manager import BenchTaskConfigManager
 from VLABench.tasks.hierarchical_tasks.primitive.select_chemistry_tube_series import SelectChemistryTubeTask, relative_col_pos, relative_row_pos
 from VLABench.configs.constant import name2class_xml
+from VLABench.utils.skill_lib import SkillLib 
 
 @register.add_config_manager("rearrange_tube")
 class RearrangeTubeConfigManager(BenchTaskConfigManager):
@@ -97,3 +99,16 @@ class RearrangeTubeConfigManager(BenchTaskConfigManager):
 class RearrangeTubeTask(SelectChemistryTubeTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
+    
+    def get_expert_skill_sequence(self, physics):
+        target_positions = self.config_manager.target_tube_position
+        skill_sequence = []
+        for key, pos in target_positions.items():
+            skill_sequence.extend([
+                partial(SkillLib.pick, target_entity_name=key, prior_eulers=[[-np.pi, 0, 0]]),
+                partial(SkillLib.lift, gripper_state=np.ones(2)*0.005, lift_height=0.2),
+                partial(SkillLib.moveto, target_pos=np.array(pos)+np.array([0, 0, 0.2]),  gripper_state=np.ones(2)*0.005),
+                partial(SkillLib.place, target_container_name="chemistry_tube_stand", target_pos=np.array(pos)+np.array([0, 0, 0.05])),
+                partial(SkillLib.lift, gripper_state=np.ones(2)*0.04, lift_height=0.2),
+            ])
+        return skill_sequence

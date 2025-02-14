@@ -2,7 +2,8 @@ import random
 import numpy as np
 import os
 import json
-from VLABench.configs.constant import name2class_xml, name2config
+from VLABench.configs import name2config
+from VLABench.configs.constant import name2class_xml
 from VLABench.utils.utils import flatten_list, grid_sample, find_key_by_value
 
 DEFAULT_RABDOMNESS = dict(
@@ -15,13 +16,14 @@ class BenchTaskConfigManager():
     Config manager class for task configuration load and management.
     The items of config should include: robot, task, engine.
     For each children classes, they differs from the task-specific assets, layouts, conditions and instructions.
-    Basic assets layout include: (un)seen objects - the objects that can be manipulated.
-                                 (un)seen containers - the cintainer that is empty at the begining but can be used to hold objects.
-                                 (un)seen init_containers - the container that is filled with objects at the begining. 
+    Basic assets layout include: 
+        (un)seen objects - the objects that can be manipulated.
+        (un)seen containers - the cintainer that is empty at the begining but can be used to hold objects.
+        (un)seen init_containers - the container that is filled with objects at the begining. 
     """
     def __init__(self, 
                  task_name,
-                 num_objects = [3, 4],
+                 num_objects=[3, 4],
                  **kwargs):
         """
         param:
@@ -29,12 +31,6 @@ class BenchTaskConfigManager():
         """
         # default config
         self.config = dict(
-            robot=dict(
-                name="franka",
-                xml_path="franka_emika_panda/panda.xml",
-                position=[0, -0.4, 0.78],
-                euler=[0, 0, np.pi/2],
-            ),
             task=dict(
                 ngrid=[10, 10],
                 n_distractor=1,

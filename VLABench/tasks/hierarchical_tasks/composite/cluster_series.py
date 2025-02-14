@@ -1,10 +1,10 @@
 import numpy as np
 import random
-from VLABench.tasks.dm_task import ClusterTask
+from VLABench.tasks.dm_task import *
 from VLABench.tasks.config_manager import ClusterConfigManager
 from VLABench.tasks.hierarchical_tasks.primitive.select_billiards_series import SOLID, STRIPED
 from VLABench.utils.register import register
-from VLABench.utils.utils import grid_sample
+from VLABench.utils.utils import grid_sample, euler_to_quaternion
 
 @register.add_config_manager("cluster_book")
 class ClusterBookConfigManager(ClusterConfigManager):
@@ -184,7 +184,29 @@ class ClusterBookTask(ClusterTask):
                 entity.detach()
                 self._arena.attach(entity)
         return super().build_from_config(eval)
-
+    
+    def get_expert_skill_sequence(self, physics, prior_eulers=[[-np.pi, 0, -np.pi/2]]):
+        cluster_entities_1 = self.config_manager.entities_to_load["cls_1"]
+        cluster_entities_2 = self.config_manager.entities_to_load["cls_2"]
+        shelf = self.entities[self.target_container]
+        recommended_place_point = np.array(shelf.get_xpos(physics))
+        cluster_positions_1 = [[-0.1, recommended_place_point[1], 1.3], [0.1, recommended_place_point[1], 1.3]]
+        cluster_positions_2 = [[-0.1, recommended_place_point[1], 1], [0.1, recommended_place_point[1], 1]]
+        skill_sequence = []
+        for entities, poses in zip([cluster_entities_1, cluster_entities_2], [cluster_positions_1, cluster_positions_2]):
+            for i, entity in enumerate(entities):
+                pose = poses[i]
+                current_entity = self.entities[entity]
+                current_entity_pos = np.array(current_entity.get_xpos(physics))
+                pose[0] = current_entity_pos[0]
+                skill_sequence.extend([
+                    partial(SkillLib.pick, target_entity_name=entity, prior_eulers=prior_eulers),
+                    partial(SkillLib.moveto, target_pos=pose, target_quat=euler_to_quaternion(-np.pi/2, np.pi/2, 0), gripper_state=np.zeros(2)),
+                    partial(SkillLib.push, target_quat=euler_to_quaternion(-np.pi/2, np.pi/2, 0), gripper_state=np.zeros(2)),
+                    partial(SkillLib.pull, gripper_state=np.ones(2)*0.04),
+                ])
+        return skill_sequence
+    
 @register.add_task("cluster_billiards")
 class ClusterBilliardsTask(ClusterTask):
     def __init__(self, task_name, robot, **kwargs):

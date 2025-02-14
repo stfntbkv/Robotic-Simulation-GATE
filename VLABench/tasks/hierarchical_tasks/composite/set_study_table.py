@@ -1,8 +1,10 @@
 import random
 import numpy as np
+from functools import partial
 from VLABench.utils.register import register
 from VLABench.tasks.hierarchical_tasks.primitive.select_book_series import SelectSpecificTypeBookConfigManager, SelectBookTask
-
+from VLABench.utils.skill_lib import SkillLib
+from VLABench.utils.utils import euler_to_quaternion
 
 @register.add_config_manager("set_study_table")
 class SelectBookConfigManager(SelectSpecificTypeBookConfigManager):
@@ -42,3 +44,16 @@ class SelectBookConfigManager(SelectSpecificTypeBookConfigManager):
 class SetStudyTableTask(SelectBookTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot, **kwargs)
+    
+    def get_expert_skill_sequence(self, physics):
+        laptop_pos = np.array(self.entities["laptop"].get_xpos(physics))
+        skill_sequence = [
+            partial(SkillLib.pick, target_entity_name=self.target_entity, prior_eulers=[[-np.pi/2, -np.pi/2, 0]]),
+            partial(SkillLib.pull, gripper_state=np.zeros(2), pull_distance=0.2),
+            partial(SkillLib.place, target_container_name="table", target_pos=laptop_pos + np.array([0.4, 0, 0.1]), target_quat=euler_to_quaternion(-np.pi*3/4,  0, np.pi/2)),
+            partial(SkillLib.lift, gripper_state=np.ones(2)*0.04, lift_height=0.1),
+            partial(SkillLib.moveto, target_pos=laptop_pos + np.array([0, 0, 0.2]), target_quat=euler_to_quaternion(-np.pi*0.7, 0, 0), gripper_state=np.ones(2)*0.04),
+            partial(SkillLib.pick, target_entity_name="laptop", prior_eulers=[[-np.pi*0.7, 0, 0]]),
+            partial(SkillLib.open_laptop, target_entity_name="laptop"),
+        ]
+        return skill_sequence

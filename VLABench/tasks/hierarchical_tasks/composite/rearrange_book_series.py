@@ -2,7 +2,8 @@ import random
 import numpy as np
 from VLABench.utils.register import register
 from VLABench.tasks.config_manager import BenchTaskConfigManager
-from VLABench.tasks.dm_task import LM4ManipBaseTask
+from VLABench.tasks.dm_task import *
+from VLABench.utils.utils import euler_to_quaternion
 
 @register.add_config_manager("book_rearrange")
 class BookRearrangeConfigManager(BenchTaskConfigManager):
@@ -86,3 +87,16 @@ class BookRearrangeTask(LM4ManipBaseTask):
                 entity.detach()
                 self._arena.attach(entity)
         return super().build_from_config(eval)
+    
+    def get_expert_skill_sequence(self, physics):
+        container_pos = self.entities[self.target_container].get_xpos(physics)
+        target_positions = [[0.15*(i-1), container_pos[1]-0.35, 1.25] for i in range(len(self.target_entities))]
+        skill_sequence = []
+        for entity, pos in zip(self.target_entities, target_positions):
+            skill_sequence.extend([
+                    partial(SkillLib.pick, target_entity_name=entity, prior_eulers=[[-np.pi, 0, -np.pi/2]]),
+                    partial(SkillLib.moveto, target_pos=pos, gripper_state=np.zeros(2), target_quat=euler_to_quaternion(-np.pi/2, np.pi/2, 0)),
+                    partial(SkillLib.push, target_quat=euler_to_quaternion(-np.pi/2, np.pi/2, 0), gripper_state=np.zeros(2)),
+                    partial(SkillLib.pull, gripper_state=np.ones(2)*0.04)
+                ])
+        return skill_sequence

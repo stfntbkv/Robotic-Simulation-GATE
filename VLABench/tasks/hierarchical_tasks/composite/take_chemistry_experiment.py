@@ -2,10 +2,13 @@ import random
 import json
 import os
 import numpy as np
+from functools import partial
 from VLABench.utils.register import register
 from VLABench.configs.constant import name2class_xml
 from VLABench.tasks.hierarchical_tasks.primitive.select_chemistry_tube_series import (relative_col_pos, relative_row_pos, SelectChemistryTubeConfigManager, SelectChemistryTubeTask)
 from VLABench.tasks.condition import ConditionSet, AsynSequenceCondition
+from VLABench.utils.utils import euler_to_quaternion
+from VLABench.utils.skill_lib import SkillLib
 
 with open(os.path.join(os.getenv("VLABENCH_ROOT"), "configs/task_related/experiment.json"), "r") as f:
     EXPERIMENTS = json.load(f)
@@ -139,3 +142,24 @@ class TakeChemistryExperimentTask(SelectChemistryTubeTask):
             condition_set = ConditionSet(conditions)
             condition_sets.append(condition_set)
         self.conditions = AsynSequenceCondition(condition_sets)
+    
+    def get_expert_skill_sequence(self, physics):
+        place_point = np.array(self.entities[self.target_container].get_place_point(physics)[-1])
+        target_positions = self.config_manager.target_positions
+        skill_sequence = []
+        for solution, end_pos in zip(self.target_entity, target_positions):
+            grasppoint = np.array(self.entities[solution].get_grasped_keypoints(physics)[-1])
+            skill_sequence.extend([
+                partial(SkillLib.pick, target_entity_name=solution, target_pos=grasppoint+np.array([0, 0, 0.02]), target_quat=euler_to_quaternion(-np.pi/2, -np.pi/2, 0)),
+                partial(SkillLib.lift, gripper_state=np.zeros(2), lift_height=0.25),
+                partial(SkillLib.moveto, target_pos=place_point, gripper_state=np.zeros(2)),
+                partial(SkillLib.pour, target_delta_qpos=np.pi/2+np.pi/10, n_repeat_step=4),
+                partial(SkillLib.wait, wait_time=10),
+                partial(SkillLib.pull, pull_distance=0.1),
+                partial(SkillLib.pour, target_delta_qpos=-(np.pi/2+np.pi/10), n_repeat_step=4, target_q_velocity=-np.pi/40),
+                partial(SkillLib.moveto, target_pos=end_pos+np.array([0, 0, 0.25]), target_quat=euler_to_quaternion(-np.pi/2, -np.pi/2, 0), gripper_state=np.zeros(2)),
+                partial(SkillLib.move_offset, offset=[0, 0, -0.1]),
+                partial(SkillLib.open_gripper)
+            ])
+        return skill_sequence
+            

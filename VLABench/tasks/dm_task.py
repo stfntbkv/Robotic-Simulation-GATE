@@ -4,14 +4,16 @@ import yaml
 import json
 import random
 import itertools
+from functools import partial
 from dm_control import composer
-from dm_control.composer import variation
 from VLABench.utils.register import register
 from VLABench.tasks.condition import ConditionSet, OrCondition
-from VLABench.utils.utils import grid_sample, find_key_by_value
+from VLABench.utils.utils import grid_sample
 from VLABench.tasks.components.scene import Scene
-from VLABench.configs.constant import name2class_xml, name2config
+from VLABench.configs.constant import name2class_xml
 from VLABench.tasks.components.entity import Entity
+from VLABench.utils.skill_lib import SkillLib
+
 
 with open(os.path.join(os.getenv("VLABENCH_ROOT"), "configs/camera_config.json"), "r") as f:
     CAMERA_VIEWS = json.load(f)
@@ -77,6 +79,25 @@ class LM4ManipBaseTask(composer.Task):
     @property
     def name(self):
         return self.task_name
+    
+    @property
+    def target_entity(self): # especially for primitive tasks
+        return self.config_manager.target_entity
+    
+    @property
+    def target_entities(self): 
+        """
+        expoecially for composite tasks
+        """
+        return self.config_manager.target_entities
+    
+    @property
+    def target_container(self):
+        return self.config_manager.target_container
+    
+    @property
+    def init_container(self):
+        return self.config_manager.init_container
     
     def initialize_episode(self, physics, random_state):
         # grid sampling
@@ -295,13 +316,23 @@ class LM4ManipBaseTask(composer.Task):
             distractor = entity_cls(name=f"distractor_{i}_{entity_name}", xml_path=xml_path, position=[0, 0, 0.82], orientation=[0, 0, 0])
             self.add_free_entity(distractor)
             self.distractors[distractor.mjcf_model.model] = distractor
-            
+
+    def get_expert_skill_sequence(self, physics):
+        """
+        Expert trajectory generation for the task. Notice that the success rate is not 100%.
+        """
+        raise NotImplementedError(f"Task:{self.task_name} did not implement get_expert_skill_sequence method")
+    
 class PressButtonTask(LM4ManipBaseTask):
     """
     Base class for task to press button for question-answering.
     This type of tasks can be easily expanded with previous vision-language QA datasets, 
         to evaluate the capability retention of VLA-based VLMs. 
     """
+    @property
+    def target_button(self):
+        return self.config_manager.target_button
+    
     def build_from_config(self, eval=False):
         super().build_from_config(eval)
         for key in list(self.entities.keys()):
@@ -309,6 +340,13 @@ class PressButtonTask(LM4ManipBaseTask):
                 button = self.entities[key]
                 button.detach()
                 self._arena.attach(button)
+
+    def get_expert_skill_sequence(self, physics):
+        target_button_pos = self.entities[self.target_button].get_xpos(physics)
+        skill_sequence = [
+            partial(SkillLib.press, target_pos=target_button_pos)
+        ]
+        return skill_sequence
 
 class ClusterTask(LM4ManipBaseTask):
     def __init__(self, task_name, robot, random_init=False, **kwargs):
@@ -340,6 +378,30 @@ class ClusterTask(LM4ManipBaseTask):
         self.conditions = OrCondition(condition_sets)
         return True
 
+    def get_expert_skill_sequence(self, physics, prior_eulers):
+        cluster_entities_1 = self.config_manager.entities_to_load["cls_1"]
+        cluster_entities_2 = self.config_manager.entities_to_load["cls_2"]
+        if cluster_entities_1[0] == cluster_entities_1[-1]:
+            cluster_entities_1[-1] = cluster_entities_1[-1] + "_1"
+        if cluster_entities_2[0] == cluster_entities_2[-1]:
+            cluster_entities_2[-1] = cluster_entities_2[-1] + "_1"
+        container_1 = self.target_container[0] + "_0"
+        container_2 = self.target_container[1] + "_1"
+        skill_sequence = []
+        for index, (cluster_entities, container) in enumerate(zip([cluster_entities_1, cluster_entities_2], [container_1, container_2])):
+            for i, entity in enumerate(cluster_entities):
+                skill_sequence.extend([
+                        partial(SkillLib.pick, target_entity_name=entity, prior_eulers=prior_eulers[task_name]),    
+                        partial(SkillLib.lift, gripper_state=np.zeros(2)),
+                ]) 
+                target_container = self.entities[container]
+                target_place_point = target_container.get_place_point(physics)[-1]
+                target_place_point[1] += 0.1 * (i-0.5)
+                skill_sequence.append(partial(SkillLib.place, target_container_name=container, target_pos=target_place_point))
+                if index == 1 and i == 1: # wait when last placing
+                    skill_sequence.append(partial(SkillLib.wait))
+        return skill_sequence
+                     
 class SpatialMixin:
     """
     Base class for task focusing on assessing spatial perception and understanding.

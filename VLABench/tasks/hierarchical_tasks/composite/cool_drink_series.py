@@ -1,7 +1,10 @@
 import random
+import numpy as np
+from functools import partial
 from VLABench.tasks.hierarchical_tasks.primitive.select_drink_series import SelectDrinkConfigManager, SelectDrinkTask
 from VLABench.utils.register import register
-from VLABench.utils.utils import flatten_list
+from VLABench.utils.utils import flatten_list, euler_to_quaternion
+from VLABench.utils.skill_lib import SkillLib
 
 @register.add_config_manager("cool_drink")
 class CoolDrinkTaskConfigManager(SelectDrinkConfigManager):
@@ -135,3 +138,22 @@ class CoolDrinkTask(SelectDrinkTask):
 class TakeOutCoolDrinkTask(CoolDrinkTask):
     def __init__(self, task_name, robot, random_init=False, **kwargs):
         super().__init__(task_name, robot=robot, random_init=random_init, **kwargs)
+    
+    def get_expert_skill_sequence(self, physics):
+        skill_sequence = [
+            partial(SkillLib.pick, target_entity_name=self.init_container, prior_eulers=[[-np.pi, 0, -np.pi/2]]),
+            partial(SkillLib.open_door, target_container_name=self.init_container), 
+            partial(SkillLib.lift, gripper_state=np.ones(2)*0.04, lift_height=0.1),
+            partial(SkillLib.pull, gripper_state=np.ones(2)*0.04, target_quat=euler_to_quaternion(-np.pi, 0, -np.pi/2), pull_distance=0.15),
+            partial(SkillLib.move_offset, offset=[0.35, 0, 0], gripper_state=np.ones(2)*0.04),
+            partial(SkillLib.pick, target_entity_name=self.target_entity, prior_eulers=[[-np.pi, 1.1, -np.pi/2]]),
+            partial(SkillLib.lift, gripper_state=np.zeros(2), lift_height=0.1),
+            partial(SkillLib.pull, pull_distance=0.3),
+            partial(SkillLib.place, target_container_name="table", target_pos=np.array([0.2, 0.1, 0.83])),
+            partial(SkillLib.lift, lift_height=0.3),
+            partial(SkillLib.pull, pull_distance=0.2),
+            partial(SkillLib.move_offset, gripper_state=np.ones(2)*0.04, offset=[-0.4, 0, 0], target_quat=euler_to_quaternion(-np.pi, 0, -np.pi/2)),
+            partial(SkillLib.pick, target_entity_name=self.init_container, prior_eulers=[[-np.pi, 0, np.pi]]),
+            partial(SkillLib.close_door, target_container_name=self.init_container),
+        ]
+        return skill_sequence

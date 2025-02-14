@@ -1,7 +1,7 @@
 import random
 import os
 import json
-from VLABench.tasks.dm_task import LM4ManipBaseTask
+from VLABench.tasks.dm_task import *
 from VLABench.tasks.config_manager import BenchTaskConfigManager
 from VLABench.utils.register import register
 from VLABench.utils.utils import grid_sample
@@ -79,3 +79,18 @@ class CookDishesTask(LM4ManipBaseTask):
     def __init__(self, task_name, robot, random_init=False, **kwargs):
         self.config_manager_cls = register.load_config_manager("cook_dishes")
         super().__init__(task_name, robot=robot, random_init=random_init, **kwargs)
+    
+    def get_expert_skill_sequence(self, physics):
+        target_place_point = self.entities[self.target_container].get_place_point(physics)[-1]
+        target_place_points = [np.array([target_place_point[0]-0.05, target_place_point[1]-0.05, target_place_point[2]]),
+                               np.array([target_place_point[0]+0.05, target_place_point[1]-0.05, target_place_point[2]]),
+                               np.array([target_place_point[0]-0.05, target_place_point[1]+0.05, target_place_point[2]]),
+                               np.array([target_place_point[0]+0.05, target_place_point[1]-0.05, target_place_point[2]])]
+        skill_sequences = []
+        for i, entity in enumerate(self.target_entities):
+            skill_sequences.extend([
+                partial(SkillLib.pick, target_entity_name=entity, prior_eulers=[[-np.pi, 0, np.pi/2]]),
+                partial(SkillLib.lift, gripper_state=np.zeros(2), lift_height=0.2),
+                partial(SkillLib.place, target_container_name=self.target_container, target_pos=target_place_points[i])
+            ])
+        return skill_sequences

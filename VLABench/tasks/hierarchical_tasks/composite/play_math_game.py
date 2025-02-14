@@ -3,7 +3,7 @@ import os
 import json
 from VLABench.utils.register import register
 from VLABench.tasks.config_manager import BenchTaskConfigManager
-from VLABench.tasks.dm_task import LM4ManipBaseTask
+from VLABench.tasks.dm_task import *
 from VLABench.utils.utils import grid_sample
 from VLABench.configs.constant import name2class_xml
 
@@ -89,3 +89,14 @@ class MathGameConfigManager(BenchTaskConfigManager):
 class MathGameTask(LM4ManipBaseTask):
     def __init__(self, task_name, robot, random_init=False, **kwargs):
         super().__init__(task_name, robot=robot, random_init=random_init, **kwargs)
+    
+    def get_expert_skill_sequence(self, physics):
+        center_place_point = self.entities[self.target_container].get_place_point(physics)[-1]
+        skill_sequence = []
+        for i, entity in enumerate(self.target_entity):
+            target_pos = [(i - 1) * 0.05 + center_place_point[0], center_place_point[1], center_place_point[2] - 0.05]
+            skill_sequence.extend([
+                partial(SkillLib.pick, target_entity_name=entity, prior_eulers=[[-np.pi, 0, 0]]),
+                partial(SkillLib.place, target_container_name=self.target_container, target_pos=target_pos),
+            ])
+        return skill_sequence

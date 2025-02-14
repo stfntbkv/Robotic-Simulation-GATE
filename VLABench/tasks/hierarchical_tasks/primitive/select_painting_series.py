@@ -5,7 +5,7 @@ import numpy as np
 from VLABench.tasks.dm_task import *
 from VLABench.tasks.config_manager import BenchTaskConfigManager, PressButtonConfigManager
 from VLABench.utils.register import register
-from VLABench.utils.utils import flatten_list
+from VLABench.utils.utils import flatten_list, euler_to_quaternion
 from VLABench.tasks.components import Button, RandomGeom
 from VLABench.configs.constant import name2class_xml
 
@@ -251,3 +251,14 @@ class HangPictureTask(LM4ManipBaseTask):
             terminal = False
         return terminal
     
+    def get_expert_skill_sequence(self, physics):
+        target_entity = f"{self.target_entity.lower()}_painting"
+        target_nail = self.config_manager.target_nail
+        nail_pos = np.array(self.entities[target_nail].get_xpos(physics))
+        skill_sequence = [
+            partial(SkillLib.pick, target_entity_name=target_entity, prior_eulers=[[-np.pi, 0, 0]]),
+            partial(SkillLib.lift, gripper_state=np.zeros(2)),
+            partial(SkillLib.moveto, nail_pos+np.array([0.01, -0.1, 0.02]), target_quat=euler_to_quaternion(-np.pi/2, 0, 0), gripper_state=np.zeros(2)),
+            partial(SkillLib.moveto, nail_pos+np.array([0.01, -0.1, 0.02]), target_quat=euler_to_quaternion(-np.pi/2, 0, 0), gripper_state=np.zeros(2))
+        ]
+        return skill_sequence
