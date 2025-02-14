@@ -4,6 +4,7 @@ import yaml
 import json
 import random
 import itertools
+import logging
 from functools import partial
 from dm_control import composer
 from VLABench.utils.register import register
@@ -17,6 +18,8 @@ from VLABench.utils.skill_lib import SkillLib
 
 with open(os.path.join(os.getenv("VLABENCH_ROOT"), "configs/camera_config.json"), "r") as f:
     CAMERA_VIEWS = json.load(f)
+
+NUM_SUBSTEPS = 25
 
 class LM4ManipBaseTask(composer.Task):
     """
@@ -37,6 +40,7 @@ class LM4ManipBaseTask(composer.Task):
         self.attach_entity(robot)
         self._task_observables = {}
         
+        self.control_timestep = self.physics_timestep * NUM_SUBSTEPS
         # FIXME fix the loading way
         config = kwargs.get("config", None) 
         self.entities = dict()
@@ -317,11 +321,24 @@ class LM4ManipBaseTask(composer.Task):
             self.add_free_entity(distractor)
             self.distractors[distractor.mjcf_model.model] = distractor
 
+    def get_task_progress(self, physics):
+        """
+        Get the progress percentage of the task
+        """
+        raise NotImplementedError(f"Task:{self.task_name} did not implement get_task_progress method")
+    
+    def get_intend_score_to_entity(self, physics, entity_name):
+        """
+        Get the intention score of the entity during carry out
+        """
+        raise NotImplementedError(f"Task:{self.task_name} did not implement get_intend_score_to_entity method")
+    
     def get_expert_skill_sequence(self, physics):
         """
         Expert trajectory generation for the task. Notice that the success rate is not 100%.
         """
-        raise NotImplementedError(f"Task:{self.task_name} did not implement get_expert_skill_sequence method")
+        logging.info(f"Task:{self.task_name} did not implement get_expert_skill_sequence method")
+        return None
     
 class PressButtonTask(LM4ManipBaseTask):
     """

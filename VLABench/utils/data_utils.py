@@ -50,7 +50,7 @@ def save_single_data(data:Dict, save_dir:str, filename:str, data_name:str=None):
     data_group = group.create_group(data_name)
     obs_group = data_group.create_group("observation")
     for key, buffer in data.items():
-        if key in ["trajectory", "ee_state", "q_state", "point_cloud_points", "point_cloud_colors"]:
+        if key in ["trajectory"]:
             buffer = np.array(buffer, dtype=np.float32)
             data_group.create_dataset(key, data=buffer, compression='gzip', compression_opts=9)
         # elif isinstance(buffer, str): #BUG 
@@ -61,7 +61,7 @@ def save_single_data(data:Dict, save_dir:str, filename:str, data_name:str=None):
             data_group.create_dataset(key, data=np.array(buffer).astype("S"))
         elif key in ["masked_point_cloud", "grasped_obj_name", "extrinsic", "instrinsic", "segmentation"]:
             continue
-        else:
+        else: # observation saving 
             try:
                 buffer = np.array(buffer)
                 obs_group.create_dataset(key, data=buffer, compression='gzip', compression_opts=9)

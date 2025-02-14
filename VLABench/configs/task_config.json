@@ -4,7 +4,7 @@
             "option":{
                 "impratio": 10,
                 "timestep": 1e-3,
-                "density": 1.25,
+                "density": 1.225,
                 "viscosity": 1.8e-5,
                 "integrator": "implicitfast",
                 "flag":{

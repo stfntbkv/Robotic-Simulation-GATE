@@ -4,7 +4,6 @@ class GLM4v(BaseVLM):
     def __init__(self) -> None:
         super().__init__()
         from transformers import AutoModelForCausalLM, AutoTokenizer
-        os.environ['CUDA_VISIBLE_DEVICES'] = '0,1' # 设置 GPU 编号，如果单机单卡指定一个，单机多卡指定多个 GPU 编号
         MODEL_PATH = "THUDM/glm-4v-9b"
 
         self.device = "cuda" if torch.cuda.is_available() else "cpu"

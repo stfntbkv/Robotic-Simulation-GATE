@@ -28,9 +28,10 @@ def encode_image(image_path):
   with open(image_path, "rb") as image_file:
     return base64.b64encode(image_file.read()).decode('utf-8')
 
-def query_gpt4_v(prompt, history=[] , **config):
+def query_gpt4_v(prompt, history=[] , **kwargs):
     client = OpenAI(
-        api_key="", # TODO add your api key here
+        api_key=kwargs.get("api_key", None), 
+        base_url=kwargs.get("base_url", None)
     )
     
     while True:
@@ -73,8 +74,3 @@ def build_prompt_with_tilist(text_image_list):
             uri = convert_base64_to_data_uri(base64image)
             prompt.append({"type": "image_url", "image_url": {"url": uri}})
     return prompt
-
-if __name__ == "__main__":
-    prompt = build_prompts("which label is mug?", image_paths=["/home/shiduo/project/LM4ManipBench/logs/annotated.png"])
-    content = query_gpt4_v(prompt)
-    print(content)

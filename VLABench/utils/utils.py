@@ -6,6 +6,8 @@ import copy
 from scipy.spatial import cKDTree
 import cv2
 from sklearn.cluster import DBSCAN
+import logging
+import colorlog
 
 def normalize(v):
     return v / np.linalg.norm(v)
@@ -402,6 +404,29 @@ def find_key_by_value(dictionary, target_value):
         elif not isinstance(value, list) and value == target_value:
             return key
     return target_value
+
+def get_logger(level=logging.INFO):
+    logger = logging.getLogger()
+    logger.setLevel(level)
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(level)
+    
+    color_formatter = colorlog.ColoredFormatter(
+        '%(log_color)s%(levelname)s: %(message)s',
+        log_colors={
+            'DEBUG': 'cyan',
+            'INFO': 'green',
+            'WARNING': 'yellow',
+            'ERROR': 'red',
+            'CRITICAL': 'red,bg_white',
+        }
+    )
+    console_handler.setFormatter(color_formatter)
+    for handler in logger.handlers:
+        logger.removeHandler(handler)
+        
+    logger.addHandler(console_handler)
+    return logger
 
 if __name__ == "__main__":
     # quat = compute_rotation_quaternion([0, 0, 1], [0, 0, 0])

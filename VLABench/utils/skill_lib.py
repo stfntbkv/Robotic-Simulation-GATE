@@ -404,7 +404,7 @@ class SkillLib:
     @staticmethod
     def press(env, target_pos, target_quat=None, move_vector=[0, 0, 0.1], max_n_substep=100): #TODO move vector to determine the press direction
         prepare_pos = target_pos + np.array(move_vector) if move_vector is not None else target_pos
-        observations, waypoints, _ = SkillLib.moveto(env, 
+        observations, waypoints, _, _ = SkillLib.moveto(env, 
                                                      prepare_pos, 
                                                      target_quat,
                                                      max_n_substep=max_n_substep)
