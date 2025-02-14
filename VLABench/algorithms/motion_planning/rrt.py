@@ -4,8 +4,8 @@ from rrt_algorithms.rrt.rrt import RRT
 from rrt_algorithms.rrt.rrt_star import RRTStar
 from rrt_algorithms.search_space.search_space import SearchSpace
 from rrt_algorithms.utilities.plotting import Plot
-from LM4manipBench.algorithms.path_smoothing import bezier_smoothing, polynomial_smoothing
-from LM4manipBench.algorithms.utils import remove_pcd_near_point
+from VLABench.algorithms.path_smoothing import bezier_smoothing, polynomial_smoothing
+from VLABench.algorithms.utils import remove_pcd_near_point
 
 SEARCH_DIMENSIONS = np.array([(-1, 1), (-1, 1), (0.8, 1.3)])
 
