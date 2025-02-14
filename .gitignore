@@ -165,6 +165,7 @@ checkpoints
 *.jpg
 VLABench/assets/obj
 VLABench/assets/scenes
+VLABench/assets/robots
 VLABench/third_party
 **/test_result/
 **/cache/
@@ -175,3 +176,7 @@ scripts/paper_scripts
 
 *sh
 *csv
+
+dataset
+logs
+test
