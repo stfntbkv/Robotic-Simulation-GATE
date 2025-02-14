@@ -124,6 +124,8 @@ class LM4ManipDMEnv(composer.Environment):
             instrinsic_matrixs.append(instrinsic)
             extrinsic_matrixs.append(extrinsic)
         observation["q_state"] = np.array(self.robot.get_qpos(self.physics))
+        observation["q_velocity"] = np.array(self.robot.get_qvel(self.physics))
+        observation["q_acceleration"] = np.array(self.robot.get_qacc(self.physics))
         observation["rgb"] = np.array(multi_view_rgb)
         observation["depth"] = np.array(multi_view_depth)
         observation["segmentation"] = np.array(multi_view_seg)
@@ -131,11 +133,11 @@ class LM4ManipDMEnv(composer.Environment):
         observation["instrinsic"] = np.array(instrinsic_matrixs)
         observation["extrinsic"] = np.array(extrinsic_matrixs)
         self.pcd_generator.physics = self.physics
-        observation["masked_point_cloud"] = self.pcd_generator.generateCroppedPointCloud(target_id=list(range(self.physics.model.ncam - 1)), 
+        observation["masked_point_cloud"] = self.pcd_generator.generate_pcd_from_rgbd(target_id=list(range(self.physics.model.ncam - 1)), 
                                                                                          rgb=multi_view_rgb,
                                                                                          depth=multi_view_depth,
                                                                                          mask=expand_mask(observation["robot_mask"]))
-        observation["point_cloud"] = self.pcd_generator.generateCroppedPointCloud(target_id=list(range(self.physics.model.ncam - 1)),
+        observation["point_cloud"] = self.pcd_generator.generate_pcd_from_rgbd(target_id=list(range(self.physics.model.ncam - 1)),
                                                                                   rgb=multi_view_rgb,
                                                                                   depth=multi_view_depth)
         observation["ee_state"] = self.robot.get_ee_state(self.physics)
@@ -198,8 +200,20 @@ class LM4ManipDMEnv(composer.Environment):
             geom_ids = [self.physics.bind(geom).element_id for geom in self.task.entities[name].geoms]
             obj_mask = np.where((segmentation[..., 0] <= max(geom_ids))&(segmentation[..., 0] >= min(geom_ids)), 0, 1).astype(np.uint8)
             total_mask *= obj_mask
-        obstacle_pcd= self.pcd_generator.generateCroppedPointCloud(target_id=list(range(self.physics.model.ncam - 1)), 
+        obstacle_pcd= self.pcd_generator.generate_pcd_from_rgbd(target_id=list(range(self.physics.model.ncam - 1)), 
                                                                                         rgb=multi_view_rgb,
                                                                                         depth=multi_view_depth,
                                                                                         mask=expand_mask(total_mask))
         return obstacle_pcd
+    
+    def get_expert_skill_sequence(self):
+        """
+        Get the expert demenstration of trajectory generation sequence
+        """
+        return self.task.get_expert_skill_sequence(self.physics)
+    
+    def parse(self):
+        """
+        Parse the task and env configuration
+        """
+        raise NotImplementedError("This function should be implemented in the subclass")

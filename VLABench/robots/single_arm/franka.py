@@ -54,6 +54,20 @@ class Franka(SingleArm):
             qposes.append(qpos)
         return qposes
     
+    def get_qvel(self, physics):
+        qvels = []
+        for joint in self.joints[:7]:
+            qvel = physics.bind(joint).qvel
+            qvels.append(qvel)
+        return qvels
+    
+    def get_qacc(self, physics):
+        qaccs = []
+        for joint in self.joints[:7]:
+            qacc = physics.bind(joint).qacc
+            qaccs.append(qacc)
+        return qaccs
+    
     def get_ee_open_state(self, physics=None):
         left_finger_joint = self.mjcf_model.find("joint", "finger_joint1")
         right_finger_joint = self.mjcf_model.find("joint", "finger_joint2")

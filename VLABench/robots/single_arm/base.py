@@ -18,18 +18,18 @@ class SingleArm(Robot):
     
     @property
     def velocity_limits(self):
-        raise NotImplementedError
-    
-    def get_end_effector_pos(self):
-        raise NotImplementedError
-    
-    def get_end_effector_quat(self):
-        raise NotImplementedError   
+        raise NotImplementedError  
     
     def set_end_effector(self, pos, quat):
         raise NotImplementedError
     
     def get_qpos(self):
+        raise NotImplementedError
+    
+    def get_qvel(self):
+        raise NotImplementedError
+    
+    def get_qacc(self):
         raise NotImplementedError
     
     def set_qpos(self, qpos):
