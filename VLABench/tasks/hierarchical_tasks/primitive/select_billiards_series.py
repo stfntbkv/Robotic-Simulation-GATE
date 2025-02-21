@@ -124,16 +124,16 @@ class SelectBilliardsTask(LM4ManipBaseTask):
         return skill_sequence
 
 @register.add_task("select_billiards_spatial")
-class SelectBilliardsSpatialTask(SelectBilliardsTask, SpatialMixin):
+class SelectBilliardsSpatialTask(SelectBilliardsTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("select_billiards_common_sense")
-class SelectBilliardsCommonSenseTask(SelectBilliardsTask, CommonSenseReasoningMixin):
+class SelectBilliardsCommonSenseTask(SelectBilliardsTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("select_billiards_semantic")
-class SelectBilliardsSemanticTask(SelectBilliardsTask, SemanticMixin):
+class SelectBilliardsSemanticTask(SelectBilliardsTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)

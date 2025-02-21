@@ -10,6 +10,7 @@ from dm_control import mjcf
 
 class Entity(composer.Entity):
     def __init__(self, *args, **kwargs):
+        self.asset_root = os.path.join(os.getenv("VLABENCH_ROOT"), "assets")
         self.texture_root = os.path.join(os.getenv("VLABENCH_ROOT"), "assets/obj/assets/textures")
         self.entity_asset_root = os.path.join(os.getenv("VLABENCH_ROOT"), "assets/obj/meshes")
         super().__init__(*args, **kwargs)
@@ -26,6 +27,7 @@ class Entity(composer.Entity):
             -parent_entity: Entity, the parent entity of the entity. If the parent entity is not None, the entity will be attached to the parent entity.
         """
         xml_path = kwargs.get("xml_path", None)
+        self.relative_xml_path = xml_path.split(self.asset_root)[-1][1:] if xml_path is not None else None # for save the entity info
         name = kwargs.get("name", "entity")
         if xml_path is not None:
             self._mjcf_model = mjcf.from_path(xml_path)
@@ -219,6 +221,15 @@ class Entity(composer.Entity):
             if elem.pos is not None:
                 elem.pos = elem.pos * scale_ratio
     
+    def save(self, physics):
+        info_to_save=dict(
+            name=self.mjcf_model.model,
+            xml_path=self.relative_xml_path,
+            position=self.get_xpos(physics).tolist(),
+            orientation=self.get_xqaut(physics).tolist(),
+        )
+        info_to_save["class"] = self.__class__.__name__
+        return info_to_save
     
 @register.add_entity("CommonGraspedEntity")
 class CommonGraspedEntity(Entity):    

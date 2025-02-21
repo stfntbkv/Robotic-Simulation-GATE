@@ -53,9 +53,6 @@ def save_single_data(data:Dict, save_dir:str, filename:str, data_name:str=None):
         if key in ["trajectory"]:
             buffer = np.array(buffer, dtype=np.float32)
             data_group.create_dataset(key, data=buffer, compression='gzip', compression_opts=9)
-        # elif isinstance(buffer, str): #BUG 
-        #     dt = h5py.string_dtype(encoding='utf-8')
-        #     data_group.create_dataset(key, data=buffer, dtype=dt)
         elif isinstance(buffer, list) and isinstance(buffer[0], str):
             buffer = [x.encode('utf-8') for x in buffer]
             data_group.create_dataset(key, data=np.array(buffer).astype("S"))
@@ -63,7 +60,7 @@ def save_single_data(data:Dict, save_dir:str, filename:str, data_name:str=None):
             continue
         else: # observation saving 
             try:
-                buffer = np.array(buffer)
+                buffer = np.array(buffer, dtype=np.float32) if key != "rgb" else np.array(buffer, dtype=np.uint8)
                 obs_group.create_dataset(key, data=buffer, compression='gzip', compression_opts=9)
             except Exception as e:
                 print(f"Error in saving {key}: {e}")

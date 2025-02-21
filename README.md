@@ -60,14 +60,17 @@ Run this to verify installation successful
     python -c "from octo.model.octo_model import OctoModel; model = OctoModel.load_pretrained('hf://rail-berkeley/octo-base-1.5'); print('Model loaded successfully')"
 
 ## Recent Work Todo
-- [ ] Manage the left few tasks not released in preview version.
+- [x] Organize the functional code sections. 
+    - [x] Reconstruct the efficient, user-friendly, and comprehensive evaluation framework. 
+    - [x] Manage the automatic data workflow for existing tasks.
+    - [x] Improve the DSL of skill libarary.
+- [x] Release the trejectory and evaluation scripts.
+- [ ] Release the left few tasks not released in preview version.
 - [ ] Test the interface of humanoid and dual-arm manipulation.
-- [ ] Organize the functional code sections. 
-    - [ ] Reconstruct the efficient, user-friendly, and comprehensive evaluation framework. 
-    - [ ] Manage the automatic data augmentation workflow for existing tasks, especially the rewriting the DSL of skill libarary.
-- [ ] Organize commonly used VLA models to facilitate replication for everyone.
-- [ ] Maintain a leaderboard of VLAs and VLMs in the standard evaluation 
-- [ ] Consider to transfer our work both to Issac and Genesis.
+- [ ] Integrate the commonly used VLA models for facilitate replication. (Continously update)
+- [ ] Leaderboard of VLAs and VLMs in the standard evaluation 
+    - [ ] Release standard evaluation datasets/episodes, in different dimension and difficulty level.
+    - [ ] Release standard finetune dataset.
 
 ## Expandation 
 VLABench adopts a flexible modular framework for task construction, offering high adaptability. You can follow the process outlined below to customize your own tasks.

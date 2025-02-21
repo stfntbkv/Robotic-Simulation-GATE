@@ -153,16 +153,16 @@ class SelectMahjongTask(LM4ManipBaseTask):
         return skill_sequence
 
 @register.add_task("select_mahjong_spatial")
-class SelectMahjongSpatialTask(SelectMahjongTask, SpatialMixin):
+class SelectMahjongSpatialTask(SelectMahjongTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("select_mahjong_semantic")
-class SelectMahjongSemanticTask(SelectMahjongTask, SemanticMixin):
+class SelectMahjongSemanticTask(SelectMahjongTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("select_unique_type_mahjong")
-class SelectUniqueTypeMahjongTask(SelectMahjongTask, CommonSenseReasoningMixin):
+class SelectUniqueTypeMahjongTask(SelectMahjongTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)

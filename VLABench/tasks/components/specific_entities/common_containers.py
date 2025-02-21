@@ -12,12 +12,13 @@ MATERIALS = ["wood0", "wood1", "wood2", "wood3", "wood4", "stone0", "stone", "st
 @register.add_entity("Table")
 class Table(FlatContainer):
     def _build(self, name="table", **kwargs):
+        self.materials = kwargs.get("materials", MATERIALS)
         super()._build(name=name, **kwargs)
         
     def set_texture(self, physics, texture):
         vis_body = self.mjcf_model.worldbody.find("body", "table_vis")
         target_geoms = vis_body.find_all("geom")
-        new_material = random.choice(MATERIALS)
+        new_material = random.choice(self.materials)
         
         materials = self.mjcf_model.find_all("material")
         material_names = [material.name for material in materials]
@@ -32,7 +33,13 @@ class Table(FlatContainer):
                 break
         for geom in target_geoms:
             geom.material = target_material
-
+    
+    def save(self, physics):
+        info = super().save(physics)
+        if self.mjcf_model.worldbody.find("body", "table_vis") is not None:
+            info["materials"] = [self.mjcf_model.worldbody.find("body", "table_vis").find_all("geom")[0].material.name]
+        return info
+    
 @register.add_entity("Counter")
 class Counter(Table):
     def _build(self, name="counter", **kwargs):
@@ -79,7 +86,12 @@ class BilliardTable(Table):
                 min_z <= point[2] <= max_z:
             return True
         return False
-
+    
+    def save(self, physics):
+        data_to_save = super().save(physics)
+        data_to_save["target_hole"] = self.target_hole
+        return data_to_save
+        
 @register.add_entity("Plate")
 class Plate(FlatContainer):
     def _build(self, name="plate", **kwargs):

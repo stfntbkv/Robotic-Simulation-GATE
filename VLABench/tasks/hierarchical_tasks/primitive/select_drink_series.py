@@ -151,11 +151,11 @@ class SelectDrinkTask(LM4ManipBaseTask):
     def __init__(self, task_name, robot, eval=False, **kwargs):
        super().__init__(task_name, robot, eval, **kwargs)
 
-    def build_from_config(self, eval=False):
+    def build_from_config(self, eval=False, **kwargs):
         """
         Attach the fridge to the arena for reasonable and stable visual display.
         """
-        super().build_from_config(eval)
+        super().build_from_config(eval, **kwargs)
         for key, entity in self.entities.items():
             if "fridge" in key:
                 entity.detach()
@@ -170,16 +170,16 @@ class SelectDrinkTask(LM4ManipBaseTask):
         return skill_sequence
 
 @register.add_task("select_drink_common_sense")
-class SelectDrinkCommonSenseTask(SelectDrinkTask, CommonSenseReasoningMixin):
+class SelectDrinkCommonSenseTask(SelectDrinkTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("select_drink_spatial")
-class SelectDrinkSpatialTask(SelectDrinkTask, SpatialMixin):
+class SelectDrinkSpatialTask(SelectDrinkTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
         
 @register.add_task("select_drink_semantic")
-class SelectDrinkSemanticTask(SelectDrinkTask, SemanticMixin):
+class SelectDrinkSemanticTask(SelectDrinkTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)

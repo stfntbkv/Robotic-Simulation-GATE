@@ -2,6 +2,7 @@ import random
 import json
 import os
 import numpy as np
+import copy
 from functools import partial
 from VLABench.utils.register import register
 from VLABench.configs.constant import name2class_xml
@@ -118,7 +119,7 @@ class TakeChemistryExperimentTask(SelectChemistryTubeTask):
 
     def init_conditions(self):
         if self.config["task"].get("conditions") is not None:
-            condition_config = self.config["task"]["conditions"]
+            condition_config = copy.deepcopy(self.config["task"]["conditions"])
         else:
             self.conditions = None
             return False

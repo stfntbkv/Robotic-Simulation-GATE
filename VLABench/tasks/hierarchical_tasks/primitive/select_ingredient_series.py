@@ -117,16 +117,16 @@ class SelectIngredientTask(LM4ManipBaseTask):
         return skill_sequence
 
 @register.add_task("select_ingredient_spatial")
-class SelectIngredientSpatialTask(SelectIngredientTask, SpatialMixin):
+class SelectIngredientSpatialTask(SelectIngredientTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("select_ingredient_common_sense")
-class SelectIngredientCommonSenseTask(SelectIngredientTask, CommonSenseReasoningMixin):
+class SelectIngredientCommonSenseTask(SelectIngredientTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("select_ingredient_semantic")
-class SelectIngredientSemanticTask(SelectIngredientTask, SemanticMixin):
+class SelectIngredientSemanticTask(SelectIngredientTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)

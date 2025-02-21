@@ -142,16 +142,16 @@ class SelectBookTask(LM4ManipBaseTask):
         return skill_sequence
     
 @register.add_task("select_specific_type_book")
-class SelectSpecificTypeBookTask(SelectBookTask, CommonSenseReasoningMixin):
+class SelectSpecificTypeBookTask(SelectBookTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("select_book_spatial")
-class SelectBookSpatialTask(SelectBookTask, SpatialMixin):
+class SelectBookSpatialTask(SelectBookTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("select_book_semantic")
-class SelectBookSemanticTask(SelectBookTask, SemanticMixin):
+class SelectBookSemanticTask(SelectBookTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)

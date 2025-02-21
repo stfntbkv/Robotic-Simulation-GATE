@@ -36,7 +36,7 @@ class SelectFruitCommonSeneseConfigManager(SelectFruitConfigManager):
         self.config["task"]["instructions"] = instruction
 
 @register.add_config_manager("select_fruit_spatial")
-class SelectFruitSpatialConfigManager(LM4ManipBaseTask):
+class SelectFruitSpatialConfigManager(SelectFruitConfigManager):
     def load_objects(self, target_entity):
         # init container add subentities
         self.config["task"]["components"][-1]["subentities"] = []
@@ -91,17 +91,17 @@ class SelectFruitTask(LM4ManipBaseTask):
         return skill_sequence
     
 @register.add_task("select_fruit_common_sense")
-class SelectFruitCommonSenseTask(SelectFruitTask, CommonSenseReasoningMixin):
+class SelectFruitCommonSenseTask(SelectFruitTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("select_fruit_spatial")
-class SelectFruitSpatialTask(SelectFruitTask, SpatialMixin):
+class SelectFruitSpatialTask(SelectFruitTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("select_fruit_semantic")
-class SelectFruitSemanticTask(SelectFruitTask, SemanticMixin):
+class SelectFruitSemanticTask(SelectFruitTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
         

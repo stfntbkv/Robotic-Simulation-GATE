@@ -160,11 +160,11 @@ class SelectChemistryTubeTask(LM4ManipBaseTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
-    def build_from_config(self, config, eval=False):
+    def build_from_config(self, eval=False, **kwargs):
         """
         Attach the nametag to the tubestand.
         """
-        super().build_from_config(eval)
+        super().build_from_config(eval, **kwargs)
         for key in list(self.entities.keys()):
             if "tag" in key:
                 nametag = self.entities[key]
@@ -179,17 +179,17 @@ class SelectChemistryTubeTask(LM4ManipBaseTask):
         return skill_sequence
             
 @register.add_task("select_chemistry_tube_common_sense")
-class SelectChemistryTubeCommonSenseTask(SelectChemistryTubeTask, CommonSenseReasoningMixin):
+class SelectChemistryTubeCommonSenseTask(SelectChemistryTubeTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("select_chemistry_tube_spatial")
-class SelectChemistryTubeSpatialTask(SelectChemistryTubeTask, SpatialMixin):
+class SelectChemistryTubeSpatialTask(SelectChemistryTubeTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("select_chemistry_tube_semantic")
-class SelectChemistryTubeSemanticTask(LM4ManipBaseTask, SemanticMixin):
+class SelectChemistryTubeSemanticTask(LM4ManipBaseTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
     

@@ -82,7 +82,7 @@ class SelectToyTask(LM4ManipBaseTask):
         return skill_sequence
 
 @register.add_task("select_toy_spatial")
-class SelectToySpatialTask(SelectToyTask, SpatialMixin):
+class SelectToySpatialTask(SelectToyTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot, **kwargs)
         
@@ -94,23 +94,23 @@ class SelectToySpatialTask(SelectToyTask, SpatialMixin):
             if "target" in key: target_pos = entity.init_pos[:2]
             elif "another" in key: another_pos = entity.init_pos[:2]
         assert target_pos is not None and another_pos is not None, "could not find valid target and another container"
-        robot_pos = self.config["robot"]["position"][:2]
+        robot_pos = self.robot.robot_config["position"][:2]
         spatial_description = []    
         # left or right
         spatial_description.append("left") if target_pos[0] < another_pos[0] else spatial_description.append("right")
         # distance
         spatial_description.append("nearest") if np.linalg.norm(target_pos - robot_pos) < np.linalg.norm(another_pos - robot_pos) else spatial_description.append("farthest")
-        print(f"target_pos: {target_pos}, another_pos: {another_pos}, robot_pos: {robot_pos}, spatial_description: {spatial_description}")
+        # print(f"target_pos: {target_pos}, another_pos: {another_pos}, robot_pos: {robot_pos}, spatial_description: {spatial_description}")
         if isinstance(self.instructions, list):
             self.instructions[0] = self.instructions[0].replace("TODO", f"{spatial_description}")
         return res
 
 @register.add_task("select_toy_common_sense")
-class SelectToyCommonSense(SelectToyTask, CommonSenseReasoningMixin):
+class SelectToyCommonSense(SelectToyTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot, **kwargs)
 
 @register.add_task("select_toy_semantic")
-class SelectToySemantic(SelectToyTask, SemanticMixin):
+class SelectToySemantic(SelectToyTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot, **kwargs)

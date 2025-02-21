@@ -86,7 +86,7 @@ class BookRearrangeTask(LM4ManipBaseTask):
             if "shelf" in key:
                 entity.detach()
                 self._arena.attach(entity)
-        return super().build_from_config(eval)
+        return super().build_from_config(eval, **kwargs)
     
     def get_expert_skill_sequence(self, physics):
         container_pos = self.entities[self.target_container].get_xpos(physics)

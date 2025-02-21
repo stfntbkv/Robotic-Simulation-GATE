@@ -183,7 +183,7 @@ class ClusterBookTask(ClusterTask):
             if "shelf" in key:
                 entity.detach()
                 self._arena.attach(entity)
-        return super().build_from_config(eval)
+        return super().build_from_config(eval, **kwargs)
     
     def get_expert_skill_sequence(self, physics, prior_eulers=[[-np.pi, 0, -np.pi/2]]):
         cluster_entities_1 = self.config_manager.entities_to_load["cls_1"]

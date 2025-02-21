@@ -206,6 +206,18 @@ class LM4ManipDMEnv(composer.Environment):
                                                                                         mask=expand_mask(total_mask))
         return obstacle_pcd
     
+    def get_intention_score(self, threshold=0.5, discrete=True):
+        """
+        Get the intention score of the task
+        """
+        return self.task.get_intention_score(self.physics, threshold, discrete)
+    
+    def get_task_progress(self):
+        """
+        Get the stage progress score of the task
+        """
+        return self.task.get_task_progress(self.physics)
+    
     def get_expert_skill_sequence(self):
         """
         Get the expert demenstration of trajectory generation sequence

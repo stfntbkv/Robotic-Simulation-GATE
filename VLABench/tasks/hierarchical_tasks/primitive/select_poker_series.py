@@ -167,16 +167,16 @@ class SelectPokerTask(LM4ManipBaseTask):
         return skill_sequence
     
 @register.add_task("select_nth_largest_poker")
-class SelectNthLargestPokerTask(SelectPokerTask, CommonSenseReasoningMixin):
+class SelectNthLargestPokerTask(SelectPokerTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("select_poker_spatial")
-class SelectpokerSpatialTask(SelectPokerTask, SpatialMixin):
+class SelectpokerSpatialTask(SelectPokerTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("select_poker_semantic")
-class SelectPokerSemanticTask(SelectPokerTask, SemanticMixin):
+class SelectPokerSemanticTask(SelectPokerTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)

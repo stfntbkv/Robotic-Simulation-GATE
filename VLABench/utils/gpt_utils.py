@@ -2,6 +2,7 @@
 Pass the local image base64 code to the OpenAI API to get the image captioning result.
 '''
 from openai import OpenAI
+import os
 import base64
 import json
 
@@ -30,8 +31,8 @@ def encode_image(image_path):
 
 def query_gpt4_v(prompt, history=[] , **kwargs):
     client = OpenAI(
-        api_key=kwargs.get("api_key", None), 
-        base_url=kwargs.get("base_url", None)
+        api_key=kwargs.get("api_key", os.environ.get("OPENAI_API_KEY", None)), 
+        base_url=kwargs.get("base_url", os.environ.get("OPENAI_BASE_URL", None))
     )
     
     while True:
@@ -44,7 +45,7 @@ def query_gpt4_v(prompt, history=[] , **kwargs):
             response = client.chat.completions.create(
                         model="gpt-4-turbo",
                         messages=messages,
-                        max_tokens=300,
+                        max_tokens=1000,
                         )
             break
         except Exception as e:

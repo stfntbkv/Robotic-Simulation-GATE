@@ -180,8 +180,8 @@ class SelectPaintingTask(PressButtonTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
     
-    def build_from_config(self, eval=False):
-        super().build_from_config(eval)
+    def build_from_config(self, eval=False, **kwargs):
+        super().build_from_config(eval, **kwargs)
         for key, entity in self.entities.items():
             if key not in ["table", "button0", "button1", "button2", "target_box"]:
                 entity.detach()
@@ -218,8 +218,8 @@ class HangPictureTask(LM4ManipBaseTask):
         super().__init__(task_name, robot=robot, **kwargs)
         self.should_terminate = False
         
-    def build_from_config(self, eval=False):
-        super().build_from_config(eval)
+    def build_from_config(self, eval=False, **kwargs):
+        super().build_from_config(eval, **kwargs)
         for key in list(self.entities.keys()):
             if "nail" in key:
                 nail = self.entities[key]

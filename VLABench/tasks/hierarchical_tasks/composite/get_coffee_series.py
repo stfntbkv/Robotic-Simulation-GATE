@@ -109,7 +109,7 @@ class GetCoffeeTask(LM4ManipBaseTask):
         super().__init__(task_name, robot=robot, **kwargs)
     
     def build_from_config(self, eval=False):
-        super().build_from_config(eval)
+        super().build_from_config(eval, **kwargs)
         for key, entity in self.entities.items():
             if "coffee_machine" in key:
                 entity.detach()

@@ -119,7 +119,7 @@ name2class_xml = {
     "sweet_potato":[components.Ingredient, get_object_list(os.path.join(xml_root, "obj/meshes/ingredients/sweet_potato"))],
     "tomato":[components.Ingredient, get_object_list(os.path.join(xml_root, "obj/meshes/ingredients/tomato"))],
     "cucumber":[components.Ingredient, get_object_list(os.path.join(xml_root, "obj/meshes/ingredients/cucumber"))],
-    "dishes":[components.Entity, get_object_list(os.path.join(xml_root, "obj/meshes/dishes"))],
+    "dishes":[components.FlatContainer, get_object_list(os.path.join(xml_root, "obj/meshes/dishes"))],
     # snacks
     "snack": [components.Snack, get_object_list(os.path.join(xml_root, "obj/meshes/snacks"))],
     "bagged_food": [components.Snack, get_object_list(os.path.join(xml_root, "obj/meshes/snacks/bagged_food"))],

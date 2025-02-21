@@ -83,3 +83,12 @@ class Scene(composer.Entity):
                 target_material = material
                 break
         floor.material = target_material
+    
+    def save(self, physics):
+        info_to_save = dict(
+            name=self._mjcf_model.model,
+            position=physics.bind(self.mjcf_model.worldbody).xpos.tolist(),
+            orientation=physics.bind(self.mjcf_model.worldbody).xquat.tolist(),
+            floor_textures=[self.mjcf_model.find("geom", "floor").material.name]
+        )
+        return info_to_save

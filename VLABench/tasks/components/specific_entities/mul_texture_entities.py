@@ -15,9 +15,15 @@ class BilliardBall(CommonGraspedEntity):
     """
     def _build(self, value="white", **kwargs):
         super()._build(**kwargs)  
+        self.value = value
         body = self.mjcf_model.worldbody.add("body", euler="0 1 0")
         body.add("geom", dclass="visual", mesh="ball_vis", material=value)
         body.add("geom", dclass="collision", mesh="ball_col")
+    
+    def save(self, physics):
+        data_to_save = super().save(physics)
+        data_to_save["value"] = self.value
+        return data_to_save
 
 @register.add_entity("ChemistryTube")
 class ChemistryTube(CommonGraspedEntity):
@@ -56,6 +62,11 @@ class ChemistryTube(CommonGraspedEntity):
     def initialize_episode(self, physics, random_state):
         self.change_texture(physics, self.solution)
         return super().initialize_episode(physics, random_state)
+    
+    def save(self, physics):
+        data_to_save = super().save(physics)
+        data_to_save["solution"] = self.solution
+        return data_to_save
 
 @register.add_entity("NameTag")
 class NameTag(CommonGraspedEntity):
@@ -74,6 +85,11 @@ class NameTag(CommonGraspedEntity):
     
     def initialize_episode(self, physics, random_state):
         return super().initialize_episode(physics, random_state)
+    
+    def save(self, physics):
+        data_to_save = super().save(physics)
+        data_to_save["content"] = self.content
+        return data_to_save
 
 @register.add_entity("Mahjong")
 class Mahjong(CommonGraspedEntity):
@@ -89,12 +105,19 @@ class Mahjong(CommonGraspedEntity):
             mahjong = random.choice(self.mahjongs)
             str_split = mahjong.split("_")
             value, suite = str_split[0], str_split[-1]
+        self.value, self.suite = value, suite
         material = f"{value}_{suite}"
         
         body = self.mjcf_model.worldbody.find("body", "mahjong")
         body.add("geom", dclass="visual", mesh="majong_2", material=material)
         body.add("geom", dclass="collision", mesh="majong_2")
-        
+    
+    def save(self, physics):
+        data_to_save = super().save(physics)
+        data_to_save["value"] = self.value
+        data_to_save["suite"] = self.suite
+        return data_to_save
+    
 @register.add_entity("NumberCube")
 class NumberCube(CommonGraspedEntity):
     digit2str = {
@@ -189,6 +212,7 @@ class Poker(CommonGraspedEntity):
             card = random.choice(self.cards)
             str_split = card.split("_")
             value, suite = str_split[0], str_split[-1]
+        self.value, self.suite = value, suite
         if suite == "joker":
             material = f"{value}_{suite}"
         else:
@@ -197,3 +221,9 @@ class Poker(CommonGraspedEntity):
         body.add("geom", dclass="card", material=material, name="visual_geom")
         body.add("geom", dclass="collision", name="collision_geom")
         body.add("site", dclass="grasppoint", pos="-0.02 0 0")
+    
+    def save(self, physics):
+        data_to_save = super().save(physics)
+        data_to_save["value"] = self.value
+        data_to_save["suite"] = self.suite
+        return data_to_save

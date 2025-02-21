@@ -71,12 +71,12 @@ class AddCondimentTask(LM4ManipBaseTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
     
-    def build_from_config(self, eval=False):
+    def build_from_config(self, eval=False, **kwargs):
         """
         attach the dished to the pan and fix the nametag of shakers to worldframe 
         for reasonable and stable visual display.
         """
-        super().build_from_config(eval)
+        super().build_from_config(eval, **kwargs)
         for key in list(self.entities.keys()):
             if "pan" in key:
                 pan = self.entities[key]
@@ -120,16 +120,16 @@ class AddCondimentSemanticConfigManager(AddCondimentConfigManager):
         self.config["task"]["instructions"] = instruction
 
 @register.add_task("add_condiment_spatial")
-class AddCondimentSpatialTask(AddCondimentTask, SpatialMixin):
+class AddCondimentSpatialTask(AddCondimentTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot, **kwargs)
 
 @register.add_task("add_condiment_common_sense")
-class AddCondimentCommonSenseTask(AddCondimentTask, CommonSenseReasoningMixin):
+class AddCondimentCommonSenseTask(AddCondimentTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot, **kwargs)
 
 @register.add_task("add_condiment_semantic")
-class AddCondimentSemanticTask(AddCondimentTask, SemanticMixin):
+class AddCondimentSemanticTask(AddCondimentTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot, **kwargs)

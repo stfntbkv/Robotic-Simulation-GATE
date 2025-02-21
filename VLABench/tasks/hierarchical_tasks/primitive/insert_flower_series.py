@@ -93,12 +93,12 @@ class InsertFlowerTask(LM4ManipBaseTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
         
-    def build_from_config(self, eval=False):
+    def build_from_config(self, eval=False, **kwargs):
         """
         Attach the vase for stable interaction.
         """
         # FIXME delete the re-attachment of the vase for more realistic interaction
-        super().build_from_config(eval)
+        super().build_from_config(eval, **kwargs)
         for key, entity in self.entities.items():
             if "vase" in key:
                 entity.detach()
@@ -116,22 +116,22 @@ class InsertFlowerTask(LM4ManipBaseTask):
         
 
 @register.add_task("insert_flower_common_sense")
-class InsertFlowerCommonSenseTask(InsertFlowerTask, CommonSenseReasoningMixin):
+class InsertFlowerCommonSenseTask(InsertFlowerTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("insert_flower_semantic")
-class InsertFlowerSemanticTask(InsertFlowerTask, SemanticMixin):
+class InsertFlowerSemanticTask(InsertFlowerTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("insert_flower_spatial")
-class InsertFlowerSpatialTask(InsertFlowerTask, SpatialMixin):
+class InsertFlowerSpatialTask(InsertFlowerTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("insert_bloom_flower")
-class InsertBloomFlowerTask(InsertFlowerTask, CommonSenseReasoningMixin):
+class InsertBloomFlowerTask(InsertFlowerTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 

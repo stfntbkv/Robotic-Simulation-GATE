@@ -152,7 +152,7 @@ class HammerLooseNailTask(LM4ManipBaseTask):
         super().__init__(task_name, robot=robot, **kwargs)
 
     def build_from_config(self, eval=False):
-        super().build_from_config(eval)
+        super().build_from_config(eval, **kwargs)
         for key in list(self.entities.keys()):
             if "nail" in key:
                 nail = self.entities[key]
@@ -165,7 +165,7 @@ class AssembleHammerTask(LM4ManipBaseTask):
         super().__init__(task_name, robot=robot, **kwargs)
     
     def build_from_config(self, eval=False):
-        super().build_from_config(eval)
+        super().build_from_config(eval, **kwargs)
         nail = self.entities["nail"]
         nail.detach() # delete the free joint of nail
         self._arena.attach(nail)

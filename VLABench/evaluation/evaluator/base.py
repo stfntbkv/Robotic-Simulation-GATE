@@ -113,7 +113,9 @@ class Evaluator:
         info["task"] = task_name
         info["success"] = success
         info["consumed_step"] = i
-        # info["intention_score"] = env.get_intention_score()
+        info["intention_score"] = env.get_intention_score()
+        info["progress_score"] = env.get_task_progress()
+        
         env.close()
         if self.save_dir is not None and self.visulization:
             os.makedirs(os.path.join(self.save_dir, agent.name, task_name), exist_ok=True)
