@@ -26,6 +26,13 @@ class Policy:
     @property
     def name(self):
         return "Policy"
+    
+    @property
+    def control_mode(self):
+        """
+        prediction mode of the policy, e.g. "ee" or "joint"
+        """
+        return "ee"
 
 class RandomPolicy(Policy):
     def predict(self, obs):

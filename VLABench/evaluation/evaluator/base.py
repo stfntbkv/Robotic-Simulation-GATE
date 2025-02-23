@@ -95,10 +95,16 @@ class Evaluator:
             observation["instruction"] = env.task.get_instruction()
             if self.save_dir is not None and self.visulization:
                 frames_to_save.append(observation["rgb"])
-            pos, euler, gripper_state = agent.predict(observation, **kwargs)
-            quat = euler_to_quaternion(*euler)
-            action = env.robot.get_qpos_from_ee_pos(physics=env.physics, pos=pos, quat=quat)[:7]
-            action = np.concatenate([action, gripper_state])
+            if agent.control_mode == "ee":
+                pos, euler, gripper_state = agent.predict(observation, **kwargs)
+                quat = euler_to_quaternion(*euler)
+                action = env.robot.get_qpos_from_ee_pos(physics=env.physics, pos=pos, quat=quat)[:7]
+                action = np.concatenate([action, gripper_state])
+            elif agent.control_mode == "joint":
+                qpos, gripper_state = agent.predict(observation, **kwargs)
+                action = np.concatenate([qpos, gripper_state])
+            else:
+                raise NotImplementedError(f"Control mode {agent.control_mode} is not implemented")    
             for _ in range(self.max_substeps):
                 timestep = env.step(action)
                 if timestep.last():
