@@ -61,6 +61,22 @@ class Robot(composer.Robot):
     
     def set_base_orientation(self, ori):
         raise NotImplementedError
+    
+    def set_end_effector(self, pos, quat):
+        raise NotImplementedError
+    
+    def get_qpos(self, physics):
+        raise NotImplementedError
+    
+    def get_qvel(self, physics):
+        raise NotImplementedError
+    
+    def get_qacc(self, physics):
+        raise NotImplementedError
+    
+    def set_qpos(self, physics, qpos):
+        assert len(qpos) == self.n_dof, "qpos must have the same length as n_dof"
+        raise NotImplementedError
 
     
     

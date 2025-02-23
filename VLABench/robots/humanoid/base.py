@@ -1,8 +1,8 @@
 from dm_control.utils.inverse_kinematics import qpos_from_site_pose
-from VLABench.robots.base import Robot
+from VLABench.robots.dual_arm import DualArm
 from VLABench.utils.utils import matrix_to_quaternion
 
-class Humanoid(Robot):
+class Humanoid(DualArm):
     def __init__(self, *args, **kwargs):
         """
         To unifiy the interface of the humanoid robot with standard single arm, we set the main hand as the right hand by default.
@@ -31,35 +31,18 @@ class Humanoid(Robot):
     def position_limites(self):
         raise NotImplementedError
     
-    def get_end_effector_pos(self):
+    def get_qpos(self, target="whole"):
         """
-        Return the position of the main hand
+        Get the joint angles of the robot
         """
-        left_hand_pos, right_hand_pos = self.get_hands_pos()
-        if self.main_hand == "left":
-            return left_hand_pos
+        if target == "whole":
+            return self.get_whole_body_qpos()
+        elif target == "arm":
+            return self.get_arm_qpos()
+        elif target == "leg":
+            return self.get_leg_qpos()
         else:
-            return right_hand_pos
-    
-    def get_end_effector_quat(self):
-        """
-        Return the quaternion of the main hand
-        """
-        left_hand_quat, right_hand_quat = self.get_hands_quat()
-        if self.main_hand == "left":
-            return left_hand_quat
-        else:
-            return right_hand_quat
-    
-    def get_hands_pos(self, physics=None):
-        left_hand_pos = physics.bind(self.left_hand_site).xpos
-        right_hand_pos = physics.bind(self.right_hand_site).xpos
-        return left_hand_pos, right_hand_pos
-    
-    def get_hands_quat(self, physics=None):
-        left_hand_mat = physics.bind(self.left_hand_site).xmat
-        right_hand_mat = physics.bind(self.right_hand_site).xmat
-        return matrix_to_quaternion(left_hand_mat), matrix_to_quaternion(right_hand_mat)
+            raise ValueError("target must be whole, arm or leg")
     
     def get_whole_body_qpos(self):
         raise NotImplementedError

@@ -20,21 +20,6 @@ class SingleArm(Robot):
     def velocity_limits(self):
         raise NotImplementedError  
     
-    def set_end_effector(self, pos, quat):
-        raise NotImplementedError
-    
-    def get_qpos(self):
-        raise NotImplementedError
-    
-    def get_qvel(self):
-        raise NotImplementedError
-    
-    def get_qacc(self):
-        raise NotImplementedError
-    
-    def set_qpos(self, qpos):
-        assert len(qpos) == self.n_dof, "qpos must have the same length as n_dof"
-        raise NotImplementedError
         
     def set_base_position(self, pos):
         """
