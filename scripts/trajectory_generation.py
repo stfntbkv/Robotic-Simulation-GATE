@@ -92,11 +92,13 @@ def generate_trajectory(args, index, logger):
     data_to_save["trajectory"] = robot_frame_waypoints
     data_to_save["entities"] = meta_info["entities"]
     data_to_save["target_entity"] = meta_info["target_entity"]
+    data_to_save["episode_config"] = json.dumps(env.save())
     data_to_save["instruction"] =meta_info["instruction"]
     save_single_data(data_to_save, 
                      save_dir=task_dir,
                      filename=f"data_{index}.hdf5",
                      )
+    env.close()
     
         
 if __name__ == "__main__":

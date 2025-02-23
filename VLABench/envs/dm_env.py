@@ -224,8 +224,8 @@ class LM4ManipDMEnv(composer.Environment):
         """
         return self.task.get_expert_skill_sequence(self.physics)
     
-    def parse(self):
+    def save(self):
         """
-        Parse the task and env configuration
+        Save the task and env configuration
         """
-        raise NotImplementedError("This function should be implemented in the subclass")
+        return self.task.save(self.physics)

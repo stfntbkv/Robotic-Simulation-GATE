@@ -99,18 +99,18 @@ class PokerPlayTask(LM4ManipBaseTask):
     
     @property
     def target_entities(self):
-        return self.target_entities
+        return self._target_entities
     
     def init_conditions(self):
-        self.target_entities = dict()
+        self._target_entities = dict()
         rank, target_cards = get_largest_combination([(poker.name.split('_')[0], poker.name.split('_')[2]) for poker in self.pokers])
         self.max_cardtype = list(RANKING.keys())[-rank]
         assert len(target_cards) > 0
         for target_card in target_cards:
             target_name = "{}_of_{}".format(VALUES[target_card[0] - 2], target_card[1])
             target_entity = self.entities[target_name]
-            self.target_entities[target_name] = target_entity
-        entities=list(self.target_entities.values())
+            self._target_entities[target_name] = target_entity
+        entities=list(self._target_entities.values())
         if None in entities:
             entities.remove(None)
         on_condition = ContainCondition(entities=entities, 

@@ -69,6 +69,11 @@ class Evaluator:
                 task_infos.append(info)
             metric_score = self.compute_metric(task_infos)       
             metrics[task] = metric_score
+            
+        if self.save_dir is not None:
+            os.makedirs(os.path.join(self.save_dir, agent.name))
+            with open(os.path.join(self.save_dir, agent.name, "metrics.json"), "w") as f:
+                json.dump(metrics, f)
         return metrics
         
     def evaluate_single_episode(self, agent, task_name, episode_id, episode_config, seed=42, max_episode_length=200, **kwargs):

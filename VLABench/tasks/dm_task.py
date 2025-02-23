@@ -387,9 +387,12 @@ class LM4ManipBaseTask(composer.Task):
         target_entity = self.target_entity
         entity_names = list(self.entities.keys())
         query = f"{sys_prompt_0} {entity_names}. {sys_prompt_1} {target_entity}. {sys_prompt_2}"
-        instructions = query_gpt4_v(query)
-        instructions = re.findall(r'instruction:\s*"([^"]*)"', instructions)
-        self.instructions = instructions
+        try:
+            instructions = query_gpt4_v(query)
+            instructions = re.findall(r'instruction:\s*"([^"]*)"', instructions)
+            self.instructions = instructions
+        except:
+            self.instructions = []
     
     def save(self, physics):
         """
