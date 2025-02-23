@@ -49,13 +49,20 @@ def save_single_data(data:Dict, save_dir:str, filename:str, data_name:str=None):
         group = hdf5_file.create_group("data")
     data_group = group.create_group(data_name)
     obs_group = data_group.create_group("observation")
+    info_group = data_group.create_group("meta_info")
     for key, buffer in data.items():
         if key in ["trajectory"]:
             buffer = np.array(buffer, dtype=np.float32)
             data_group.create_dataset(key, data=buffer, compression='gzip', compression_opts=9)
         elif isinstance(buffer, list) and isinstance(buffer[0], str):
             buffer = [x.encode('utf-8') for x in buffer]
-            data_group.create_dataset(key, data=np.array(buffer).astype("S"))
+            if key in ["instruction"]:
+                data_group.create_dataset(key, data=np.array(buffer).astype("S"))
+            else:
+                info_group.create_dataset(key, data=np.array(buffer).astype("S"))
+        elif isinstance(buffer, str):
+            buffer = buffer.encode('utf-8')
+            info_group.create_dataset(key, data=np.array(buffer).astype("S"))
         elif key in ["masked_point_cloud", "grasped_obj_name", "extrinsic", "instrinsic", "segmentation"]:
             continue
         else: # observation saving 
