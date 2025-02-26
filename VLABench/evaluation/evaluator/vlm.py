@@ -27,6 +27,7 @@ class VLMEvaluator(Evaluator):
         if not os.path.exists(save_path):
             os.makedirs(save_path)
         self.all_task_list = os.listdir(data_path)
+        self.all_task_list.remove("data_complement_check.ipynb")
         self.eval_tasks = tasks
         with open(os.path.join(os.environ["VLABENCH_ROOT"], f"configs/prompt/eval_vlm_{language}.txt"), 'r', encoding='utf-8') as file:
             self.pre_prompt = file.read()
