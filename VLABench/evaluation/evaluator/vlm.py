@@ -121,7 +121,7 @@ class VLMEvaluator(Evaluator):
         print(Fore.BLUE + Style.BRIGHT + vlm.name)
 
         if task_list is None or len(task_list) == 0:
-            task_list = self.eval_tasks
+            task_list = self.all_task_list
         model_result_save_path = os.path.join(self.save_path, vlm.name, self.language)
         if not os.path.exists(model_result_save_path):
             os.makedirs(model_result_save_path)
