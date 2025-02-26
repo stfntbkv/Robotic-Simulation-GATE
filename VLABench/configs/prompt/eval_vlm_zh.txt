@@ -146,10 +146,13 @@
 可以被抽取的sub skill sequence 的 pattern如下：
 ["pick", "place"],
 ["pick", "insert"],
+["pick", "pour", "place"],
 ["pick", "pour"],
 ["pick", "pull"],
 ["pick", "lift"],
 ["pick", "push", "pull"],
+["pick", "push", "place"],
+["pick", "push"],
 ["pick", "open_door"],
 ["press"]
 例如如果输出只有一个"pick"在评测时会被认为是错误的输出。

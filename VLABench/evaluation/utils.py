@@ -7,10 +7,13 @@ from collections import Counter
 SUBTASK_PATTERN = [
     ["pick", "place"],
     ["pick", "insert"],
+    ["pick", "pour", "place"],
     ["pick", "pour"],
     ["pick", "pull"],
     ["pick", "lift"],
     ["pick", "push", "pull"],
+    ["pick", "push", "place"],
+    ["pick", "push"],
     ["pick", "open_door"],
     ["press"]
 ]
