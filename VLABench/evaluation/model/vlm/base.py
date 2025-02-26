@@ -6,13 +6,13 @@ class BaseVLM():
     def __init__(self) -> None:
         self.name =self.get_name()
 
-    def evaluate(self, input_dict, language):
+    def evaluate(self, input_dict, language, with_CoT=False):
         raise NotImplementedError
     
     def get_name(self):
         return "BaseVLM"
     
-def get_ti_list(input_dict, language):
+def get_ti_list(input_dict, language, with_CoT=False):
     if language == "zh":
         ti_list = []
         ti_list.append(["text", input_dict["pre_prompt"] ])
@@ -33,6 +33,8 @@ def get_ti_list(input_dict, language):
         ti_list.append(["text", "语言指令:"])
         ti_list.append(["text", input_dict["input_instruction"]])
         ti_list.append(["text", "请你给出输出的技能序列"])
+        if with_CoT:
+            ti_list.append(["text", "请一步一步分析问题最后给出答案"])
     elif language == "en":
         ti_list = []
         ti_list.append(["text", input_dict["pre_prompt"] ])
@@ -53,6 +55,8 @@ def get_ti_list(input_dict, language):
         ti_list.append(["text", "Language instruction:"])
         ti_list.append(["text", input_dict["input_instruction"]])
         ti_list.append(["text", "Please give the output skill sequence"])
+        if with_CoT:
+            ti_list.append(["text", "Please analyze the problem step by step and give the answer"])
     else:
         raise ValueError("language should be zh or en")
     return ti_list

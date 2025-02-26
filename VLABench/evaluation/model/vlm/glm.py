@@ -17,8 +17,8 @@ class GLM4v(BaseVLM):
             device_map="auto"
         ).eval()
 
-    def evaluate(self, input_dict, language):
-        ti_list = get_ti_list(input_dict, language)
+    def evaluate(self, input_dict, language, with_CoT=False):
+        ti_list = get_ti_list(input_dict, language, with_CoT)
         content, combined_image = self.build_prompt_with_tilist(ti_list)
         inputs = self.tokenizer.apply_chat_template([{"role": "user", "image": combined_image, "content": content}],
                                             add_generation_prompt=True, tokenize=True, return_tensors="pt",
