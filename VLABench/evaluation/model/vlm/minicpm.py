@@ -16,9 +16,9 @@ class MiniCPM_V2_6(BaseVLM):
             tensor_parallel_size=2
         )
 
-    def evaluate(self, input_dict, language):
+    def evaluate(self, input_dict, language, with_CoT=False):
         from vllm import SamplingParams
-        ti_list = get_ti_list(input_dict, language)
+        ti_list = get_ti_list(input_dict, language, with_CoT=with_CoT)
         content, image_list = self.build_prompt_with_tilist(ti_list)
 
         messages = [{

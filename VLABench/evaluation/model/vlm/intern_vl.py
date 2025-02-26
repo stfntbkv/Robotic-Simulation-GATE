@@ -8,8 +8,8 @@ class InternVL2(BaseVLM):
         model = 'OpenGVLab/InternVL2-8B'
         self.pipe = pipeline(model, backend_config=TurbomindEngineConfig(session_len=8192))
 
-    def evaluate(self, input_dict, language):
-        ti_list = get_ti_list(input_dict, language)
+    def evaluate(self, input_dict, language, with_CoT=False):
+        ti_list = get_ti_list(input_dict, language, with_CoT=with_CoT)
         prompt, images = self.get_prompt_with_tilist(ti_list)
         response = self.pipe((prompt, images))
         # Numbering images improves multi-image conversations

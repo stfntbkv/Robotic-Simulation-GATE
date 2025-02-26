@@ -81,6 +81,16 @@ class VLMEvaluator(Evaluator):
 
         return prepared_input
     
+    def get_result_save_path(self, vlm_name, few_shot_num, with_CoT):
+        model_result_save_path = os.path.join(self.save_path, vlm_name, self.language)
+        if not with_CoT:
+            model_result_save_path = os.path.join(model_result_save_path, str(few_shot_num) + "_shot")
+        else:
+            model_result_save_path = os.path.join(model_result_save_path,  str(few_shot_num) + "_shot_CoT")
+        if not os.path.exists(model_result_save_path):
+            os.makedirs(model_result_save_path)
+        return model_result_save_path
+    
     def load_single_input(self, task_name, example_num):
         input_pic_path = os.path.join(self.data_path, task_name, "example"+ str(example_num), 'input/input.png')
         input_pic_gt_path = os.path.join(self.data_path, task_name, "example"+ str(example_num), 'input/input_gt.png')
@@ -98,8 +108,8 @@ class VLMEvaluator(Evaluator):
             gt_operation_sequence = json.load(f)
         return gt_operation_sequence
     
-    def get_single_anwer(self, task_name, example_num, vlm, few_shot_num = 0):
-        outputs = vlm.evaluate(self.build_input(task_name, example_num, few_shot_num), self.language)
+    def get_single_anwer(self, task_name, example_num, vlm, few_shot_num = 0,with_CoT=False):
+        outputs = vlm.evaluate(self.build_input(task_name, example_num, few_shot_num), self.language, with_CoT=with_CoT)
         if not isinstance(outputs, dict):
             return {"format_error": outputs}
         return outputs
@@ -109,13 +119,14 @@ class VLMEvaluator(Evaluator):
             return True
         return False
 
-    def evaluate(self, vlm, task_list=None, save_interval=1, few_shot_num=0):
+    def evaluate(self, vlm, task_list=None, save_interval=1, few_shot_num=0, with_CoT=False):
         """
         param:
           vlm: the wrapped vlm model with standard interface
           task_list: the list of tasks to evaluate, if None, evaluate all tasks
           save_interval: the interval to save the output
           few_shot_num: the few-shot number
+          with_CoT: use CoT or not
         """
         print(Fore.YELLOW + Style.BRIGHT + "\n\nworking on ",end = "")
         print(Fore.BLUE + Style.BRIGHT + vlm.name)
@@ -125,7 +136,7 @@ class VLMEvaluator(Evaluator):
         model_result_save_path = os.path.join(self.save_path, vlm.name, self.language)
         if not os.path.exists(model_result_save_path):
             os.makedirs(model_result_save_path)
-        model_result_save_path = os.path.join(model_result_save_path, str(few_shot_num) + "_shot")
+        model_result_save_path = self.get_result_save_path(vlm.name, few_shot_num, with_CoT)
         if not os.path.exists(model_result_save_path):
             os.makedirs(model_result_save_path)
 
@@ -155,7 +166,11 @@ class VLMEvaluator(Evaluator):
             print(Fore.MAGENTA + Style.BRIGHT + "All examples are already exist")
             return model_output
 
-        if model_output["benchmeatinfo"]["existing_num"] != existing_num:
+        if model_output["benchmeatinfo"]["existing_num"] == 0:
+            model_output["benchmeatinfo"]["existing_num"] = existing_num
+            model_output["benchmeatinfo"]["already_running_time"] = existing_num * 10
+
+        elif model_output["benchmeatinfo"]["existing_num"] != existing_num:
             model_output["benchmeatinfo"]["already_running_time"] = model_output["benchmeatinfo"]["already_running_time"] * existing_num / model_output["benchmeatinfo"]["existing_num"]
             model_output["benchmeatinfo"]["existing_num"] = existing_num
         already_running_time = model_output["benchmeatinfo"]["already_running_time"]
@@ -176,7 +191,7 @@ class VLMEvaluator(Evaluator):
                     model_output[task_name][example_num] = {}
                 #   answer should be a dict with keys: operation_sequence / format_error
                 #   if format_error is not in dict, it means the answer is not valid
-                answer = self.get_single_anwer(task_name, example_num, vlm, few_shot_num)
+                answer = self.get_single_anwer(task_name, example_num, vlm, few_shot_num, with_CoT)
                 model_output[task_name][example_num] = answer
             except Exception as e:
                 print("\n\nError in task: ", task_name, " example: ", example_num)
@@ -217,10 +232,10 @@ class VLMEvaluator(Evaluator):
             json.dump(model_output, f, ensure_ascii=False, indent=4)
         print(Fore.YELLOW + Style.BRIGHT + "working end at " + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
 
-    def get_final_score_dict(self, vlm_name, few_shot_num=0):
-        output_file = os.path.join(self.save_path, vlm_name, self.language, str(few_shot_num) + "_shot", "output.json")
+    def get_final_score_dict(self, vlm_name, few_shot_num=0, with_CoT=False):
+        output_file = os.path.join(self.get_result_save_path(vlm_name, few_shot_num, with_CoT), "output.json")
         if not os.path.exists(output_file):
-            print(Fore.RED + Style.BRIGHT + "output file not exist for model: ", vlm_name, " few_shot_num: ", few_shot_num)
+            print(Fore.RED + Style.BRIGHT + "output file not exist for model: ", vlm_name, " few_shot_num: ", few_shot_num, " with_CoT: ", with_CoT)
             return None
         with open(output_file) as f:
             model_output = json.load(f)
@@ -260,28 +275,28 @@ class VLMEvaluator(Evaluator):
                         "total_score": 0
                     }
                 
-        final_score_dict_save_path = os.path.join(self.save_path, vlm_name, self.language, str(few_shot_num) + "_shot", "final_score.json")
+        final_score_dict_save_path = os.path.join(self.get_result_save_path(vlm_name, few_shot_num, with_CoT), "final_score.json")
         with open(final_score_dict_save_path, 'w', encoding="utf-8") as f:
             json.dump(final_score_dict, f, ensure_ascii=False, indent=4)
         return final_score_dict
 
-    def get_six_dim_result(self, vlm_name, few_shot_num = 0):
-        six_dim_result_save_path = os.path.join(self.save_path, vlm_name, self.language, str(few_shot_num) + "_shot", "six_dim_result.json")
+    def get_six_dim_result(self, vlm_name, few_shot_num = 0, with_CoT=False):
+        six_dim_result_save_path = os.path.join(self.get_result_save_path(vlm_name, few_shot_num, with_CoT), "six_dim_result.json")
         if os.path.exists(six_dim_result_save_path):
             with open(six_dim_result_save_path) as f:
                 six_dim_result = json.load(f)
             return six_dim_result
         
-        final_score_file = os.path.join(self.save_path, vlm_name, self.language, str(few_shot_num) + "_shot", "final_score.json")
+        final_score_file = os.path.join(self.get_result_save_path(vlm_name, few_shot_num, with_CoT), "final_score.json")
         final_score_dict = None
         if not os.path.exists(final_score_file):
-            final_score_dict = self.get_final_score_dict(vlm_name, few_shot_num=few_shot_num)
+            final_score_dict = self.get_final_score_dict(vlm_name, few_shot_num=few_shot_num, with_CoT=with_CoT)
         else:
             with open(final_score_file) as f:
                 final_score_dict = json.load(f)
             
         if final_score_dict is None:
-            print(Fore.RED + Style.BRIGHT + "get final score dict failed for model: ", vlm_name, " few_shot_num: ", few_shot_num)
+            print(Fore.RED + Style.BRIGHT + "get final score dict failed for model: ", vlm_name, " few_shot_num: ", few_shot_num, " with_CoT: ", with_CoT)
             return None
         
         six_dim_result = {}
@@ -307,7 +322,7 @@ class VLMEvaluator(Evaluator):
                 if key != "example_num":
                     six_dim_result[dim][key] = six_dim_result[dim][key] / six_dim_result[dim]["example_num"]
 
-        six_dim_result_save_path = os.path.join(self.save_path, vlm_name, self.language, str(few_shot_num) + "_shot", "six_dim_result.json")
+        six_dim_result_save_path = os.path.join(self.get_result_save_path(vlm_name, few_shot_num, with_CoT), "six_dim_result.json")
         with open(six_dim_result_save_path, 'w', encoding="utf-8") as f:
             json.dump(six_dim_result, f, ensure_ascii=False, indent=4)
         return six_dim_result
