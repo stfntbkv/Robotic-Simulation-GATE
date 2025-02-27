@@ -8,10 +8,10 @@ from VLABench.utils.utils import euler_to_quaternion
 @register.add_config_manager("insert_flower")
 class InsertFlowerConfigManager(BenchTaskConfigManager):
     def __init__(self,
-                 seen_object,
+                 task_name,
                  num_objects=[3],
                  **kwargs):
-        super().__init__(seen_object, num_objects, **kwargs)
+        super().__init__(task_name, num_objects, **kwargs)
     
     def load_containers(self, target_container):
         super().load_containers(target_container)

@@ -1,4 +1,6 @@
+import random
 from VLABench.tasks.dm_task import PressButtonTask, LM4ManipBaseTask
+from VLABench.tasks.config_manager import PressButtonConfigManager
 from VLABench.utils.register import register
 
 @register.add_task("friction_qa")

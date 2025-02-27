@@ -10,11 +10,11 @@ SHAKER_INGRADIENTS = ["salt", "sugar"]
 @register.add_config_manager("add_condiment")
 class AddCondimentConfigManager(BenchTaskConfigManager):
     def __init__(self,
-                 seen_object,
+                 task_name,
                  num_objects=[3, 4],
                  **kwargs
                  ):
-        super().__init__(seen_object, num_objects, **kwargs)
+        super().__init__(task_name, num_objects, **kwargs)
     
     def load_containers(self, target_container):
         stove_config = self.get_entity_config("stove", position=[0.1, 0, 0], randomness=None)

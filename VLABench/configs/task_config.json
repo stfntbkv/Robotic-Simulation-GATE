@@ -669,7 +669,21 @@
     },
     
     "physical_qa_series":{
-
+        "task":{
+            "components":[
+                {
+                    "name": "table",
+                    "xml_path": "obj/meshes/table/table.xml",
+                    "class": "Table",
+                    "randomness": {
+                        "texture": false
+                    }
+                }
+            ],
+            "scene":{
+                "name": "lab_1"
+            }
+        }
     },
 
     "heat_food_series": {

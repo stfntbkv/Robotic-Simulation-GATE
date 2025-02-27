@@ -28,6 +28,10 @@ class RandomGeom(CommonGraspedEntity):
         if material is None or material not in materials:
             material = random.choice(materials)
         self.material = material
+        if kwargs.get("texture", None) is None:
+            self.texture = random.choice(material2texture[self.material])
+        else:
+            self.texture = kwargs.get("texture")
         self.size = size
         super().__init__(**kwargs)
     
@@ -48,12 +52,16 @@ class RandomGeom(CommonGraspedEntity):
         elif self.material == "rubber": density = random.uniform(910, 930)
         elif self.material == "stone": density = random.uniform(2300, 2900)
         
-        self.mjcf_model.asset.add("texture", name=f"{self.material}", type="cube", file=os.path.join(self.texture_root, random.choice(material2texture[self.material]) + ".png"))
+        self.mjcf_model.asset.add("texture", name=f"{self.material}", type="cube", file=os.path.join(self.texture_root, self.texture + ".png"))
         self.mjcf_model.asset.add("material", name=f"{self.material}", texture=f"{self.material}")
         self.mjcf_model.worldbody.add("geom", type=f"{self.geom_type}", material=f"{self.material}", size=size, density=density, contype="0", conaffinity="0")
         self.mjcf_model.worldbody.add("geom", type=f"{self.geom_type}", material=f"{self.material}", size=size, solref="0.001 1")
         
-        
+    def save(self, save_path):
+        data_to_save = super().save(save_path)
+        data_to_save["material"] = self.material
+        data_to_save["texture"] = self.texture
+        return data_to_save
     
 
         

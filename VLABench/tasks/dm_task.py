@@ -35,11 +35,21 @@ class LM4ManipBaseTask(composer.Task):
                  robot,
                  eval=False,
                  random_init=True,
+                 use_llm=False,
                  episode_config=None,
                  **kwargs):
+        """
+        Params:
+            robot: robot name to use in the task
+            eval: whether load unseen objects to evaluate the generalization ability
+            random_init: whether to compute grid sampling positions when initializing the entities
+            use_llm: whether to use LLMs to generate instructions
+            episode_config: deterministic configuration for task building
+        """
         self.task_name = task_name
         self.config_manager = register.load_config_manager(task_name)(task_name)
-        self.asset_path = os.path.join(os.getenv("VLABENCH_ROOT"), "assets")        
+        self.asset_path = os.path.join(os.getenv("VLABENCH_ROOT"), "assets") 
+        self.use_llm = use_llm       
         self._arena = composer.Arena(xml_path=os.path.join(self.asset_path, "base/default.xml"))
         self._robot = robot
         self.attach_entity(robot)
@@ -375,8 +385,12 @@ class LM4ManipBaseTask(composer.Task):
         return None
     
     def build_instruction(self):
+        self.instructions = ['']
         if self.config["task"].get("instructions", None) is not None:
             self.instructions = self.config["task"]["instructions"]
+        if not self.use_llm:
+            return 
+        # generate instruction with GPT4
         with open(os.path.join(os.getenv("VLABENCH_ROOT"), "configs/prompt/prompt.json"), "r") as f:
             prompts = json.load(f)
         if not self.task_name in prompts.keys():

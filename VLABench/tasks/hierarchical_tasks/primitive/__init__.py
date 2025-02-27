@@ -1,6 +1,6 @@
 from VLABench.tasks.hierarchical_tasks.primitive.add_condiment_series import *
 from VLABench.tasks.hierarchical_tasks.primitive.insert_flower_series import *
-from VLABench.tasks.hierarchical_tasks.primitive.physical_laws_series import *
+from VLABench.tasks.hierarchical_tasks.primitive.physical_series import *
 from VLABench.tasks.hierarchical_tasks.primitive.select_billiards_series import *
 from VLABench.tasks.hierarchical_tasks.primitive.select_book_series import *
 from VLABench.tasks.hierarchical_tasks.primitive.select_chemistry_tube_series import *
