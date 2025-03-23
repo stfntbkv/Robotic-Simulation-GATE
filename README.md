@@ -7,7 +7,10 @@
 
 
 ## News
-* **2024/12/25** The preview verison of VLABench has been released! This version is a gift for my birthday, happy birthday to myself and merry chrismas to u!🎁🎉 The preview version showcases most of the designed tasks and structure, but the functionalities are still being managed and tested. I aim to provide you with a highly user-friendly and efficient evaluation tool, so I kindly ask for your patience during this process. Thank you for your understanding, and I look forward to delivering a polished and seamless experience soon!
+<!-- * **2025/3/20** Releasing standard evaluation dataset and leaderboard. -->
+* **2025/2/26** Releasing referenced evaluation pipeline. 
+* **2025/2/14** Releasing the scripts for trajectory generation. 
+* **2024/12/25** The preview verison of VLABench has been released! The preview version showcases most of the designed tasks and structure, but the functionalities are still being managed and tested.
 
 ## Installation
 
@@ -96,8 +99,8 @@ The processed Lerobot dataset will be stored defaultly in your `HF_HOME/lerobot/
     - [x] Manage the automatic data workflow for existing tasks.
     - [x] Improve the DSL of skill libarary.
 - [x] Release the trejectory and evaluation scripts.
+- [x] Test the interface of humanoid and dual-arm manipulation.
 - [ ] Release the left few tasks not released in preview version.
-- [ ] Test the interface of humanoid and dual-arm manipulation.
 - [ ] Integrate the commonly used VLA models for facilitate replication. (Continously update)
 - [ ] Leaderboard of VLAs and VLMs in the standard evaluation 
     - [ ] Release standard evaluation datasets/episodes, in different dimension and difficulty level.
@@ -116,10 +119,11 @@ VLABench adopts a flexible modular framework for task construction, offering hig
 2. Import the new task class in `VLABench/tasks/hierarchical_tasks/__init__.py`. -->
 
 ## Evaluate
-I am currently updating the evaluation process, which includes making the tools more user-friendly, speeding up the entire evaluation workflow, and implementing a more comprehensive scoring system.
+I am currently updating the evaluation process, which includes making the tools more user-friendly, speeding up the entire evaluation workflow, and implementing a more comprehensive scoring system. 
 ```sh
-python scirpts/eval.py --n-sample 20 --model your_model_script
+python scirpts/evaluate_policy.py --n-sample 20 --model your_model_script
 ```
+Due to different project packaging methods for each model, we are initially providing the evaluation method for OpenVLA. Evaluation scripts for other models are currently being integrated.
 
 ## Citation
 ```bibtex
