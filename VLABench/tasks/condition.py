@@ -1,3 +1,4 @@
+import numpy as np
 from VLABench.utils.register import register
 from VLABench.utils.utils import distance
 from VLABench.tasks.components.entity import Entity
@@ -8,6 +9,9 @@ class Condition:
     
     def is_met(self, physics=None):
         raise NotImplementedError()
+    
+    def met_progress(self, physics=None):
+        return self.is_met(physics)
 
 @register.add_condition("order")
 class OrderCondition(Condition):
@@ -59,6 +63,10 @@ class ContainCondition(Condition):
                 return False
         return True
 
+    def met_progress(self, physics=None):
+        # TODO: return the progress of the condition
+        return super().met_progress(physics)
+    
 @register.add_condition("not_contain")
 class NotContainCondition(Condition):
     """
@@ -80,6 +88,10 @@ class NotContainCondition(Condition):
             if self.container.contain(point, physics):
                 return False
         return True
+    
+    def met_progress(self, physics=None):
+        # TODO: return the progress of the condition
+        return super().met_progress(physics)
 
 @register.add_condition("is_grasped")
 class IsGraspedCondition(Condition):
@@ -291,8 +303,10 @@ class ConditionSet:
     def __init__(self, conditions):
         self.conditions = conditions
     
+    def __len__(self):
+        return len(self.conditions)
+    
     def is_met(self, physics=None):
-        # TODO: return the subcondition that is already met
         conditions_are_met = [condition.is_met(physics) for condition in self.conditions]
         return all(conditions_are_met)
     
@@ -331,6 +345,14 @@ class AsynSequenceCondition(Condition):
                     self.condition_has_been_met[i] = True
         if all(self.condition_has_been_met): return True
         else: return False
+    
+    def met_progress(self, physics=None):
+        met_scores = []
+        # subcontion_num = 0
+        for condition_set in self.condition_sets:
+            progress_score, _ = condition_set.met_progress(physics)
+            met_scores.append(progress_score)
+        return np.mean(met_scores), None
 
 @register.add_condition("or")
 class OrCondition(Condition):

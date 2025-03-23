@@ -58,7 +58,11 @@ def create_lerobot_dataset_from_hdf5(args):
         image_writer_threads=10
     )
     
-    tasks = os.listdir(args.dataset_path)
+    if args.task_list is None:
+        tasks = os.listdir(args.dataset_path)
+    else:
+        tasks = args.task_list
+    print("Task to process:", tasks)
     h5py_files = list()
     for task in tasks:
         h5py_files.extend(get_all_hdf5_files(os.path.join(args.dataset_path, task))[:args.max_files])
@@ -96,7 +100,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Create a LeRobot dataset")
     parser.add_argument("--dataset-name", type=str, default="test", help="Name of the dataset")
     parser.add_argument("--dataset-path", type=str, default="/media/shiduo/LENOVO_USB_HDD/dataset/VLABench/select_billiards", help="Path to the dataset")
-    parser.add_argument("--max-files", type=int, default=100, help="Maximum number of files to process")
+    parser.add_argument("--max-files", type=int, default=500, help="Maximum number of files to process")
+    parser.add_argument("--task-list", type=str, nargs="+", default=None, help="List of tasks to process")
     args = parser.parse_args()
 
     create_lerobot_dataset_from_hdf5(args)

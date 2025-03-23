@@ -56,7 +56,6 @@ class LM4ManipBaseTask(composer.Task):
         self._task_observables = {}
         
         self.control_timestep = self.physics_timestep * NUM_SUBSTEPS
-        # FIXME fix the loading way
         config = kwargs.get("config", None) 
         self.entities = dict()
         self.distractors = dict()
@@ -120,6 +119,7 @@ class LM4ManipBaseTask(composer.Task):
     
     def initialize_episode(self, physics, random_state):
         self.reset_intention_distance()
+        self.reset_task_progress()
         # grid sampling
         if self.ngrid is not None and self.random_init:
             entities_to_random = [key for key in self.entities.keys() if key not in self.random_ignored_entities]
@@ -143,6 +143,7 @@ class LM4ManipBaseTask(composer.Task):
     def after_step(self, physics, random_state):
         physics.data.ctrl[:] = 0
         self.update_intention_distance(physics)
+        self.update_task_progress(physics)
     
     def after_substep(self, physics, random_state):
         pass
@@ -176,6 +177,9 @@ class LM4ManipBaseTask(composer.Task):
             for key in ["scene", "components", "instructions", "conditions"]:
                 if key in deterministic_config["task"].keys():
                     self.config["task"][key] = deterministic_config["task"][key]
+            for key in ["target_entity", "target_container", "target_entities"]:
+                if key in deterministic_config["task"].keys() and hasattr(self.config_manager, key):
+                    setattr(self.config_manager, key, deterministic_config["task"][key])
         # load engine config
         self.set_engine_config(self.config["engine"])
         # load scene and entities
@@ -348,23 +352,44 @@ class LM4ManipBaseTask(composer.Task):
                 entity_names.remove(ignore_entity)
         for entity_name in entity_names: 
             self.intention_distance[entity_name] = np.inf
-    
+            
+    def reset_task_progress(self):
+        self.target_is_grasped = dict()
+        if isinstance(self.target_entity, str):
+            self.target_is_grasped[self.target_entity] = False
+        elif isinstance(self.target_entity, list):
+            for entity in self.target_entity:
+                self.target_is_grasped[entity] = False
+        
     def update_intention_distance(self, physics):
         ee_pos = self.robot.get_end_effector_pos(physics)
         for key, entity in self.entities.items():
             if key in self.random_ignored_entities: continue
             self.intention_distance[key] = min(self.intention_distance[key], distance(ee_pos, entity.get_xpos(physics)))
     
+    def update_task_progress(self, physics):
+        if isinstance(self.target_entity, list):
+            for entity in self.target_entity:
+                if self.entities[entity].is_grasped(physics, self.robot):
+                    self.target_is_grasped[entity] = True
+        else:
+            if self.entities[self.target_entity].is_grasped(physics, self.robot):
+                self.target_is_grasped[self.target_entity] = True
+        
     def get_intention_score(self, physics, threshold=0.2, discrete=True):
+        if isinstance(self.target_entity, list):
+            return self.get_intention_score_to_entity(physics, self.target_entity[-1], threshold, discrete)
         return self.get_intention_score_to_entity(physics, self.target_entity, threshold, discrete)
     
     def get_task_progress(self, physics):
-        """
-        Get the progress percentage of the task
-        """
-        if self.conditions is not None:
-            return self.conditions.met_progress(physics)
-        raise NotImplementedError(f"Task:{self.task_name} did not implement get_task_progress method")
+        # FIXME: temporary solution: in primitive tasks, a successful pick often occupies half of the task progress
+        _, conditions_met = self.conditions.met_progress(physics)
+        n_condition = len(self.conditions)
+        n_condition += len(self.target_is_grasped)
+        target_entity_met = []
+        for value in self.target_is_grasped.values():
+            if value: target_entity_met.append(value)
+        return (len(conditions_met) + len(target_entity_met)) / n_condition
     
     def get_intention_score_to_entity(self, physics, entity_name, threshold=0.2, discrete=False):
         """
@@ -422,6 +447,9 @@ class LM4ManipBaseTask(composer.Task):
         data_to_dump["task"]["scene"] = self.scene.save(physics)
         data_to_dump["task"]["instructions"] = self.instructions
         data_to_dump["task"]["conditions"] = self.config["task"].get("conditions", None)
+        for key in ["target_entity", "target_container", "target_entities"]:
+            if hasattr(self.config_manager, key):
+                data_to_dump["task"][key] = getattr(self.config_manager, key)
         return data_to_dump
     
 class PressButtonTask(LM4ManipBaseTask):
@@ -448,6 +476,20 @@ class PressButtonTask(LM4ManipBaseTask):
             partial(SkillLib.press, target_pos=target_button_pos)
         ]
         return skill_sequence
+
+    def reset_task_progress(self):
+        pass
+    
+    def update_task_progress(self, physics):
+        pass
+    
+    def get_task_progress(self, physics):
+        return self.conditions.is_met(physics)
+    
+    def get_intention_score(self, physics, threshold=0.2, discrete=True):
+        target_button = self.conditions.conditions[0].button._mjcf_model.model
+        return self.get_intention_score_to_entity(physics, target_button, threshold, discrete)
+        
 
 class ClusterTask(LM4ManipBaseTask):
     def __init__(self, task_name, robot, random_init=False, **kwargs):
@@ -492,7 +534,7 @@ class ClusterTask(LM4ManipBaseTask):
         for index, (cluster_entities, container) in enumerate(zip([cluster_entities_1, cluster_entities_2], [container_1, container_2])):
             for i, entity in enumerate(cluster_entities):
                 skill_sequence.extend([
-                        partial(SkillLib.pick, target_entity_name=entity, prior_eulers=prior_eulers[task_name]),    
+                        partial(SkillLib.pick, target_entity_name=entity, prior_eulers=prior_eulers),    
                         partial(SkillLib.lift, gripper_state=np.zeros(2)),
                 ]) 
                 target_container = self.entities[container]
@@ -502,7 +544,13 @@ class ClusterTask(LM4ManipBaseTask):
                 if index == 1 and i == 1: # wait when last placing
                     skill_sequence.append(partial(SkillLib.wait))
         return skill_sequence
-                     
+    
+    def reset_task_progress(self):
+        raise NotImplementedError
+    
+    def update_task_progress(self, physics):
+        raise NotImplementedError
+    
 class SpatialMixin:
     """
     Base class for task focusing on assessing spatial perception and understanding.

@@ -77,6 +77,13 @@ class Robot(composer.Robot):
     def set_qpos(self, physics, qpos):
         assert len(qpos) == self.n_dof, "qpos must have the same length as n_dof"
         raise NotImplementedError
-
+    
+    def save(self, physics):
+        data_to_save = {
+            "name":self.name,
+            "position": physics.bind(self.link_base).xpos,
+            "euler": physics.bind(self.link_base).xquat,
+        }
+        return data_to_save
     
     

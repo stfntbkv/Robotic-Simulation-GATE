@@ -111,7 +111,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     # Define the save directories
-    builder_file = "VLABench/utils/rlds_builder.py"
+    builder_file = "VLABench/utils/multithread_rlds_builder.py"
     if args.task is None:
         tasks = os.listdir(args.save_dir)
         for task in tasks:

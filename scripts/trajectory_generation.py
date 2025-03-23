@@ -23,7 +23,7 @@ os.environ["MUJOCO_GL"] = "egl"
 
 def get_args():
     parser = argparse.ArgumentParser(description='Generate trajectory for a task')
-    parser.add_argument('--task-name', default="select_fruit", type=str, help='task name')
+    parser.add_argument('--task-name', default="select_poker", type=str, help='task name')
     parser.add_argument('--record-video', default=True, help='record video')
     parser.add_argument('--save-dir', default="/media/shiduo/LENOVO_USB_HDD/dataset/VLABench")
     parser.add_argument('--n-sample', default=1, type=int, help='number of samples to generate')
@@ -31,13 +31,22 @@ def get_args():
     parser.add_argument('--robot', default="franka", type=str, help='robot name')
     parser.add_argument('--debug', action="store_true", default=False, help='debug mode')
     parser.add_argument('--early-stop', action="store_true", default=False, help='whether use early stop when skill failed to carry out')
+    parser.add_argument('--max-episode', default=100, type=int, help='max episode number in the directory')
     args = parser.parse_args()
     return args
 
+def get_all_hdf5_files(directory):
+    hdf5_files = []
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            if file.endswith('.hdf5'):
+                hdf5_files.append(os.path.join(root, file))
+    return hdf5_files
 
 def generate_trajectory(args, index, logger):
     env = load_env(args.task_name, robot=args.robot)
     env.reset()
+    episode_config = env.save()
     
     # load key prior information and task specific variables
     target_entity = env.task.config_manager.target_entity   
@@ -92,7 +101,7 @@ def generate_trajectory(args, index, logger):
     data_to_save["trajectory"] = robot_frame_waypoints
     data_to_save["entities"] = meta_info["entities"]
     data_to_save["target_entity"] = meta_info["target_entity"]
-    data_to_save["episode_config"] = json.dumps(env.save())
+    data_to_save["episode_config"] = json.dumps(episode_config)
     data_to_save["instruction"] =meta_info["instruction"]
     save_single_data(data_to_save, 
                      save_dir=task_dir,
@@ -107,11 +116,12 @@ if __name__ == "__main__":
     for i in tqdm(range(args.n_sample)):
         i += args.start_id
         try:
+            h5_files = get_all_hdf5_files(os.path.join(args.save_dir, args.task_name))
+            if len(h5_files) >= args.max_episode:
+                logger.info(f"Task {args.task_name} has reached the maximum episode number, skip")
+                break
             generate_trajectory(args, i, logger)
         except Exception as e:
             err = traceback.TracebackException.from_exception(e)
             print("".join(err.format()))
             continue
-    # ===================================================================================
-    # BUG: mujoco render will not work after open3d visulization
-    # ===================================================================================
