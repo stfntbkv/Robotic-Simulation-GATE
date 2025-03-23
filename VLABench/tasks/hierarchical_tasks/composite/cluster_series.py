@@ -178,7 +178,7 @@ class ClusterBookTask(ClusterTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot, **kwargs)
     
-    def build_from_config(self, eval=False):
+    def build_from_config(self, eval=False, **kwargs):
         for key, entity in self.entities.items():
             if "shelf" in key:
                 entity.detach()
@@ -211,23 +211,38 @@ class ClusterBookTask(ClusterTask):
 class ClusterBilliardsTask(ClusterTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot, **kwargs)
+    
+    def get_expert_skill_sequence(self, physics, prior_eulers=[[-np.pi, 0, 0]]):
+        return super().get_expert_skill_sequence(physics, prior_eulers)
 
 @register.add_task("cluster_toy")
 class ClusterToyTask(ClusterTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot, **kwargs)
+        
+    def get_expert_skill_sequence(self, physics, prior_eulers=[[-np.pi, 0, np.pi]]):
+        return super().get_expert_skill_sequence(physics, prior_eulers)
 
 @register.add_task("cluster_dessert")
 class ClusterDessertTask(ClusterTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot, **kwargs)
+    
+    def get_expert_skill_sequence(self, physics, prior_eulers=[[-np.pi, 0, -np.pi/2]]):
+        return super().get_expert_skill_sequence(physics, prior_eulers)
 
 @register.add_task("cluster_drink")
 class ClusterDrinkTask(ClusterTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot, **kwargs)
+    
+    def get_expert_skill_sequence(self, physics, prior_eulers=[[-np.pi, 0, -np.pi/2]]):
+        return super().get_expert_skill_sequence(physics, prior_eulers)
 
 @register.add_task("cluster_ingredients")
 class ClusterIngredientsTask(ClusterTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot, **kwargs)
+    
+    def get_expert_skill_sequence(self, physics, prior_eulers=[[-np.pi, 0, -np.pi/2]]):
+        return super().get_expert_skill_sequence(physics, prior_eulers)

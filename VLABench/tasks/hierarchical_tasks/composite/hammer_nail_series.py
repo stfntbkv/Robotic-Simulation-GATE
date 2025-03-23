@@ -151,7 +151,7 @@ class HammerLooseNailTask(LM4ManipBaseTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
-    def build_from_config(self, eval=False):
+    def build_from_config(self, eval=False, **kwargs):
         super().build_from_config(eval, **kwargs)
         for key in list(self.entities.keys()):
             if "nail" in key:
@@ -164,7 +164,7 @@ class AssembleHammerTask(LM4ManipBaseTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
     
-    def build_from_config(self, eval=False):
+    def build_from_config(self, eval=False, **kwargs):
         super().build_from_config(eval, **kwargs)
         nail = self.entities["nail"]
         nail.detach() # delete the free joint of nail
@@ -195,7 +195,7 @@ class HammerNailandHangPictureTask(HangPictureTask):
         super().__init__(task_name, robot=robot, **kwargs)
     
     def get_expert_skill_sequence(self, physics):
-        nail_pos = np.array(self.entities[self.entities["nail"]].get_xpos(physics))
+        nail_pos = np.array(self.entities["nail"].get_xpos(physics))
         target_entity = f"{self.target_entity.lower()}_painting"
         grasppoint= np.array(self.entities[target_entity].get_grasped_keypoints(physics)[-1])
         skill_sequence = [
@@ -212,3 +212,9 @@ class HammerNailandHangPictureTask(HangPictureTask):
             partial(SkillLib.push, push_distance=0.1, target_quat=euler_to_quaternion(-np.pi/2, 0, 0), gripper_state=np.zeros(2))
         ]
         return skill_sequence
+    
+    def update_task_progress(self, physics):
+        pass
+    
+    def reset_task_progress(self):
+        pass

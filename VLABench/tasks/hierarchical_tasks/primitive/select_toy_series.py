@@ -80,7 +80,7 @@ class SelectToyTask(LM4ManipBaseTask):
             partial(SkillLib.place, target_container_name=self.target_container)
         ]
         return skill_sequence
-
+    
 @register.add_task("select_toy_spatial")
 class SelectToySpatialTask(SelectToyTask):
     def __init__(self, task_name, robot, **kwargs):

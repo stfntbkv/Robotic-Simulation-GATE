@@ -104,7 +104,7 @@ class FindUnseenObjectTask(LM4ManipBaseTask):
     def __init__(self, task_name, robot, random_init=False, **kwargs):
         super().__init__(task_name, robot=robot, random_init=random_init, **kwargs)
     
-    def build_from_config(self, eval=False):
+    def build_from_config(self, eval=False, **kwargs):
         super().build_from_config(eval, **kwargs)
         for key, entity in self.entities.items():
             if "cabinet" in key:

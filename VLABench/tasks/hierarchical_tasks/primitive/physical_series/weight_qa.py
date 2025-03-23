@@ -35,19 +35,19 @@ class WeightQAConfigManager(PhysicalQAConfigManager):
                         button_configs.append(config)
             # set geom_config
             self.geom_size_uni = random.uniform(0.02, 0.03)
-            print(f"mode_experiment:{self.mode_experiment}, target_index_weight:{self.target_index_weight}, order_geom_types:{self.order_geom_types}, target_material: {self.target_material}, self.target_button_id:{self.target_button_id}, target_geoms:{self.order_geom_types[self.target_button_id]}")
+            # print(f"mode_experiment:{self.mode_experiment}, target_index_weight:{self.target_index_weight}, order_geom_types:{self.order_geom_types}, target_material: {self.target_material}, self.target_button_id:{self.target_button_id}, target_geoms:{self.order_geom_types[self.target_button_id]}")
             for i, (button_config, geom_type) in enumerate(zip(button_configs, self.order_geom_types)):
-                print(f"{i}:geom:{geom_type}, material:{self.target_material}")
+                # print(f"{i}:geom:{geom_type}, material:{self.target_material}")
                 if i == self.target_button_id:
                     self.target_button = button_config["name"]
                     self.target_entity = f"{self.target_material}_{geom_type}"
-                    print(f"is_target:{i}, {geom_type}")
+                    # print(f"is_target:{i}, {geom_type}")
                 if geom_type == "box":
                     size = [self.geom_size_uni, self.geom_size_uni, self.geom_size_uni]
                 elif geom_type == "sphere":
-                    size = [(self.geom_size_uni)]
+                    size = [self.geom_size_uni]
                 elif geom_type == "cylinder":
-                    size = [(self.geom_size_uni), self.geom_size_uni]
+                    size = [self.geom_size_uni, self.geom_size_uni]
                 else:
                     raise ValueError("Random function is wrong!")
                 geom_config = dict(
@@ -68,11 +68,11 @@ class WeightQAConfigManager(PhysicalQAConfigManager):
             if self.target_geom_type == "box":
                 size = [self.geom_size_uni, self.geom_size_uni, self.geom_size_uni]
             elif self.target_geom_type == "sphere":
-                size = [(self.geom_size_uni) / 2]
+                size = [self.geom_size_uni / 2]
             elif self.target_geom_type == "cylinder":
-                size = [(self.geom_size_uni) / 2, self.geom_size_uni]
+                size = [self.geom_size_uni / 2, self.geom_size_uni]
             elif self.target_geom_type == "capsule":
-                size = [(self.geom_size_uni) / 2, self.geom_size_uni]
+                size = [self.geom_size_uni / 2, self.geom_size_uni]
             else:
                 raise ValueError("Random function is wrong!")
             # random materials
@@ -154,3 +154,8 @@ class WeightQAConfigManager(PhysicalQAConfigManager):
             density_order[material] = DENSITY_ORDER.index(material)
         density_order = dict(sorted(density_order.items(), key=lambda item: item[1]))
         return density_order
+
+@register.add_task("weight_qa")
+class WeightQATask(PressButtonTask):
+    def __init__(self, task_name, robot, **kwargs):
+        super().__init__(task_name, robot, **kwargs)

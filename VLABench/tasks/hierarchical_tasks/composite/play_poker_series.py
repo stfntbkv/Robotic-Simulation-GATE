@@ -98,8 +98,12 @@ class PokerPlayTask(LM4ManipBaseTask):
         return entity
     
     @property
+    def target_entity(self):
+        return list(self._target_entities.keys())
+    
+    @property
     def target_entities(self):
-        return self._target_entities
+        return list(self._target_entities.keys())
     
     def init_conditions(self):
         self._target_entities = dict()

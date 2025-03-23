@@ -58,7 +58,7 @@ class MathGameConfigManager(BenchTaskConfigManager):
                                 farthest_sample=False)
         random.shuffle(objects)
         for object, pos in zip(objects, positions):
-            pos = [pos[0], pos[1], 0.83]
+            pos = [pos[0], pos[1], 0.78]
             object_config = dict(
                 name=f"{object}",
                 number=object,
@@ -100,3 +100,13 @@ class MathGameTask(LM4ManipBaseTask):
                 partial(SkillLib.place, target_container_name=self.target_container, target_pos=target_pos),
             ])
         return skill_sequence
+    
+    def get_intention_score(self, physics, threshold=0.2, discrete=True):
+        intention_scores = []
+        if isinstance(self.target_entity, list):
+            for entity in self.target_entity:
+                intention_scores.append(self.get_intention_score_to_entity(physics, entity, threshold, discrete))
+        return np.mean(intention_scores)
+    
+    def get_task_progress(self, physics):
+        return super().get_task_progress(physics)

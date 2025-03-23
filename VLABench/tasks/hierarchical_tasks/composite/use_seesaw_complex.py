@@ -1,62 +1,38 @@
 import random
 import numpy as np
 from VLABench.utils.register import register
-from VLABench.tasks.config_manager import BenchTaskConfigManager
-from VLABench.tasks.dm_task import LM4ManipBaseTask
+from VLABench.tasks.hierarchical_tasks.primitive import SimpleSeesawUseTask, UseSeeSawSimpleConfigManager
 from VLABench.tasks.components import RandomGeom
 
 @register.add_config_manager("complex_seesaw_use")
-class UseSeeSawComplexConfigManager(BenchTaskConfigManager):
+class UseSeeSawComplexConfigManager(UseSeeSawSimpleConfigManager):
     def __init__(self,
                  task_name,
                  num_objects=[2, 3],
                  **kwargs):
         super().__init__(task_name, num_objects, **kwargs)
-    
-    def get_task_config(self, target_entity, target_container, init_container, **kwargs):
-        self.target_entity, self.target_container, self.init_container = target_entity, "seesaw", init_container
-        target_subentity = self.load_objects(target_entity)
-        self.load_init_containers(target_subentity)
-        self.get_instruction(target_entity)
-        self.get_condition_config(target_entity)
-        return self.config
-    
-    def load_init_containers(self, subentity, **kwargs):
-        seesaw_machine = self.get_entity_config("seesaw", 
-                                        position=[random.uniform(-0.2, -0.1), 0.2, 0.8])
-        
-        seesaw_machine["subentities"] = [subentity]
-        self.config["task"]["components"].append(seesaw_machine)
-    
-    def load_objects(self, target_entity):
-        target_entity = self.get_entity_config(target_entity,
-                                               position=[0.0, 0, 0.15],
-                                               randomness=None)
-        # load boxes as weights
-        for i in range(self.num_object):
-            weight_config = dict(
-                name=f"weight_{i}",
-                gemo_type="box",
-                position=[(i-2)*random.uniform(0.1, 0.15), random.uniform(-0.1, 0.1), 0.8],
-            )
-            weight_config["class"] = RandomGeom
-            self.config["task"]["components"].append(weight_config)
-        return target_entity
-    
-    def get_instruction(self, target_entity, **kwargs):
-        instruction = [f"Get the {target_entity} out of container"]
-        self.config["task"]["instructions"] = instruction
-    
-    def get_condition_config(self, target_entity, **kwargs):
-        condition_config = dict(
-            is_grasped=dict(
-                entities=[f"{target_entity}"],
-                robot="franka"
-            )
-        )
-        self.config["task"]["conditions"] = condition_config
 
 @register.add_task("complex_seesaw_use")
-class UseSeesawComplexTask(LM4ManipBaseTask):
+class UseSeesawComplexTask(SimpleSeesawUseTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
+    
+    def initialize_episode(self, physics, random_state):
+        """
+        Apply a weight to the target entity
+        """
+        res = super().initialize_episode(physics, random_state)
+        weight_entities = [self.entities[name] for name in self.entities if "weight" in name]
+        weight_masses = []
+        for weight_entity in weight_entities:
+            weight_masses.append(physics.bind(weight_entity.mjcf_model.worldbody).mass)
+        min_weight = np.min(weight_masses)
+        sum_weight = np.sum(weight_masses)
+        new_mass = random.uniform(min_weight, sum_weight)
+        
+        target_entity_instance = self.entities[self.target_entity]
+        bodies_of_target_entities = target_entity_instance.mjcf_model.find_all("body")
+        n_bodies = len(bodies_of_target_entities)
+        for body in bodies_of_target_entities:
+            physics.bind(body).mass = new_mass / n_bodies
+        return res

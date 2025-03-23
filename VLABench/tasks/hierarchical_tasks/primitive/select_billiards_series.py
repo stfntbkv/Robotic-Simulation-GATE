@@ -25,8 +25,10 @@ class SelectBilliardsConfigManager(BenchTaskConfigManager):
     def __init__(self, 
                  task_name,
                  num_objects=[4, 5],
+                 seen_object=BILLIARDS[::2], 
+                 unseen_object=BILLIARDS[1::2],
                  **kwargs):
-        super().__init__(task_name, num_objects, seen_object=BILLIARDS[::2], unseen_object=BILLIARDS[1::2], **kwargs)
+        super().__init__(task_name, num_objects, seen_object=seen_object, unseen_object=unseen_object,  **kwargs)
     
     def load_containers(self, **kwargs):
         billiards_table = self.get_entity_config("billiards_table",
