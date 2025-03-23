@@ -135,13 +135,20 @@ class NumberCube(CommonGraspedEntity):
     def _build(self, number="zero", **kwargs):
         super()._build(**kwargs)
         if isinstance(number, int) or number.isdigit():
-            number = self.digit2str[str(number)]
+            self.number = self.digit2str[str(number)]
+        else:
+            self.number = number
         body = self.mjcf_model.worldbody.find("body", "body")
-        body.add("geom", mesh="cube", dclass="visual", material=number)
+        body.add("geom", mesh="cube", dclass="visual", material=self.number)
         body.add("geom", mesh="cube", dclass="collision")
+    
+    def save(self, physics):
+        data_to_save = super().save(physics)
+        data_to_save["number"] = self.number
+        return data_to_save
 
 @register.add_entity("Painting")
-class Painting(FlatContainer):
+class Painting(FlatContainer, CommonGraspedEntity):
     """
     Painting is a special class in VLABench. 
     On the one hand, it is a container to place something; 
@@ -166,7 +173,8 @@ class Painting(FlatContainer):
                     texture_file = specific_painting + ".png"
                     style = subdir
                     break
-        
+        self.style = style
+        self.specific_painting = specific_painting
         super()._build(**kwargs) 
         self.mjcf_model.asset.add("texture", name=f"{style.lower()}", file=os.path.join(self.painting_root, style, texture_file), type="2d")    
         self.mjcf_model.asset.add("material", name=f"{style.lower()}", texture=f"{style.lower()}")
@@ -187,6 +195,12 @@ class Painting(FlatContainer):
         if len(grasp_keypoints) == 0:
             grasp_keypoints.append(self.get_xpos(physics)) 
         return grasp_keypoints
+
+    def save(self, physics):
+        data_to_save = super().save(physics)
+        data_to_save["style"] = self.style
+        data_to_save["specific_painting"] = self.specific_painting
+        return data_to_save
 
 @register.add_entity("Poker")
 class Poker(CommonGraspedEntity):

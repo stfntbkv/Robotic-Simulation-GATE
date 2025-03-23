@@ -59,11 +59,18 @@ class Stove(FlatContainer):
         "zline_gas":[0.425, 0.29, 0]
     }
     def _build(self, name="stove", **kwargs):
-        for key, offset in self.offset.items():
-            if key in kwargs.get("xml_path"):
-                kwargs["position"][0] -= offset[0]
-                break
+        # if the stove is initialized from no config file, compute the offset
+        if kwargs.get("has_offset", None) is None:
+            for key, offset in self.offset.items():
+                if key in kwargs.get("xml_path"):
+                    kwargs["position"][0] -= offset[0]
+                    break
         super()._build(name=name, **kwargs)
+    
+    def save(self, physics):
+        data_to_save = super().save(physics)
+        data_to_save["has_offset"] = True
+        return data_to_save
 
 @register.add_entity("BilliardTable")
 class BilliardTable(Table):

@@ -240,3 +240,14 @@ class ContainerWithDrawer(CommonContainer):
         grasp_keypoints = []
         grasp_keypoints.extend([physics.bind(site).xpos for site in grasp_sites])
         return grasp_keypoints
+    
+    def is_grasped(self, physics, robot):
+        gripper_geoms = robot.gripper_geoms
+        gripper_geom_ids = [physics.bind(geom).element_id for geom in gripper_geoms]
+        entity_geom_ids = [physics.bind(geom).element_id for geom in self.geoms]
+        contacts = physics.data.contact
+        for contact in contacts:
+            if (contact.geom1 in gripper_geom_ids and contact.geom2 in entity_geom_ids) or \
+                (contact.geom2 in gripper_geom_ids and contact.geom1 in entity_geom_ids):
+                return True
+        return False

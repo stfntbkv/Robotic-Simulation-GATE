@@ -66,7 +66,7 @@ class Entity(composer.Entity):
             if self.randomness.get("scale", None) is not None:
                 # modify the scale of the mesh, size and relative pos of geom
                 self.set_scale(physics, self.randomness.get("scale"))
-            if self.randomness.get("texture", None) is not None:
+            if self.randomness.get("texture", None) is not None and self.randomness.get("texture") != False:
                 # modify the texture of the mesh
                 self.set_texture(physics, self.randomness.get("texture"))
         self.set_pose(physics, new_xpos, new_xquat)

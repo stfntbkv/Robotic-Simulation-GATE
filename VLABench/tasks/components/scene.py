@@ -9,11 +9,14 @@ from VLABench.utils.utils import euler_to_quaternion, quaternion_multiply, rotat
 FLOOR_TEXTURE = [f"floor{i}" for i in range(13)]
 
 class Scene(composer.Entity):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, use_default_scene=True, *args, **kwargs):
         self.scene_asset_root = os.path.join(os.getenv("VLABENCH_ROOT"), "assets/scenes")
+        self.use_default_scene = use_default_scene
         super().__init__(*args, **kwargs)
         
     def _build(self, *args, **kwargs):
+        if self.use_default_scene:
+            return self.build_default_scene()
         scene_name = kwargs.get("name", None)
         with open(os.path.join(os.getenv("VLABENCH_ROOT"), "configs/scene_config.json"), "r") as f:
             all_scene_config = json.load(f)
@@ -92,3 +95,11 @@ class Scene(composer.Entity):
             floor_textures=[self.mjcf_model.find("geom", "floor").material.name]
         )
         return info_to_save
+    
+    def build_default_scene(self):
+        self._mjcf_model = mjcf.from_path(os.path.join(self.scene_asset_root, "default/empty.xml"))
+        self._mjcf_model.model = "default"
+        self.init_pos = [0, 0, 0]
+        self.init_quat = [1, 0, 0, 0]
+        self.randomness = None
+        self.candidate_pos = None
