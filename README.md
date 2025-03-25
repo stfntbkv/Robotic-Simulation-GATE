@@ -29,6 +29,13 @@ pip install -e .
 ```sh
 python script/download_assetes.py
 ```
+
+3. (Option) Initialize submodules
+```sh
+git submodule update --init --recursive
+```
+This will update other policies repos such openpi.
+
 The script will automatically download the necessary assets and unzip them into the correct directory.
 
 ### Issues with octo
@@ -119,11 +126,20 @@ VLABench adopts a flexible modular framework for task construction, offering hig
 2. Import the new task class in `VLABench/tasks/hierarchical_tasks/__init__.py`. -->
 
 ## Evaluate
-I am currently updating the evaluation process, which includes making the tools more user-friendly, speeding up the entire evaluation workflow, and implementing a more comprehensive scoring system. 
+Due to different project packaging methods for each model, we are initially providing the evaluation method for OpenVLA. Evaluation scripts for other models are currently being integrated by git submodules.
+
+1. Evaluate OpenVLA
+Before evaluate your finetuned OpenVLA, please compute the norm_stat on your dataset and place it to `VLABench/configs/model/openvla_config.json`
+
+Run the evaluation scripts by
 ```sh
-python scirpts/evaluate_policy.py --n-sample 20 --model your_model_script
+python scirpts/evaluate_policy.py --n-sample 20 --model openvla --model_ckpt xx --loar_ckpt xx
 ```
-Due to different project packaging methods for each model, we are initially providing the evaluation method for OpenVLA. Evaluation scripts for other models are currently being integrated.
+
+2. Evaluate Openpi
+Please use `git submodule update --init --recursive` to ensure that you have correctly installed the repositories for the other models.
+
+For openpi, you should create a virtual env with `uv` and run the server policy. Then, you can evaluate the finetuned openpi on VLABench. Please refer [here](third_party/openpi/examples/vlabench/README.md) for example.
 
 ## Citation
 ```bibtex
