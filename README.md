@@ -1,13 +1,13 @@
-# VLABench: A Large-Scale Benchmark for Language-Conditioned Robotics Manipulation with Long-Horizon Reasoning Tasks (Early Preview-Version!)
+# VLABench: A Large-Scale Benchmark for Language-Conditioned Robotics Manipulation with Long-Horizon Reasoning Tasks
 
-<span style="font-size:16px"> 🚨 <span style="color:#AB4459;">**NOTICE:**</span> 🎁 The early preview version is released on my birthday (12.25) as a gift for myself🎄! Most codes are still under management or even reconstruction for a more robust and user-friendly version.（Sorry, I’ve been so busy these days). The Complete Version will be open-sourced around the Chinese Lunar New Year🧧! </br> <span style="font-size:14px;font-style: italic;">I don’t like the phrase "code coming soon"; it often feels like I’ll never actually see the code on GitHub, which can be quite frustrating. So this early version is my promise.</span></span>
+<!-- <span style="font-size:16px"> 🚨 <span style="color:#AB4459;">**NOTICE:**</span> 🎁 The early preview version is released on my birthday (12.25) as a gift for myself🎄! Most codes are still under management or even reconstruction for a more robust and user-friendly version.（Sorry, I’ve been so busy these days). The Complete Version will be open-sourced around the Chinese Lunar New Year🧧! </br> <span style="font-size:14px;font-style: italic;">I don’t like the phrase "code coming soon"; it often feels like I’ll never actually see the code on GitHub, which can be quite frustrating. So this early version is my promise.</span></span> -->
 
-###  🎓 [**Paper**](docs/pdf/paper.pdf) |  🌐 [**Project Website**](https://vlabench.github.io/) ｜ 🤗 [**Hugging Face**](https://huggingface.co/datasets/VLABench/eval_vlm_v0)
+###  🎓 [**Paper**](docs/pdf/paper.pdf) |  🌐 [**Project Website**](https://vlabench.github.io/) ｜ 🤗 [**Hugging Face**](https://huggingface.co/datasets/VLABench/)
 <img src="docs/images/Figure1_overview.png" width="100%" />
 
 
 ## News
-<!-- * **2025/3/20** Releasing standard evaluation dataset and leaderboard. -->
+* **2025/3/25** Releasing standard evaluation episodes and primitive task finetune dataset.
 * **2025/2/26** Releasing referenced evaluation pipeline. 
 * **2025/2/14** Releasing the scripts for trajectory generation. 
 * **2024/12/25** The preview verison of VLABench has been released! The preview version showcases most of the designed tasks and structure, but the functionalities are still being managed and tested.
@@ -37,37 +37,6 @@ git submodule update --init --recursive
 This will update other policies repos such openpi.
 
 The script will automatically download the necessary assets and unzip them into the correct directory.
-
-### Issues with octo
-Some experiences to create octo evaluation env:
-```sh
-    conda env remove -n octo
-    conda create -n octo python=3.10
-    conda activate octo
-    pip install -e .
-    pip install "jax[cuda12_pip]==0.4.20" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html flax==0.7.5 
-    pip install tensorflow==2.15.0 pip install dlimp@git+https://github.com/kvablack/dlimp@5edaa4691567873d495633f2708982b42edf1972 
-    pip install distrax==0.1.5 
-    pip install tensorflow_probability==0.23.0 
-    pip install scipy==1.12.0 
-    pip install einops==0.6.1
-    pip install transformers==4.34.1 
-    pip install ml_collections==0.1.0 
-    pip install wandb==0.12.14 
-    pip install matplotlib 
-    pip install gym==0.26 
-    pip install plotly==5.16.1
-    pip install orbax-checkpoint==0.4.0
-```
-Note: Line 5 "cuda12_pip" may be replaced by other proper version according to your machine. Refer to  [jax installation](https://jax.readthedocs.io/en/latest/installation.html#nvidia-gpu).
-
-Make sure jax version=0.4.20 and flax version=0.7.5
-
-    pip show jax flax jaxlib
-
-Run this to verify installation successful
-
-    python -c "from octo.model.octo_model import OctoModel; model = OctoModel.load_pretrained('hf://rail-berkeley/octo-base-1.5'); print('Model loaded successfully')"
 
 ## Data Collection
 ### Run scripts to generate hdf5 dataset with multi-processing
@@ -108,10 +77,10 @@ The processed Lerobot dataset will be stored defaultly in your `HF_HOME/lerobot/
 - [x] Release the trejectory and evaluation scripts.
 - [x] Test the interface of humanoid and dual-arm manipulation.
 - [ ] Release the left few tasks not released in preview version.
-- [ ] Integrate the commonly used VLA models for facilitate replication. (Continously update)
 - [ ] Leaderboard of VLAs and VLMs in the standard evaluation 
-    - [ ] Release standard evaluation datasets/episodes, in different dimension and difficulty level.
-    - [ ] Release standard finetune dataset.
+    - [x] Release standard evaluation datasets/episodes, in different dimension and difficulty level.
+    - [x] Release standard finetune dataset.
+    - [ ] Integrate the commonly used VLA models for facilitate replication. (Continously update)
 
 ## Expandation 
 VLABench adopts a flexible modular framework for task construction, offering high adaptability. You can follow the process outlined in [tutorial 6](tutorials/6.expandation.ipynb).
@@ -126,20 +95,38 @@ VLABench adopts a flexible modular framework for task construction, offering hig
 2. Import the new task class in `VLABench/tasks/hierarchical_tasks/__init__.py`. -->
 
 ## Evaluate
-Due to different project packaging methods for each model, we are initially providing the evaluation method for OpenVLA. Evaluation scripts for other models are currently being integrated by git submodules.
+VLABench currently provides standard benchmark datasets, focusing on generalization across multiple dimensions. In the [VLABench/configs/evaluation/tracks](./VLABench/configs/evaluation/tracks) directory, we have set up multiple benchmark sets across different dimensions. These configs ensure that different models can be fairly compared under the same episodes on different machines.
+
+| Track | Descrition |
+|----------|----------|
+| track_1_in_distribution | Evaluation of the policy's task learning ability, requiring it to fit in-domain episodes with a small and diverse set of data. |
+| track_2_cross_categroy | Evaluation of the policy's generalization ability at the object **category level** & **instance level**, requiring visual generalization capability. |
+| track_3_common_sense | Evaluation of the policy's application of common sense, requiring the use of common sense understanding for describing the target. |
+| track_4_semantic_instruction | Evaluation of the policy's ability to understand complex semantics involves instructions that are rich in contextual or semantic information. |
+| track_5_cross_task | Evaluation of the policy's ability to transfer skills across tasks is **kept open** in this setting, allowing users to choose training tasks and evaluation tasks according to their needs. |
+| track_6_unseen_texture | Evaluation of the policy's visual robustness, involving episodes with different backgrounds and table textures in this setting. |
+
+**NOTICE:** The evaluation can also be done by directly sampling episodes from the environment. This evaluation method is more flexible, but there is a risk of improperly initialized episodes. We recommend using the 'evaluation_tracks' method for evaluation.
 
 1. Evaluate OpenVLA
+
 Before evaluate your finetuned OpenVLA, please compute the norm_stat on your dataset and place it to `VLABench/configs/model/openvla_config.json`
 
 Run the evaluation scripts by
 ```sh
-python scirpts/evaluate_policy.py --n-sample 20 --model openvla --model_ckpt xx --loar_ckpt xx
+python scirpts/evaluate_policy.py --n-sample 20 --model openvla --model_ckpt xx --loar_ckpt xx --eval_track track_1_in_distribution --tasks task1, task2 ...
 ```
 
 2. Evaluate Openpi
+
 Please use `git submodule update --init --recursive` to ensure that you have correctly installed the repositories for the other models.
 
 For openpi, you should create a virtual env with `uv` and run the server policy. Then, you can evaluate the finetuned openpi on VLABench. Please refer [here](third_party/openpi/examples/vlabench/README.md) for example.
+
+3. Continously integrate more policies...
+
+## Issues
+When you encounter an issue, you can first refer to the [document](./docs/issues.md). Feel free to open a new issue if needed.
 
 ## Citation
 ```bibtex

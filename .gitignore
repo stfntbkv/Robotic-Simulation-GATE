@@ -174,7 +174,7 @@ VLABench/evaluateVLM/dataset/
 
 scripts/paper_scripts
 
-*sh
+# *sh
 *csv
 
 dataset
