@@ -17,6 +17,7 @@ class Evaluator:
                  metrics=["success_rate"],
                  save_dir=None,
                  visulization=False,
+                 eval_unseen=False,
                  **kwargs
                  ):
         """
@@ -29,6 +30,7 @@ class Evaluator:
             metrics: list of metrics to evaluate
             save_dir: directory to save the evaluation results
             visulization: whether to visualize the evaluation progress as videos
+            eval_unseen: whether to evaluate the unseen object categories
         """
         if isinstance(episode_config, str):
             with open(episode_config, "r") as f:
@@ -37,13 +39,16 @@ class Evaluator:
         if self.episode_config is None:
             print("Load the task episodes by seeds, instead of episodes")
         else:
-            assert len(self.episode_config) >= len(n_episodes), "The number of episodes should be less than the number of configurations"
+            for task in tasks:
+                assert len(self.episode_config[task]) >= n_episodes, "The number of episodes should be less than the number of configurations"
         self.eval_tasks = tasks
         self.n_episodes = n_episodes 
         
         self.max_substeps = max_substeps
         self.tolerance = tolerance
         self.target_metrics = metrics
+        self.intention_score_threshold = kwargs.get("intention_score_threshold", 0.1)
+        self.eval_unseen = eval_unseen
         
         # log, store and visualization
         self.save_dir = save_dir
@@ -59,21 +64,32 @@ class Evaluator:
         for task in self.eval_tasks:
             task_infos = []
             for i in tqdm(range(self.n_episodes), desc=f"Evaluating {task} of {agent.name}"):
+                agent.reset()
                 kwargs = {
                     "unnorm_key": task
                 }
+                
                 if self.episode_config is None: 
                     info = self.evaluate_single_episode(agent, task, i, None, seed=42+i, **kwargs)
                 else: 
-                    info = self.evaluate_single_episode(agent, task, i, self.episode_config[i], **kwargs)
+                    info = self.evaluate_single_episode(agent, task, i, self.episode_config[task][i], **kwargs)
                 task_infos.append(info)
+            
             metric_score = self.compute_metric(task_infos)       
             metrics[task] = metric_score
             
-        if self.save_dir is not None:
-            os.makedirs(os.path.join(self.save_dir, agent.name))
-            with open(os.path.join(self.save_dir, agent.name, "metrics.json"), "w") as f:
-                json.dump(metrics, f)
+            if self.save_dir is not None:
+                os.makedirs(os.path.join(self.save_dir, agent.name), exist_ok=True)
+                if os.path.exists(os.path.join(self.save_dir, agent.name, "metrics.json")):
+                    with open(os.path.join(self.save_dir, agent.name, "metrics.json"), "r") as f:
+                        previous_metrics = json.load(f)
+                else:
+                    previous_metrics = {}
+                previous_metrics.update(metrics)
+                with open(os.path.join(self.save_dir, agent.name, "metrics.json"), "w") as f:
+                    json.dump(previous_metrics, f, indent=4)
+                with open(os.path.join(self.save_dir, agent.name, task, f"detail_info.json"), "w") as f:
+                    json.dump(task_infos, f, indent=4)
         return metrics
         
     def evaluate_single_episode(self, agent, task_name, episode_id, episode_config, seed=42, max_episode_length=200, **kwargs):
@@ -90,7 +106,10 @@ class Evaluator:
         if episode_config is None: # use random seed to ditermine the task
             np.random.seed(seed)
             random.seed(seed)
-        env = load_env(task_name, config=episode_config)
+        if episode_config is not None:
+            env = load_env(task_name, episode_config=episode_config, random_init=False, eval=self.eval_unseen)
+        else:
+            env = load_env(task_name, random_init=True, eval=self.eval_unseen)
         env.reset()
         success = False
         info = {}
@@ -124,7 +143,7 @@ class Evaluator:
         info["task"] = task_name
         info["success"] = success
         info["consumed_step"] = i
-        info["intention_score"] = env.get_intention_score()
+        info["intention_score"] = env.get_intention_score(threshold=self.intention_score_threshold)
         info["progress_score"] = env.get_task_progress()
         
         env.close()

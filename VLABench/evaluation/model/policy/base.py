@@ -4,6 +4,9 @@ from VLABench.utils.utils import quaternion_to_euler
 class Policy:
     def __init__(self, model):
         self.model = model
+        
+    def reset(self):
+        pass
     
     def predict(self, obs):
         """
