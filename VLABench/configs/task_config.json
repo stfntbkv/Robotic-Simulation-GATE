@@ -111,6 +111,11 @@
     },
     
     "add_condiment_series":{
+        "engine":{
+            "option":{
+                "impratio": 2
+            }
+        },
         "task":{
             "asset":{
                 "seen_object":["bbq_sauce", "ketchup", "salt"], 

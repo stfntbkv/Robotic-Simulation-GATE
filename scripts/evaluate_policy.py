@@ -10,29 +10,32 @@ os.environ["MUJOCO_GL"]= "egl"
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--tasks', nargs='+', default=["select_fruit"], help="Specific tasks to run, work when eval-track is None")
-    parser.add_argument('--eval-track', default=None, help="The evaluation track to run")
+    parser.add_argument('--tasks', nargs='+', default=None, help="Specific tasks to run, work when eval-track is None")
+    parser.add_argument('--eval-track', default=None, type=str, choices=["track_1_in_distribution", "track_2_cross_category", "track_3_common_sense", "track_4_semantic_instruction"], help="The evaluation track to run")
     parser.add_argument('--n-episode', default=1, type=int, help="The number of episodes to evaluate for a task")
     parser.add_argument('--policy', default="openvla", help="The policy to evaluate")
     parser.add_argument('--model_ckpt', default="/remote-home1/sdzhang/huggingface/openvla-7b", help="The base model checkpoint path")
     parser.add_argument('--lora_ckpt', default="/remote-home1/pjliu/openvla/weights/vlabench/select_fruit+CSv1+lora/", help="The lora checkpoint path")
     parser.add_argument('--save-dir', default="logs", help="The directory to save the evaluation results")
     parser.add_argument('--visulization', action="store_true", default=False, help="Whether to visualize the episodes")
-    parser.add_argument('--metric', nargs='+', default=["success_rate"], choices=["success_rate", "intention_score", "progress_score"], help="The metrics to evaluate")
+    parser.add_argument('--metrics', nargs='+', default=["success_rate"], choices=["success_rate", "intention_score", "progress_score"], help="The metrics to evaluate")
     args = parser.parse_args()
     return args
 
 def evaluate(args):
+    episode_config = None
     if args.eval_track is not None:
-        with open(os.path.join(os.getenv("VLABENCH_ROOT"), "configs/evaluation/tracks", args.eval_track), "r") as f:
-            tasks = json.load(f)
-    else:
+        with open(os.path.join(os.getenv("VLABENCH_ROOT"), "configs/evaluation/tracks", f"{args.eval_track}.json"), "r") as f:
+            episode_config = json.load(f)
+            tasks = list(episode_config.keys())
+    if args.tasks is not None:
         tasks = args.tasks
     assert isinstance(tasks, list)
 
     evaluator = Evaluator(
         tasks=tasks,
         n_episodes=args.n_episode,
+        episode_config=episode_config,
         max_substeps=10,   
         save_dir=args.save_dir,
         visulization=args.visulization,

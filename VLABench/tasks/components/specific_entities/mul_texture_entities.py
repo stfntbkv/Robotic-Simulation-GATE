@@ -163,6 +163,7 @@ class Painting(FlatContainer, CommonGraspedEntity):
         if style is not None and specific_painting is None: # style
             style = style if style is not None else random.choice(self.styles) 
             texture_file = random.choice(os.listdir(os.path.join(self.painting_root, style)))
+            specific_painting = texture_file.split(".png")[0]
             if kwargs.get("name", None) is None:
                 kwargs["name"] = f"{style.lower()}_painting"
         elif specific_painting is not None: # specific painting

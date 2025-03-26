@@ -87,6 +87,8 @@ class AddCondimentTask(LM4ManipBaseTask):
                 self._arena.attach(nametag)
             if "dishes" in key:
                 dishes = self.entities[key]
+                if kwargs.get("deterministic_config", None) is not None:
+                    dishes.init_pos = [0., 0.05, 0.01]
                 dishes.detach()
                 pan.attach(dishes)
     

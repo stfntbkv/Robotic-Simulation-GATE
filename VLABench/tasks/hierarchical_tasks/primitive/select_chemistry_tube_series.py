@@ -168,8 +168,9 @@ class SelectChemistryTubeTask(LM4ManipBaseTask):
         for key in list(self.entities.keys()):
             if "tag" in key:
                 nametag = self.entities[key]
-                nametag.detach()
-                nametag.parent_entity.attach(nametag)
+                if nametag.parent_entity is not None:
+                    nametag.detach()
+                    nametag.parent_entity.attach(nametag)
     
     def get_expert_skill_sequence(self, physics):
         skill_sequence = [

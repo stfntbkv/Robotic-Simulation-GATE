@@ -78,7 +78,7 @@ class Scene(composer.Entity):
         materials = self.mjcf_model.find_all("material")
         material_names = [material.name for material in materials]
         if new_material not in material_names:
-            self.mjcf_model.asset.add("texture", name=new_material, type="2d", file=os.path.join(self.scene_asset_root, "obj/assets/textures", f"{new_material}.png"))
+            self.mjcf_model.asset.add("texture", name=new_material, type="2d", file=os.path.join(self.scene_asset_root, "../obj/assets/textures", f"{new_material}.png"))
             self.mjcf_model.asset.add("material", name=new_material, texture=new_material, texrepeat="3 3")
         materials = self.mjcf_model.find_all("material")
         for material in materials:

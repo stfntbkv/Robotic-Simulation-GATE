@@ -95,7 +95,7 @@ class SelectNthLargestPokerConfigManager(SelectPokerConfigManager):
                 xml_path=name2class_xml["poker"][-1],
                 value=value,
                 suite=suite,
-                position=[0, 0, 0.05],
+                position=[0, 0, 0.1],
                 orientation=[0, np.pi/2, 0]
             )
             poker_config["class"] = Poker

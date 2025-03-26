@@ -32,6 +32,7 @@ def get_args():
     parser.add_argument('--debug', action="store_true", default=False, help='debug mode')
     parser.add_argument('--early-stop', action="store_true", default=False, help='whether use early stop when skill failed to carry out')
     parser.add_argument('--max-episode', default=100, type=int, help='max episode number in the directory')
+    parser.add_argument('--eval-unseen', default=False, action="store_true", help='evaluate unseen object categories')
     args = parser.parse_args()
     return args
 
@@ -44,7 +45,7 @@ def get_all_hdf5_files(directory):
     return hdf5_files
 
 def generate_trajectory(args, index, logger):
-    env = load_env(args.task_name, robot=args.robot)
+    env = load_env(args.task_name, robot=args.robot, eval=args.eval_unseen)
     env.reset()
     episode_config = env.save()
     
