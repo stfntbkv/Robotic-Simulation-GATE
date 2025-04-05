@@ -108,6 +108,7 @@ VLABench currently provides standard benchmark datasets, focusing on generalizat
 
 **NOTICE:** The evaluation can also be done by directly sampling episodes from the environment. This evaluation method is more flexible, but there is a risk of improperly initialized episodes. We recommend using the 'evaluation_tracks' method for evaluation.
 
+### VLA/policy evaluation
 1. Evaluate OpenVLA
 
 Before evaluate your finetuned OpenVLA, please compute the norm_stat on your dataset and place it to `VLABench/configs/model/openvla_config.json`
@@ -124,6 +125,26 @@ Please use `git submodule update --init --recursive` to ensure that you have cor
 For openpi, you should create a virtual env with `uv` and run the server policy. Then, you can evaluate the finetuned openpi on VLABench. Please refer [here](third_party/openpi/examples/vlabench/README.md) for example.
 
 3. Continously integrate more policies...
+
+### VLM evaluation
+
+Step 1. Download the evaluation episodes from HuggingFace
+```sh
+cd /root/of/VLABench
+mkdir dataset
+cd dataset
+
+git clone https://huggingface.co/datasets/VLABench/vlm_evaluation_v1.0
+```
+
+Step 2. Evaluation VLMs
+```sh
+python scripts/evaluate_vlm.py --vlm_name Qwen2_VL --few-shot-num 1 --with-cot
+```
+
+Currently, the repo supports serval VLM choices:["GPT_4v", "Qwen2_VL", "InternVL2", "MiniCPM_V2_6", "GLM4v", "Llava_NeXT"], and more VLMs (diffrent family and size) will be added.
+
+If you're evaluating GPT series, please set `OPENAI_API_KEY` and `OPENAI_BASE_URL` in your environment variables.
 
 ## Issues
 When you encounter an issue, you can first refer to the [document](./docs/issues.md). Feel free to open a new issue if needed.
