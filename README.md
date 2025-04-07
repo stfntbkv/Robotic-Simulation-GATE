@@ -2,7 +2,7 @@
 
 <!-- <span style="font-size:16px"> 🚨 <span style="color:#AB4459;">**NOTICE:**</span> 🎁 The early preview version is released on my birthday (12.25) as a gift for myself🎄! Most codes are still under management or even reconstruction for a more robust and user-friendly version.（Sorry, I’ve been so busy these days). The Complete Version will be open-sourced around the Chinese Lunar New Year🧧! </br> <span style="font-size:14px;font-style: italic;">I don’t like the phrase "code coming soon"; it often feels like I’ll never actually see the code on GitHub, which can be quite frustrating. So this early version is my promise.</span></span> -->
 
-###  🎓 [**Paper**](docs/pdf/paper.pdf) |  🌐 [**Project Website**](https://vlabench.github.io/) ｜ 🤗 [**Hugging Face**](https://huggingface.co/VLABench)
+###  🎓 [**Paper**](docs/pdf/paper.pdf) |  🌐 [**Project Website**](https://vlabench.github.io/) ｜ 🤗 [**Hugging Face**] (https://huggingface.co/VLABench) | [**Quick Start with Docker**](./QuickStart.md)
 <img src="docs/images/Figure1_overview.png" width="100%" />
 
 
@@ -97,14 +97,14 @@ VLABench adopts a flexible modular framework for task construction, offering hig
 ## Evaluate
 VLABench currently provides standard benchmark datasets, focusing on generalization across multiple dimensions. In the [VLABench/configs/evaluation/tracks](./VLABench/configs/evaluation/tracks) directory, we have set up multiple benchmark sets across different dimensions. These configs ensure that different models can be fairly compared under the same episodes on different machines.
 
-| Track | Descrition |
-|----------|----------|
-| track_1_in_distribution | Evaluation of the policy's task learning ability, requiring it to fit in-domain episodes with a small and diverse set of data. |
-| track_2_cross_categroy | Evaluation of the policy's generalization ability at the object **category level** & **instance level**, requiring visual generalization capability. |
-| track_3_common_sense | Evaluation of the policy's application of common sense, requiring the use of common sense understanding for describing the target. |
-| track_4_semantic_instruction | Evaluation of the policy's ability to understand complex semantics involves instructions that are rich in contextual or semantic information. |
-| track_5_cross_task | Evaluation of the policy's ability to transfer skills across tasks is **kept open** in this setting, allowing users to choose training tasks and evaluation tasks according to their needs. |
-| track_6_unseen_texture | Evaluation of the policy's visual robustness, involving episodes with different backgrounds and table textures in this setting. |
+| Track                        | Descrition                                                                                                                                                                                  |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| track_1_in_distribution      | Evaluation of the policy's task learning ability, requiring it to fit in-domain episodes with a small and diverse set of data.                                                              |
+| track_2_cross_categroy       | Evaluation of the policy's generalization ability at the object **category level** & **instance level**, requiring visual generalization capability.                                        |
+| track_3_common_sense         | Evaluation of the policy's application of common sense, requiring the use of common sense understanding for describing the target.                                                          |
+| track_4_semantic_instruction | Evaluation of the policy's ability to understand complex semantics involves instructions that are rich in contextual or semantic information.                                               |
+| track_5_cross_task           | Evaluation of the policy's ability to transfer skills across tasks is **kept open** in this setting, allowing users to choose training tasks and evaluation tasks according to their needs. |
+| track_6_unseen_texture       | Evaluation of the policy's visual robustness, involving episodes with different backgrounds and table textures in this setting.                                                             |
 
 **NOTICE:** The evaluation can also be done by directly sampling episodes from the environment. This evaluation method is more flexible, but there is a risk of improperly initialized episodes. We recommend using the 'evaluation_tracks' method for evaluation.
 
