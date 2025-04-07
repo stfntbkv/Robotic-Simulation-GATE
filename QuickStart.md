@@ -18,7 +18,7 @@ make
 >[!NOTE]
 >Check the `DISPLAY` environment variable with `echo $DISPLAY`, and make sure it's not empty. 
 
-```bash
+
 
 Download data assets
 
