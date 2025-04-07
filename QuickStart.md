@@ -13,7 +13,7 @@ bash setup_docker_for_host.sh
 make
 ```
 >[!NOTE]
->First time running `make` should take around 11 minutes, not including pulling public image. Basically it builds a private iamge on top of the public image, changing the ownership of the installed packages to the current user. 
+>First time running `make` should take around 11 minutes, not including pulling public image. Basically it builds a private image on top of the public image, changing the ownership of the installed packages to the current user. 
 
 >[!NOTE]
 >Check the `DISPLAY` environment variable with `echo $DISPLAY`, and make sure it's not empty. 
