@@ -180,3 +180,6 @@ scripts/paper_scripts
 dataset
 logs
 test
+
+ssh/
+gitconfig
