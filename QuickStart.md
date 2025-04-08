@@ -55,14 +55,17 @@ conda deactivate
 deactivate
 conda activate
 python lerobot/scripts/visualize_dataset.py --repo-id select_toy  --episode-index 0 
-# try choose another spisode # canbe `select_toy` or select `select_fruit` 
+# try choose another --episode-index to visualize different episode
+# --repo-id canbe `select_toy` or `select_fruit` 
 ```
 
 >[!NOTE]
 >Note that, you need a display connected to your host gpu, and set up the DISPLAY env variable. It could pose problem if you are using a remote server through ssh.
 
 
-launch the server and client in two different terminals. also you will need to download the checkpoint and put it in the right place.
+launch the server and client in two different terminals.
+>[!NOTE]
+>You will need to download the checkpoint and put it in the right place.
 
 running server:
 
