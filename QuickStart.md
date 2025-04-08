@@ -64,10 +64,11 @@ python lerobot/scripts/visualize_dataset.py --repo-id select_toy  --episode-inde
 
 
 launch the server and client in two different terminals.
->[!NOTE]
->You will need to download the checkpoint and put it in the right place.
 
 running server:
+
+>[!NOTE]
+>You will need to download the checkpoint and put it in the right place.
 
 ```bash
 #in docker
