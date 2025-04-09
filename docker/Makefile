@@ -113,6 +113,10 @@ _exec_root:
 _instantiate_container: 
 	touch ${HOME}/.netrc
 	touch ${HOME}/.bash_history
+	if [ ! -d ${SHARE_DIR} ]; then \
+		mkdir -p ${SHARE_DIR};fi 
+	if [ ! -d ${HOME}/.cache ]; then \
+		mkdir -p ${HOME}/.cache;fi 
 	if [ ! -d ${PROJ_DIR} ]; then \
 		mkdir -p ${PROJ_DIR};fi 
 	if [ ! -d ${HOME}/vscode/vscode-server ]; then \
@@ -134,7 +138,7 @@ _instantiate_container:
 			-v ${PROJ_DIR}:${TO_PROJ_DIR} \
 			-v ${HOME}/vscode/vscode-server:${CHOME}/.vscode-server \
 			-v ${HOME}/vscode/vscode-remote-containers:${CHOME}/.vscode-remote-containers \
-			--user ${_USER} \
+			--user ${_UID}:${_GID} \
 			--name ${CONTRAINER_NAME} ${USE_GPUS} $(PRIVATE_IMAGE); \
 	fi; \
 
