@@ -24,6 +24,9 @@ Download data assets
 
 ```bash
 #in docker
+deactivate #deactivate uv env
+conda activate #activate base env
+cd /app/VLABench
 python script/download_assetes.py
 ```
 
