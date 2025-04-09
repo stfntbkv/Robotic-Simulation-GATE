@@ -27,7 +27,7 @@ Download data assets
 deactivate #deactivate uv env
 conda activate #activate base env
 cd /app/VLABench
-python script/download_assetes.py
+python script/download_assets.py
 ```
 
 Generate dataset
