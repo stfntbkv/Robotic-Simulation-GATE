@@ -45,8 +45,8 @@ cd /app/VLABench
 deactivate #deactivate uv env
 conda activate #activate base env
 cd /app/VLABench
-python scripts/convert_to_lerobot.py --dataset-name select_toy --dataset-path ~/data/vlabench/trajectory/dataset/select_toy
-python scripts/convert_to_lerobot.py --dataset-name select_fruit --dataset-path ~/data/vlabench/trajectory/dataset/select_fruit
+python scripts/convert_to_lerobot.py --dataset-name select_toy --task-list select_toy --dataset-path ~/data/vlabench/trajectory/dataset/select_toy
+python scripts/convert_to_lerobot.py --dataset-name select_fruit  --task-list select_fruit --dataset-path ~/data/vlabench/trajectory/dataset/select_fruit
 ```
 
 Visualize one episode of the dataset. 
