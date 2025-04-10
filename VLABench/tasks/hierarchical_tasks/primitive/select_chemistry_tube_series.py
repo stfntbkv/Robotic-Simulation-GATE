@@ -165,6 +165,7 @@ class SelectChemistryTubeTask(LM4ManipBaseTask):
         Attach the nametag to the tubestand.
         """
         super().build_from_config(eval, **kwargs)
+        self.random_ignored_entities = ["table"]
         for key in list(self.entities.keys()):
             if "tag" in key:
                 nametag = self.entities[key]
