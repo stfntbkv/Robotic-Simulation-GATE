@@ -27,7 +27,7 @@ pip install -e .
 ```
 2. Download the assets
 ```sh
-python script/download_assetes.py
+python script/download_assets.py
 ```
 
 3. (Option) Initialize submodules
@@ -97,7 +97,7 @@ VLABench adopts a flexible modular framework for task construction, offering hig
 ## Evaluate
 VLABench currently provides standard benchmark datasets, focusing on generalization across multiple dimensions. In the [VLABench/configs/evaluation/tracks](./VLABench/configs/evaluation/tracks) directory, we have set up multiple benchmark sets across different dimensions. These configs ensure that different models can be fairly compared under the same episodes on different machines.
 
-| Track | Descrition |
+| Track | Description |
 |----------|----------|
 | track_1_in_distribution | Evaluation of the policy's task learning ability, requiring it to fit in-domain episodes with a small and diverse set of data. |
 | track_2_cross_categroy | Evaluation of the policy's generalization ability at the object **category level** & **instance level**, requiring visual generalization capability. |
@@ -109,13 +109,17 @@ VLABench currently provides standard benchmark datasets, focusing on generalizat
 **NOTICE:** The evaluation can also be done by directly sampling episodes from the environment. This evaluation method is more flexible, but there is a risk of improperly initialized episodes. We recommend using the 'evaluation_tracks' method for evaluation.
 
 ### VLA/policy evaluation
+We provide a standardized fine-tuning dataset, which can be downloaded from [hf-dataset](https://huggingface.co/datasets/VLABench/vlabench_primitive_ft_dataset). In this version, the data focuses on primitive tasks. We selected 10 basic tasks and provided 500 samples for each task.
+
+Since the current version of VLA does not perform well on primitive tasks, we plan to focus on enhancing VLA’s capabilities in this area first. In the future, we will release a more organized dataset for more composite tasks.
+
 1. Evaluate OpenVLA
 
 Before evaluate your finetuned OpenVLA, please compute the norm_stat on your dataset and place it to `VLABench/configs/model/openvla_config.json`
 
 Run the evaluation scripts by
 ```sh
-python scirpts/evaluate_policy.py --n-sample 20 --model openvla --model_ckpt xx --loar_ckpt xx --eval_track track_1_in_distribution --tasks task1, task2 ...
+python scirpts/evaluate_policy.py --n-sample 20 --model openvla --model_ckpt xx --lora_ckpt xx --eval_track track_1_in_distribution --tasks task1, task2 ...
 ```
 
 2. Evaluate Openpi

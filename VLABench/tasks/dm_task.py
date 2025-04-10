@@ -22,7 +22,7 @@ from VLABench.utils.gpt_utils import query_gpt4_v
 with open(os.path.join(os.getenv("VLABENCH_ROOT"), "configs/camera_config.json"), "r") as f:
     CAMERA_VIEWS = json.load(f)
 
-NUM_SUBSTEPS = 50
+NUM_SUBSTEPS = 100
 
 class LM4ManipBaseTask(composer.Task):
     """

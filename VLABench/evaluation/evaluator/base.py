@@ -5,14 +5,14 @@ import random
 import mediapy
 from tqdm import tqdm
 from VLABench.envs import load_env
-from VLABench.utils.utils import euler_to_quaternion
+from VLABench.utils.utils import euler_to_quaternion, quaternion_to_euler
 
 class Evaluator:
     def __init__(self, 
                  tasks,
                  n_episodes,
                  episode_config=None,
-                 max_substeps=10,
+                 max_substeps=1,
                  tolerance=1e-2,
                  metrics=["success_rate"],
                  save_dir=None,
@@ -114,13 +114,19 @@ class Evaluator:
         success = False
         info = {}
         frames_to_save = []
+        last_action = None
         for i in range(max_episode_length):
             observation = env.get_observation()
             observation["instruction"] = env.task.get_instruction()
+            ee_state = observation["ee_state"]
+            if last_action is None:
+                last_action = np.concatenate([ee_state[:3], quaternion_to_euler(ee_state[3:7])])
+            observation["last_action"] = last_action
             if self.save_dir is not None and self.visulization:
                 frames_to_save.append(observation["rgb"])
             if agent.control_mode == "ee":
                 pos, euler, gripper_state = agent.predict(observation, **kwargs)
+                last_action = np.concatenate([pos, euler])
                 quat = euler_to_quaternion(*euler)
                 action = env.robot.get_qpos_from_ee_pos(physics=env.physics, pos=pos, quat=quat)[:7]
                 action = np.concatenate([action, gripper_state])

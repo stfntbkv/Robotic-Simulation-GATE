@@ -36,7 +36,7 @@ def evaluate(args):
         tasks=tasks,
         n_episodes=args.n_episode,
         episode_config=episode_config,
-        max_substeps=10,   
+        max_substeps=0,   
         save_dir=args.save_dir,
         visulization=args.visulization,
         metrics=args.metrics
@@ -47,6 +47,8 @@ def evaluate(args):
             lora_ckpt=args.lora_ckpt,
             norm_config_file=os.path.join(os.getenv("VLABENCH_ROOT"), "configs/model/openvla_config.json") # TODO: re-compuate the norm state by your own dataset
         )
+    else:
+        policy = RandomPolicy(None)
 
     result = evaluator.evaluate(policy)
     with open(os.path.join(args.save_dir, args.policy, "evaluation_result.json"), "w") as f:
