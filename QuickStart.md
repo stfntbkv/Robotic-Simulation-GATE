@@ -57,7 +57,7 @@ Visualize one episode of the dataset.
 cd /app/lerobot
 conda deactivate
 deactivate
-conda activate
+conda activate lerobot
 python lerobot/scripts/visualize_dataset.py --repo-id select_toy  --episode-index 0 
 # try choose another --episode-index to visualize different episode
 # --repo-id canbe `select_toy` or `select_fruit` 
