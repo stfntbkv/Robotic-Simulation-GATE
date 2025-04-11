@@ -94,7 +94,7 @@ class VLMEvaluator(Evaluator):
     
     def load_single_input(self, task_name, example_num):
         input_pic_path = os.path.join(self.data_path, task_name, "example"+ str(example_num), 'input/input.png')
-        input_pic_gt_path = os.path.join(self.data_path, task_name, "example"+ str(example_num), 'input/input_gt.png')
+        input_pic_gt_path = os.path.join(self.data_path, task_name, "example"+ str(example_num), 'input/input_mask.png')
         input_instruction_path = os.path.join(self.data_path, task_name, "example"+ str(example_num), 'input/instruction.txt')
 
         input_pic = input_pic_path
