@@ -7,6 +7,7 @@
 
 
 ## News
+* **2025/4/10** Releasing the finetuned pi0 checkpoint(pi0-base and pi0-fast) on [hf](https://huggingface.co/VLABench).
 * **2025/3/25** Releasing standard evaluation episodes and primitive task finetune dataset.
 * **2025/2/26** Releasing referenced evaluation pipeline. 
 * **2025/2/14** Releasing the scripts for trajectory generation. 
