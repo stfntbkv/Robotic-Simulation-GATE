@@ -70,9 +70,9 @@ def create_lerobot_dataset_from_hdf5(args):
     for file in h5py_files:
         with h5py.File(file, "r") as f:
             for timestamp in f["data"].keys():
-                images = f["data"][timestamp]["observation"]["rgb"]
-                ee_state = f["data"][timestamp]["observation"]["ee_state"]
-                q_state = f["data"][timestamp]["observation"]["q_state"]
+                images = f["data"][timestamp]["observation"]["rgb"][()]
+                ee_state = f["data"][timestamp]["observation"]["ee_state"][()]
+                q_state = f["data"][timestamp]["observation"]["q_state"][()]
                 actions = f["data"][timestamp]["trajectory"]
                 ee_pos, ee_quat, gripper = ee_state[:, :3], ee_state[:, 3:7], ee_state[:, 7]
                 ee_euler = np.array([quat2euler(q) for q in ee_quat])
