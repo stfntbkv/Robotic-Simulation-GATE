@@ -39,7 +39,7 @@ def evaluate(args):
         tasks=tasks,
         n_episodes=args.n_episode,
         episode_config=episode_config,
-        max_substeps=0,   
+        max_substeps=1, # repeat step in simulation
         save_dir=args.save_dir,
         visulization=args.visulization,
         metrics=args.metrics
