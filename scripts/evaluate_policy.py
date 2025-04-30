@@ -19,6 +19,9 @@ def get_args():
     parser.add_argument('--save-dir', default="logs", help="The directory to save the evaluation results")
     parser.add_argument('--visulization', action="store_true", default=False, help="Whether to visualize the episodes")
     parser.add_argument('--metrics', nargs='+', default=["success_rate"], choices=["success_rate", "intention_score", "progress_score"], help="The metrics to evaluate")
+    parser.add_argument('--host', default="localhost", type=str, help="The host to the remote server")
+    parser.add_argument('--port', default=5555, type=int, help="The port to the remote server")
+    parser.add_argument('--replanstep', default=4, type=int, help="The step to replan")
     args = parser.parse_args()
     return args
 
@@ -47,6 +50,12 @@ def evaluate(args):
             lora_ckpt=args.lora_ckpt,
             norm_config_file=os.path.join(os.getenv("VLABENCH_ROOT"), "configs/model/openvla_config.json") # TODO: re-compuate the norm state by your own dataset
         )
+    elif args.policy.lower() == "gr00t":
+        from VLABench.evaluation.model.policy.gr00t import Gr00tPolicy
+        policy = Gr00tPolicy(host=args.host, port=args.port, replan_steps=args.replanstep)
+    elif args.policy.lower() == "openpi":
+        from VLABench.evaluation.model.policy.openpi import OpenPiPolicy
+        policy = OpenPiPolicy(host=args.host, port=args.port, replan_steps=args.replanstep)
     else:
         policy = RandomPolicy(None)
 
