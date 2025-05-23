@@ -38,7 +38,7 @@ class Policy:
         return "ee"
 
 class RandomPolicy(Policy):
-    def predict(self, obs):
+    def predict(self, obs, **kwargs):
         delta_pos = np.random.uniform(-0.1, 0.1, 3)
         delta_euler = np.random.uniform(-0.1, 0.1, 3)
         gripper_open = np.random.uniform(0, 1, 1)

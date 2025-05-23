@@ -82,12 +82,12 @@ class VLMEvaluator(Evaluator):
 
         return prepared_input
     
-    def get_result_save_path(self, vlm_name, few_shot_num, with_CoT):
+    def get_result_save_path(self, vlm_name, few_shot_num, with_CoT, eval_dim):
         model_result_save_path = os.path.join(self.save_path, vlm_name, self.language)
         if not with_CoT:
-            model_result_save_path = os.path.join(model_result_save_path, str(few_shot_num) + "_shot")
+            model_result_save_path = os.path.join(model_result_save_path, str(few_shot_num) + "_shot", eval_dim)
         else:
-            model_result_save_path = os.path.join(model_result_save_path,  str(few_shot_num) + "_shot_CoT")
+            model_result_save_path = os.path.join(model_result_save_path,  str(few_shot_num) + "_shot_CoT", eval_dim)
         if not os.path.exists(model_result_save_path):
             os.makedirs(model_result_save_path)
         return model_result_save_path
@@ -120,7 +120,7 @@ class VLMEvaluator(Evaluator):
             return True
         return False
 
-    def evaluate(self, vlm, task_list=None, save_interval=1, few_shot_num=0, with_CoT=False):
+    def evaluate(self, vlm, task_list=None, save_interval=1, few_shot_num=0, with_CoT=False, eval_dim="default"):
         """
         param:
           vlm: the wrapped vlm model with standard interface
@@ -133,11 +133,8 @@ class VLMEvaluator(Evaluator):
         print(Fore.BLUE + Style.BRIGHT + vlm.name)
 
         if task_list is None or len(task_list) == 0:
-            task_list = self.all_task_list
-        model_result_save_path = os.path.join(self.save_path, vlm.name, self.language)
-        if not os.path.exists(model_result_save_path):
-            os.makedirs(model_result_save_path)
-        model_result_save_path = self.get_result_save_path(vlm.name, few_shot_num, with_CoT)
+            task_list = self.eval_tasks
+        model_result_save_path = self.get_result_save_path(vlm.name, few_shot_num, with_CoT, eval_dim)
         if not os.path.exists(model_result_save_path):
             os.makedirs(model_result_save_path)
 

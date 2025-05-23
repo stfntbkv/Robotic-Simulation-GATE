@@ -59,7 +59,7 @@ class OpenVLA(Policy):
         super().__init__(model)
         
     def process_observation(self, obs, unnorm_key):
-        cam_index = CAMERA_VIEW_INDEX.get(unnorm_key, 0)
+        cam_index = CAMERA_VIEW_INDEX.get(unnorm_key, 2) # default camera-view is front-view
         instruction = obs["instruction"]
         prompt = self.build_prompt(instruction)
         rgb = obs["rgb"][cam_index]

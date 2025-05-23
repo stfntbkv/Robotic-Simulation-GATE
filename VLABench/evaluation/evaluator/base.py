@@ -5,7 +5,8 @@ import random
 import mediapy
 from tqdm import tqdm
 from VLABench.envs import load_env
-from VLABench.utils.utils import euler_to_quaternion, quaternion_to_euler
+from VLABench.configs import name2config
+from VLABench.utils.utils import euler_to_quaternion, quaternion_to_euler, find_key_by_value
 
 class Evaluator:
     def __init__(self, 
@@ -55,6 +56,8 @@ class Evaluator:
         if self.save_dir is not None:
             os.makedirs(self.save_dir, exist_ok=True)
         self.visulization = visulization
+        with open(os.path.join(os.getenv("VLABENCH_ROOT"), "configs/task_config.json"), "r") as f:
+           self.task_configs = json.load(f)
         
     def evaluate(self, agent):
         """
@@ -63,18 +66,26 @@ class Evaluator:
         metrics = {}
         for task in self.eval_tasks:
             task_infos = []
+            max_episode_length = 200
+            if self.task_configs.get(find_key_by_value(name2config, task), None):
+                if self.task_configs[find_key_by_value(name2config, task)].get("evaluation", {}).get("max_episode_length", None):
+                    max_episode_length = self.task_configs[find_key_by_value(name2config, task)]["evaluation"]["max_episode_length"]
+                
             for i in tqdm(range(self.n_episodes), desc=f"Evaluating {task} of {agent.name}"):
                 agent.reset()
                 kwargs = {
-                    "unnorm_key": task
+                    "unnorm_key": task,
+                    "max_episode_length": max_episode_length
                 }
-                
-                if self.episode_config is None: 
-                    info = self.evaluate_single_episode(agent, task, i, None, seed=42+i, **kwargs)
-                else: 
-                    info = self.evaluate_single_episode(agent, task, i, self.episode_config[task][i], **kwargs)
-                task_infos.append(info)
-            
+                try:
+                    if self.episode_config is None: 
+                        info = self.evaluate_single_episode(agent, task, i, None, seed=42+i, **kwargs)
+                    else: 
+                        info = self.evaluate_single_episode(agent, task, i, self.episode_config[task][i], **kwargs)
+                    task_infos.append(info)
+                except Exception as e:
+                    print(e)
+                    
             metric_score = self.compute_metric(task_infos)       
             metrics[task] = metric_score
             
