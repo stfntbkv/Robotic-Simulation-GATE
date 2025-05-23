@@ -11,6 +11,9 @@
                     "multiccd": "enable"
                 }
             }
+        },
+        "evaluation":{
+            
         }
     },
     
@@ -56,6 +59,9 @@
             "scene":{
                 "name":"living_room_0"
             }
+        },
+        "evaluation":{
+            "max_episode_length":100
         }
     },
 
@@ -323,6 +329,9 @@
             "scene":{
                 "name": "studyroom_0"
             }
+        },
+        "evaluation":{
+            "max_episode_length":100
         }
     },
 
