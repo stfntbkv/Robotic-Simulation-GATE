@@ -13,7 +13,7 @@ def initialize_model(model_name, *args, **kwargs):
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Run VLM benchmark with specified model and parameters.")
-    parser.add_argument("--vlm_name", type=str, default="GPT_4v", choices=["GPT_4v", "Qwen2_VL", "InternVL2", "MiniCPM_V2_6", "GLM4v", "Llava_NeXT"], help="Name of the model class to instantiate")
+    parser.add_argument("--vlm_name", type=str, default="GPT_4v", choices=["GPT_4v", "Qwen2_VL", "InternVL2", "MiniCPM_V2_6", "GLM4v", "Llava_NeXT", "Gemini", "Claude"], help="Name of the model class to instantiate")
     parser.add_argument("--save_interval", type=int, default=1, help="Interval for saving benchmark results")
     parser.add_argument("--few-shot-num", type=int, default=0, help="Number of few-shot examples")
     parser.add_argument("--eval-dimension", nargs="+", type=str, default=["M&T", "CommonSense", "Semantic", "Spatial", "PhysicalLaw", "Complex"], help="evaluation dimensions")
@@ -24,7 +24,7 @@ def parse_args():
 
 def main():
     args = parse_args()
-    assert len(args.eval_dimenion) > 0, "Please specify the evaluation dimension"
+    assert len(args.eval_dimension) > 0, "Please specify the evaluation dimension"
     
     for eval_dim in args.eval_dimension:
         if args.tasks is None:
@@ -56,6 +56,7 @@ def main():
             save_interval=args.save_interval,
             few_shot_num=args.few_shot_num,
             with_CoT=args.with_cot,
+            eval_dim=eval_dim,
         )
         result=evaluator.get_final_score_dict(args.vlm_name)
         os.makedirs(os.path.join(args.save_dir, args.vlm_name), exist_ok=True)

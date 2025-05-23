@@ -11,7 +11,7 @@ os.environ["MUJOCO_GL"]= "egl"
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--tasks', nargs='+', default=None, help="Specific tasks to run, work when eval-track is None")
-    parser.add_argument('--eval-track', default=None, type=str, choices=["track_1_in_distribution", "track_2_cross_category", "track_3_common_sense", "track_4_semantic_instruction"], help="The evaluation track to run")
+    parser.add_argument('--eval-track', default=None, type=str, choices=["track_1_in_distribution", "track_2_cross_category", "track_3_common_sense", "track_4_semantic_instruction", "track_6_unseen_texture"], help="The evaluation track to run")
     parser.add_argument('--n-episode', default=1, type=int, help="The number of episodes to evaluate for a task")
     parser.add_argument('--policy', default="openvla", help="The policy to evaluate")
     parser.add_argument('--model_ckpt', default="/remote-home1/sdzhang/huggingface/openvla-7b", help="The base model checkpoint path")
@@ -28,6 +28,7 @@ def get_args():
 def evaluate(args):
     episode_config = None
     if args.eval_track is not None:
+        args.save_dir = os.path.join(args.save_dir, args.eval_track)
         with open(os.path.join(os.getenv("VLABENCH_ROOT"), "configs/evaluation/tracks", f"{args.eval_track}.json"), "r") as f:
             episode_config = json.load(f)
             tasks = list(episode_config.keys())
@@ -60,7 +61,8 @@ def evaluate(args):
         policy = RandomPolicy(None)
 
     result = evaluator.evaluate(policy)
-    with open(os.path.join(args.save_dir, args.policy, "evaluation_result.json"), "w") as f:
+    os.makedirs(os.path.join(args.save_dir, args.policy, args.eval_track), exist_ok=True)
+    with open(os.path.join(args.save_dir, args.policy, args.eval_track, "evaluation_result.json"), "w") as f:
         json.dump(result, f)
 
 if __name__ == "__main__":
