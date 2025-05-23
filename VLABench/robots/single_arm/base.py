@@ -4,6 +4,15 @@ from VLABench.robots.base import Robot
 from VLABench.utils.utils import matrix_to_quaternion
 
 class SingleArm(Robot):
+    """
+    Base class for single arm robots.
+    Params:
+        n_dof: number of degrees of freedom for the robot
+    """
+    def __init__(self, n_dof=7, **kwargs):
+        super().__init__(**kwargs)
+        self._n_dof = n_dof
+    
     @property
     def link_base(self):
         return self.mjcf_model.find("body", "link_base")
@@ -20,7 +29,35 @@ class SingleArm(Robot):
     def velocity_limits(self):
         raise NotImplementedError  
     
-        
+    @property
+    def gripper_geoms(self):
+        raise NotImplementedError
+    
+    @property
+    def n_dof(self):
+        return self._n_dof
+    
+    def get_qpos(self, physics):
+        qposes = []
+        for joint in self.joints[:self.n_dof]:
+            qpos = physics.bind(joint).qpos
+            qposes.append(qpos)
+        return qposes
+    
+    def get_qvel(self, physics):
+        qvels = []
+        for joint in self.joints[:self.n_dof]:
+            qvel = physics.bind(joint).qvel
+            qvels.append(qvel)
+        return qvels
+    
+    def get_qacc(self, physics):
+        qaccs = []
+        for joint in self.joints[:self.n_dof]:
+            qacc = physics.bind(joint).qacc
+            qaccs.append(qacc)
+        return qaccs
+    
     def set_base_position(self, pos):
         """
         change the base world position for the robot

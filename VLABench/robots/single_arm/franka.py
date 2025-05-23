@@ -8,7 +8,9 @@ from VLABench.utils.utils import create_mesh_box, quaternion_to_matrix, compute_
 @register.add_robot("franka")
 class Franka(SingleArm):
     def __init__(self, **kwargs):
-        super().__init__(name=kwargs.get("name", "franka"), **kwargs)
+        super().__init__(name=kwargs.get("name", "franka"), 
+                         n_dof=kwargs.get("n_dof", 7),
+                         **kwargs)
     
     def _add_camera_to_wrist(self, **camera_params):
         name = camera_params.get("name", "wrist_cam")
@@ -47,34 +49,13 @@ class Franka(SingleArm):
         ee2move_transform = np.dot(R_move, R_ee.T)
         return ee2move_transform
     
-    def get_qpos(self, physics):
-        qposes = []
-        for joint in self.joints[:7]:
-            qpos = physics.bind(joint).qpos
-            qposes.append(qpos)
-        return qposes
-    
-    def get_qvel(self, physics):
-        qvels = []
-        for joint in self.joints[:7]:
-            qvel = physics.bind(joint).qvel
-            qvels.append(qvel)
-        return qvels
-    
-    def get_qacc(self, physics):
-        qaccs = []
-        for joint in self.joints[:7]:
-            qacc = physics.bind(joint).qacc
-            qaccs.append(qacc)
-        return qaccs
-    
     def get_ee_open_state(self, physics=None):
         left_finger_joint = self.mjcf_model.find("joint", "finger_joint1")
         right_finger_joint = self.mjcf_model.find("joint", "finger_joint2")
         left_finger_pos = physics.bind(left_finger_joint).qpos
         right_finger_pos = physics.bind(right_finger_joint).qpos
         if left_finger_pos < 0.035 and right_finger_pos < 0.035:
-            return True
+            return True # BUG: should be False
         else:
             return False
         
