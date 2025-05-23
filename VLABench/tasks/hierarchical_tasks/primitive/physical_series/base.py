@@ -1,6 +1,6 @@
 from VLABench.tasks.config_manager import PressButtonConfigManager
 from VLABench.tasks.components import Button, RandomGeom
-from VLABench.tasks.dm_task import PressButtonTask
+from VLABench.tasks.hierarchical_tasks.primitive.base import PressButtonTask, PrimitiveTask
 
 class PhysicalQAConfigManager(PressButtonConfigManager):
     def __init__(self, 

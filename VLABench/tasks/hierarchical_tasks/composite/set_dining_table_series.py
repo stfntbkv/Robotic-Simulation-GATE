@@ -2,7 +2,7 @@ import random
 import numpy as np
 from VLABench.utils.register import register
 from VLABench.tasks.config_manager import BenchTaskConfigManager
-from VLABench.tasks.dm_task import LM4ManipBaseTask
+from VLABench.tasks.hierarchical_tasks.composite.base import CompositeTask
 
 @register.add_config_manager("set_dining_table")
 class SetDiningTableConfigManager(BenchTaskConfigManager):
@@ -94,14 +94,14 @@ class SetDiningTableChopstickLeftHandConfigManager(SetDiningTableConfigManager):
         self.config["task"]["conditions"] = condition_config
 
 @register.add_task("set_dining_table")
-class DiningSetTask(LM4ManipBaseTask):
+class DiningSetTask(CompositeTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
     def reset_camera_views(self, index=1):
         return super().reset_camera_views(index)
     
-    def build_from_config(self, eval=False):
+    def build_from_config(self, eval=False, **kwargs):
         super().build_from_config(eval, **kwargs)
         for key, entity in self.entities.items():
             if "placemat" in key:

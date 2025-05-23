@@ -2,7 +2,7 @@ import random
 import numpy as np
 from VLABench.utils.register import register
 from VLABench.tasks.config_manager import BenchTaskConfigManager
-from VLABench.tasks.dm_task import LM4ManipBaseTask
+from VLABench.tasks.hierarchical_tasks.composite.base import CompositeTask
 
 @register.add_config_manager("store_food")
 class StoreFoodConfigManager(BenchTaskConfigManager):
@@ -55,6 +55,6 @@ class StoreFoodConfigManager(BenchTaskConfigManager):
         self.config["task"]["conditions"] = condition_config
 
 @register.add_task("store_food")
-class StoreFoodTask(LM4ManipBaseTask):
+class StoreFoodTask(CompositeTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)

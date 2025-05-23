@@ -1,5 +1,6 @@
 import random
 from VLABench.tasks.dm_task import *
+from VLABench.tasks.hierarchical_tasks.primitive.base import PrimitiveTask
 from VLABench.tasks.config_manager import BenchTaskConfigManager
 from VLABench.utils.register import register
 from VLABench.utils.utils import flatten_list, grid_sample        
@@ -79,7 +80,7 @@ class SelectFruitSemanticConfigManager(SelectFruitConfigManager):
         self.config["task"]["instructions"] = instruction
     
 @register.add_task("select_fruit")
-class SelectFruitTask(LM4ManipBaseTask):
+class SelectFruitTask(PrimitiveTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
     

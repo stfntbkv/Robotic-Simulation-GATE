@@ -2,6 +2,7 @@ import random
 import os
 import json
 from VLABench.tasks.dm_task import *
+from VLABench.tasks.hierarchical_tasks.composite.base import CompositeTask
 from VLABench.tasks.config_manager import BenchTaskConfigManager
 from VLABench.utils.register import register
 from VLABench.utils.utils import grid_sample
@@ -75,7 +76,7 @@ class CookDishesConfigManager(BenchTaskConfigManager):
         self.config["task"]["instructions"] = instruction
 
 @register.add_task("cook_dishes")
-class CookDishesTask(LM4ManipBaseTask):
+class CookDishesTask(CompositeTask):
     def __init__(self, task_name, robot, random_init=False, **kwargs):
         self.config_manager_cls = register.load_config_manager("cook_dishes")
         super().__init__(task_name, robot=robot, random_init=random_init, **kwargs)

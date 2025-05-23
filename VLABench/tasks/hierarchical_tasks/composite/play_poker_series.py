@@ -3,6 +3,7 @@ import numpy as np
 from VLABench.utils.register import register
 from VLABench.tasks.config_manager import BenchTaskConfigManager
 from VLABench.tasks.dm_task import *
+from VLABench.tasks.hierarchical_tasks.composite.base import CompositeTask
 from VLABench.configs.constant import name2class_xml
 from VLABench.tasks.components import CardHolder, Poker
 from VLABench.tasks.hierarchical_tasks.poker_utils import *
@@ -86,7 +87,7 @@ class TexasHoldemExploreConfigManager(TexasHoldemConfigManager):
         return self.config
 
 @register.add_task("texas_holdem")
-class PokerPlayTask(LM4ManipBaseTask):
+class PokerPlayTask(CompositeTask):
     def __init__(self, task_name, robot, **kwargs):
         self.pokers = list()
         super().__init__(task_name, robot, **kwargs)

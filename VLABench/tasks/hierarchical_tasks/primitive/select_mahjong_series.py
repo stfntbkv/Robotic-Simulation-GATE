@@ -2,6 +2,7 @@ import random
 import numpy as np
 from VLABench.utils.register import register
 from VLABench.tasks.dm_task import *
+from VLABench.tasks.hierarchical_tasks.primitive.base import PrimitiveTask
 from VLABench.tasks.config_manager import BenchTaskConfigManager
 from VLABench.configs.constant import name2class_xml
 
@@ -141,7 +142,7 @@ class SelectUniqueTypeMahjongConfigManager(SelectMahjongConfigManager):
         self.config["task"]["instructions"] = instruction
 
 @register.add_task("select_mahjong")
-class SelectMahjongTask(LM4ManipBaseTask):
+class SelectMahjongTask(PrimitiveTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
     

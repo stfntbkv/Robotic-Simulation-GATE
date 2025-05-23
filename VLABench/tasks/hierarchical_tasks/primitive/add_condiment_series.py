@@ -1,5 +1,6 @@
 import random
 from VLABench.tasks.dm_task import *
+from VLABench.tasks.hierarchical_tasks.primitive.base import PrimitiveTask
 from VLABench.utils.register import register
 from VLABench.tasks.config_manager import BenchTaskConfigManager
 from VLABench.utils.utils import flatten_list
@@ -67,7 +68,7 @@ class AddCondimentConfigManager(BenchTaskConfigManager):
             self.config["task"]["components"].append(object_config)
 
 @register.add_task("add_condiment")
-class AddCondimentTask(LM4ManipBaseTask):
+class AddCondimentTask(PrimitiveTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
     

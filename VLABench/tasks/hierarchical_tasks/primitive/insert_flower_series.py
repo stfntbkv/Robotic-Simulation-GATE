@@ -1,6 +1,7 @@
 import random
 import numpy as np
 from VLABench.tasks.dm_task import *
+from VLABench.tasks.hierarchical_tasks.primitive.base import PrimitiveTask
 from VLABench.utils.register import register
 from VLABench.tasks.config_manager import BenchTaskConfigManager
 from VLABench.utils.utils import euler_to_quaternion
@@ -89,7 +90,7 @@ class ReplaceWiltedFlowerConfigManager(InsertFlowerConfigManager):
         self.config["task"]["conditions"] = condition
 
 @register.add_task("insert_flower")
-class InsertFlowerTask(LM4ManipBaseTask):
+class InsertFlowerTask(PrimitiveTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
         

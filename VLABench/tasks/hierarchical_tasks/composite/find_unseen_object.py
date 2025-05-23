@@ -2,7 +2,7 @@ import random
 import numpy as np
 from VLABench.utils.register import register
 from VLABench.tasks.config_manager import BenchTaskConfigManager
-from VLABench.tasks.dm_task import LM4ManipBaseTask
+from VLABench.tasks.hierarchical_tasks.composite.base import CompositeTask
 from VLABench.utils.utils import grid_sample
 
 drinks = ["cola", "spirit", "jumpstart", "redbull", "monster"]
@@ -100,7 +100,7 @@ class FindUnseenObjectConfigManager(BenchTaskConfigManager):
         self.config["task"]["conditions"] = condition_config
 
 @register.add_task("find_unseen_object")
-class FindUnseenObjectTask(LM4ManipBaseTask):    
+class FindUnseenObjectTask(CompositeTask):    
     def __init__(self, task_name, robot, random_init=False, **kwargs):
         super().__init__(task_name, robot=robot, random_init=random_init, **kwargs)
     

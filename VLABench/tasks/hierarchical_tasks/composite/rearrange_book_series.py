@@ -3,6 +3,7 @@ import numpy as np
 from VLABench.utils.register import register
 from VLABench.tasks.config_manager import BenchTaskConfigManager
 from VLABench.tasks.dm_task import *
+from VLABench.tasks.hierarchical_tasks.composite.base import CompositeTask
 from VLABench.utils.utils import euler_to_quaternion
 
 @register.add_config_manager("book_rearrange")
@@ -77,7 +78,7 @@ class BookRearrangeConfigManager(BenchTaskConfigManager):
         self.config["task"]["conditions"] = condition_config
         
 @register.add_task("book_rearrange")
-class BookRearrangeTask(LM4ManipBaseTask):
+class BookRearrangeTask(CompositeTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name=task_name, robot=robot, **kwargs)        
     

@@ -3,6 +3,7 @@ import numpy as np
 from VLABench.utils.register import register
 from VLABench.tasks.config_manager import BenchTaskConfigManager
 from VLABench.tasks.dm_task import *
+from VLABench.tasks.hierarchical_tasks.composite.base import CompositeTask
 from VLABench.tasks.hierarchical_tasks.primitive.select_painting_series import HangPictureConfigManager, HangPictureTask
 from VLABench.utils.utils import flatten_list, euler_to_quaternion
 from VLABench.configs.constant import name2class_xml
@@ -147,7 +148,7 @@ class HammerNailandHangPicture(HangPictureConfigManager):
         self.config["task"]["instructions"] = instruction
 
 @register.add_task("hammer_loose_nail")
-class HammerLooseNailTask(LM4ManipBaseTask):
+class HammerLooseNailTask(CompositeTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
@@ -160,7 +161,7 @@ class HammerLooseNailTask(LM4ManipBaseTask):
                 self._arena.attach(nail)
 
 @register.add_task("assemble_hammer")
-class AssembleHammerTask(LM4ManipBaseTask):
+class AssembleHammerTask(CompositeTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
     

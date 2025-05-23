@@ -1,5 +1,6 @@
 import random
 from VLABench.tasks.dm_task import *
+from VLABench.tasks.hierarchical_tasks.primitive.base import PrimitiveTask
 from VLABench.tasks.config_manager import BenchTaskConfigManager
 from VLABench.utils.register import register
 from VLABench.utils.utils import flatten_list
@@ -147,7 +148,7 @@ class SelectDrinkSemanticConfigManager(SelectDrinkConfigManager):
 
 
 @register.add_task("select_drink")
-class SelectDrinkTask(LM4ManipBaseTask):
+class SelectDrinkTask(PrimitiveTask):
     def __init__(self, task_name, robot, eval=False, **kwargs):
        super().__init__(task_name, robot, eval, **kwargs)
 

@@ -3,6 +3,7 @@ import os
 import json
 import numpy as np
 from VLABench.tasks.dm_task import *
+from VLABench.tasks.hierarchical_tasks.primitive.base import PressButtonTask, PrimitiveTask
 from VLABench.tasks.config_manager import BenchTaskConfigManager, PressButtonConfigManager
 from VLABench.utils.register import register
 from VLABench.utils.utils import flatten_list, euler_to_quaternion
@@ -213,7 +214,7 @@ class PutBoxOnPaintingSemanticTask(PutBoxOnPaintingTask):
         super().__init__(task_name, robot=robot, **kwargs)    
 
 @register.add_task("hang_picture_on_specific_nail")
-class HangPictureTask(LM4ManipBaseTask):
+class HangPictureTask(PrimitiveTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
         self.should_terminate = False

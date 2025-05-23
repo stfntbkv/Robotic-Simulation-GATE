@@ -2,7 +2,7 @@ import random
 import numpy as np
 from VLABench.utils.register import register
 from VLABench.tasks.config_manager import BenchTaskConfigManager
-from VLABench.tasks.dm_task import LM4ManipBaseTask
+from VLABench.tasks.hierarchical_tasks.composite.base import CompositeTask
 from VLABench.configs.constant import name2class_xml
 from VLABench.tasks.hierarchical_tasks.mahjong_utils import *
 
@@ -65,7 +65,7 @@ class PlayMahjongConfigManager(BenchTaskConfigManager):
         self.config["task"]["conditions"] = condition_config
 
 @register.add_task("play_mahjong")
-class PlayMahjongTask(LM4ManipBaseTask):
+class PlayMahjongTask(CompositeTask):
     def __init__(self, task_name, robot, **kwargs):
         self.config_manager_cls = register.load_config_manager("play_mahjong")
         super().__init__(task_name, robot=robot, **kwargs)

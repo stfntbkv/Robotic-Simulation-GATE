@@ -1,6 +1,7 @@
 import random
 from VLABench.utils.register import register
 from VLABench.tasks.dm_task import *
+from VLABench.tasks.hierarchical_tasks.primitive.base import PrimitiveTask
 from VLABench.tasks.config_manager import BenchTaskConfigManager
 
 SOLID = ["solid_1", "solid_2", "solid_3", "solid_4", "solid_5", "solid_6", "solid_7"]
@@ -114,7 +115,7 @@ class SelectBilliardsSemanticConfigManager(SelectBilliardsConfigManager):
         super().__init__(**kwargs)
     
 @register.add_task("select_billiards")
-class SelectBilliardsTask(LM4ManipBaseTask):
+class SelectBilliardsTask(PrimitiveTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
     

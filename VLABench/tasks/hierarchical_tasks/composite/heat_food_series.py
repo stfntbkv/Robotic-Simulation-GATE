@@ -3,6 +3,7 @@ import numpy as np
 from VLABench.utils.register import register
 from VLABench.tasks.config_manager import BenchTaskConfigManager
 from VLABench.tasks.dm_task import *
+from VLABench.tasks.hierarchical_tasks.composite.base import CompositeTask
 from VLABench.utils.utils import euler_to_quaternion
 
 @register.add_config_manager("heat_food")
@@ -71,11 +72,11 @@ class PlugCordAndHeatFoodConfigManager(HeatFoodConfigManager):
         self.config["task"]["components"][-1]["subentities"] = [cord_config]
 
 @register.add_task("heat_food")
-class HeatFoodTask(LM4ManipBaseTask):
+class HeatFoodTask(CompositeTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
-    def build_from_config(self, eval=False):    
+    def build_from_config(self, eval=False, **kwargs):    
         super().build_from_config(eval, **kwargs)
         for key, entity in self.entities.items():
                 if "microwave" in key:

@@ -1,6 +1,7 @@
 import numpy as np
 import random
 from VLABench.tasks.dm_task import *
+from VLABench.tasks.hierarchical_tasks.composite.base import ClusterTask
 from VLABench.tasks.config_manager import ClusterConfigManager
 from VLABench.tasks.hierarchical_tasks.primitive.select_billiards_series import SOLID, STRIPED
 from VLABench.utils.register import register

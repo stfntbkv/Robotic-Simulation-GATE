@@ -1,6 +1,7 @@
 import random
 import numpy as np
 from VLABench.tasks.dm_task import *
+from VLABench.tasks.hierarchical_tasks.primitive.base import PrimitiveTask
 from VLABench.tasks.config_manager import BenchTaskConfigManager
 from VLABench.utils.register import register
 from VLABench.configs.constant import name2class_xml
@@ -156,7 +157,7 @@ class SelectChemistryTubeSemanticConfigManager(SelectChemistryTubeConfigManager)
         return instruction
 
 @register.add_task("select_chemistry_tube")
-class SelectChemistryTubeTask(LM4ManipBaseTask):
+class SelectChemistryTubeTask(PrimitiveTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
@@ -191,7 +192,7 @@ class SelectChemistryTubeSpatialTask(SelectChemistryTubeTask):
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("select_chemistry_tube_semantic")
-class SelectChemistryTubeSemanticTask(LM4ManipBaseTask):
+class SelectChemistryTubeSemanticTask(SelectChemistryTubeTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
     

@@ -2,7 +2,7 @@ import random
 import numpy as np
 from VLABench.utils.register import register
 from VLABench.tasks.config_manager import BenchTaskConfigManager
-from VLABench.tasks.dm_task import LM4ManipBaseTask
+from VLABench.tasks.hierarchical_tasks.composite.base import CompositeTask
 
 @register.add_config_manager("make_juice")
 class MakeJuiceConfigManager(BenchTaskConfigManager):
@@ -40,19 +40,19 @@ class MakeJuiceConfigManager(BenchTaskConfigManager):
         self.config["task"]["instructions"] = instruction
 
 @register.add_task("make_juice")
-class MakeJuiceTask(LM4ManipBaseTask):
+class MakeJuiceTask(CompositeTask):
     def __init__(self, task_name, robot, **kwargs):
         self.config_manager_cls = register.load_config_manager("make_juice")
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("find_fruit_to_make_juice")
-class FindFruitToMakeJuiceTask(LM4ManipBaseTask):
+class FindFruitToMakeJuiceTask(CompositeTask):
     def __init__(self, task_name, robot, **kwargs):
         self.config_manager_cls = register.load_config_manager("find_fruit_to_make_juice")
         super().__init__(task_name, robot=robot, **kwargs)
 
 @register.add_task("insert_power_cord_to_make_juice")
-class InsertPowerCordToMakeJuiceTask(LM4ManipBaseTask):
+class InsertPowerCordToMakeJuiceTask(CompositeTask):
     def __init__(self, task_name, robot, **kwargs):
         self.config_manager_cls = register.load_config_manager("insert_power_cord_to_make_juice")
         super().__init__(task_name, robot=robot, **kwargs)
