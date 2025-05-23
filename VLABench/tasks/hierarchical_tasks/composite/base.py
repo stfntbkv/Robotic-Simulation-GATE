@@ -68,7 +68,7 @@ class ClusterTask(CompositeTask):
         return skill_sequence
     
     def reset_task_progress(self):
-        raise NotImplementedError
-    
+        pass
+        
     def update_task_progress(self, physics):
-        raise NotImplementedError
+        pass

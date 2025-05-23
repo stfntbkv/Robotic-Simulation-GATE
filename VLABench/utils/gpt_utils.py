@@ -29,7 +29,7 @@ def encode_image(image_path):
   with open(image_path, "rb") as image_file:
     return base64.b64encode(image_file.read()).decode('utf-8')
 
-def query_gpt4_v(prompt, history=[] , **kwargs):
+def query_gpt4_v(prompt, history=[], model="gpt-4-turbo", **kwargs):
     client = OpenAI(
         api_key=kwargs.get("api_key", os.environ.get("OPENAI_API_KEY", None)), 
         base_url=kwargs.get("base_url", os.environ.get("OPENAI_BASE_URL", None))
@@ -43,7 +43,7 @@ def query_gpt4_v(prompt, history=[] , **kwargs):
                 messages.append({"role": "assistant", "content": a})
             messages.append({"role": "user", "content": prompt})
             response = client.chat.completions.create(
-                        model="gpt-4-turbo",
+                        model=model,
                         messages=messages,
                         max_tokens=1000,
                         )
