@@ -54,9 +54,8 @@ class LM4ManipBaseTask(composer.Task):
         self._robot = robot
         self.attach_entity(robot)
         self._task_observables = {}
-        
+        config = self.config_manager.config
         self.control_timestep = self.physics_timestep * NUM_SUBSTEPS
-        config = kwargs.get("config", None) 
         self.entities = dict()
         self.distractors = dict()
         self.random_init = random_init
