@@ -18,7 +18,7 @@ def load_env(task,
              time_limit=float('inf'), 
              reset_wait_step=100, 
              episode_config=None, 
-             random_init=True,
+             random_init=False,
              **kwargs):
     """
     load environment with given config
