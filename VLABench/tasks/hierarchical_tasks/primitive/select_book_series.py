@@ -135,6 +135,17 @@ class SelectBookTask(PrimitiveTask):
     def __init__(self, task_name, robot, **kwargs):
         super().__init__(task_name, robot=robot, **kwargs)
 
+    def build_from_config(self, eval=False, **kwargs):
+        """
+        Attach the shelf for stable interaction.
+        """
+        # FIXME delete the re-attachment of the shelf for more realistic interaction
+        super().build_from_config(eval, **kwargs)
+        for key, entity in self.entities.items():
+            if "shelf" in key:
+                entity.detach()
+                self._arena.attach(entity)
+    
     def get_expert_skill_sequence(self, physics):
         skill_sequence = [
             partial(SkillLib.pick, target_entity_name=self.target_entity, prior_eulers=[[-np.pi/2, -np.pi/2, 0]]),
