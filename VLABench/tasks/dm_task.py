@@ -37,6 +37,7 @@ class LM4ManipBaseTask(composer.Task):
                  random_init=True,
                  use_llm=False,
                  episode_config=None,
+                 xml_file="base/default.xml",
                  **kwargs):
         """
         Params:
@@ -45,12 +46,13 @@ class LM4ManipBaseTask(composer.Task):
             random_init: whether to compute grid sampling positions when initializing the entities
             use_llm: whether to use LLMs to generate instructions
             episode_config: deterministic configuration for task building
+            xml_file: the file path of root xml for the task
         """
         self.task_name = task_name
         self.config_manager = register.load_config_manager(task_name)(task_name)
         self.asset_path = os.path.join(os.getenv("VLABENCH_ROOT"), "assets") 
         self.use_llm = use_llm       
-        self._arena = composer.Arena(xml_path=os.path.join(self.asset_path, "base/default.xml"))
+        self._arena = composer.Arena(xml_path=os.path.join(self.asset_path, xml_file))
         self._robot = robot
         self.attach_entity(robot)
         self._task_observables = {}
