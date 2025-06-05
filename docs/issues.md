@@ -42,3 +42,20 @@ sudo apt-get install libglu1-mesa
 sudo apt-get install libgl1-mesa-dri  
 sudo apt-get install libgl1-mesa-glx
 ```
+
+### Issues about rlds generation
+1. The error: got unexpected key `file_format`
+Please refer to https://github.com/kpertsch/rlds_dataset_mod/issues/3
+
+2. ValueError: Could not load DatasetBuilder from: xxx. Make sure the module only contains a single `DatasetBuilder'.
+This issue is mainly because that the rlds relative environment lacks of some dependency packages.
+To check these packages, you can build a new python file and load the tfds.builder from the target file.
+
+For example, the builder file named `primitive.py` and the builder class is `Primitive`.
+```
+import tensorflow_datasets as tfds
+from primitive import *
+
+builder= Primitive()
+```
+Then the python will report the packages your environment doesn't have.

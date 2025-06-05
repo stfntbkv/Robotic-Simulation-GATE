@@ -12,7 +12,14 @@ with open(os.path.join(os.getenv("VLABENCH_ROOT"), "configs/robot_config.json"),
 with open(os.path.join(os.getenv("VLABENCH_ROOT"), "configs/task_config.json"), "r") as f:
     TASK_CONFIG = json.load(f)
 
-def load_env(task, robot="franka", config=None, time_limit=float('inf'), reset_wait_step=100, **kwargs):
+def load_env(task, 
+             robot="franka", 
+             config=None, 
+             time_limit=float('inf'), 
+             reset_wait_step=100, 
+             episode_config=None, 
+             random_init=False,
+             **kwargs):
     """
     load environment with given config
     params:
@@ -21,6 +28,8 @@ def load_env(task, robot="franka", config=None, time_limit=float('inf'), reset_w
         config: dict, additional configuration for the environment, including robot, task, etc.
         time_limit: int, maximum time steps for the environment
         reset_wait_step: int, number of steps to wait after reset, using for initialize the scene with no collision
+        episode_config: dict, deterministic config for a specific episode, used for evaluation or trajetcory replay.
+        random_init: bool, if true, the env will take random layout/texture in each reset. Set this value 'False' when eval or replay.
     """
     # load config
     task_series = find_key_by_value(name2config, task)
@@ -36,6 +45,6 @@ def load_env(task, robot="franka", config=None, time_limit=float('inf'), reset_w
     robot_config.update(robot_config_overide)
     robot = register.load_robot(robot)(**robot_config)
     
-    task = register.load_task(task)(task, robot, config=default_config, **kwargs)
+    task = register.load_task(task)(task, robot, episode_config=episode_config, random_init=random_init, **kwargs)
     env = LM4ManipDMEnv(task=task, time_limit=time_limit, reset_wait_step=reset_wait_step)
     return env
