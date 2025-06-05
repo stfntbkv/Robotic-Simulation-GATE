@@ -118,9 +118,9 @@ class Evaluator:
             np.random.seed(seed)
             random.seed(seed)
         if episode_config is not None:
-            env = load_env(task_name, episode_config=episode_config, random_init=False, eval=self.eval_unseen)
+            env = load_env(task_name, episode_config=episode_config, random_init=False, eval=self.eval_unseen, run_mode="eval")
         else:
-            env = load_env(task_name, random_init=True, eval=self.eval_unseen)
+            env = load_env(task_name, random_init=True, eval=self.eval_unseen, run_mode="eval")
         env.reset()
         success = False
         info = {}
@@ -139,7 +139,7 @@ class Evaluator:
                 pos, euler, gripper_state = agent.predict(observation, **kwargs)
                 last_action = np.concatenate([pos, euler])
                 quat = euler_to_quaternion(*euler)
-                action = env.robot.get_qpos_from_ee_pos(physics=env.physics, pos=pos, quat=quat)[:7]
+                success, action = env.robot.get_qpos_from_ee_pos(physics=env.physics, pos=pos, quat=quat)
                 action = np.concatenate([action, gripper_state])
             elif agent.control_mode == "joint":
                 qpos, gripper_state = agent.predict(observation, **kwargs)
