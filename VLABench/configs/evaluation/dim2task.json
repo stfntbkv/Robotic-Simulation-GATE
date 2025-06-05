@@ -20,7 +20,7 @@
         "insert_bloom_flower",
         "select_drink_spatial"
     ],
-    "CommenSence":[
+    "CommonSense":[
         "select_drink_common_sense",
         "select_chemistry_tube_common_sense",
         "add_condiment_common_sense",
