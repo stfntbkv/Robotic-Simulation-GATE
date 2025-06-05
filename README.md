@@ -28,7 +28,7 @@ pip install -e .
 ```
 2. Download the assets
 ```sh
-python script/download_assets.py
+python scripts/download_assets.py
 ```
 
 3. (Option) Initialize submodules

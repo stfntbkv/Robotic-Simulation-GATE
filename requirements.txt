@@ -20,3 +20,4 @@ pynput
 colorlog
 colorama
 peft
+gdown
