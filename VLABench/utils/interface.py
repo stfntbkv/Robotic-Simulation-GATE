@@ -203,7 +203,7 @@ class Interface:
         self.last_euler = next_euler
         if self.delta_pos.sum() != 0 or self.delta_rot.sum() != 0:
             self.buffer["trajectory"].append(np.concatenate([next_pos, next_euler, np.array([int(self.grasp)])], axis=-1))
-        action = self.env.robot.get_qpos_from_ee_pos(self.env.physics, next_pos, quat)[:7]
+        success, action = self.env.robot.get_qpos_from_ee_pos(self.env.physics, next_pos, quat)[:7]
         # print("original", pos, euler)
         # print("target", next_pos, next_euler)
         if self.grasp:

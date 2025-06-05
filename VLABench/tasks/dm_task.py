@@ -38,6 +38,7 @@ class LM4ManipBaseTask(composer.Task):
                  use_llm=False,
                  episode_config=None,
                  xml_file="base/default.xml",
+                 run_mode="efficient",
                  **kwargs):
         """
         Params:
@@ -47,6 +48,7 @@ class LM4ManipBaseTask(composer.Task):
             use_llm: whether to use LLMs to generate instructions
             episode_config: deterministic configuration for task building
             xml_file: the file path of root xml for the task
+            run_mode: the running mode of the environment, choose 'efficient' for data collection and 'eval' for evaluation
         """
         self.task_name = task_name
         self.config_manager = register.load_config_manager(task_name)(task_name)
@@ -61,6 +63,7 @@ class LM4ManipBaseTask(composer.Task):
         self.entities = dict()
         self.distractors = dict()
         self.random_init = random_init
+        self.run_mode = run_mode
         if config is not None:
             self.random_ignored_entities = config["task"].get("random_ignored_entities", ["table"])
             self.ngrid = config["task"].get("ngrid", None)
@@ -119,8 +122,9 @@ class LM4ManipBaseTask(composer.Task):
         return self.config_manager.init_container
     
     def initialize_episode(self, physics, random_state):
-        self.reset_intention_distance()
-        self.reset_task_progress()
+        if self.run_mode == "eval":
+            self.reset_intention_distance()
+            self.reset_task_progress()
         # grid sampling
         if self.ngrid is not None and self.random_init:
             entities_to_random = [key for key in self.entities.keys() if key not in self.random_ignored_entities]
@@ -143,8 +147,9 @@ class LM4ManipBaseTask(composer.Task):
     
     def after_step(self, physics, random_state):
         physics.data.ctrl[:] = 0
-        self.update_intention_distance(physics)
-        self.update_task_progress(physics)
+        if self.run_mode == "eval":
+            self.update_intention_distance(physics)
+            self.update_task_progress(physics)
     
     def after_substep(self, physics, random_state):
         pass
@@ -448,6 +453,7 @@ class LM4ManipBaseTask(composer.Task):
         data_to_dump["task"]["scene"] = self.scene.save(physics)
         data_to_dump["task"]["instructions"] = self.instructions
         data_to_dump["task"]["conditions"] = self.config["task"].get("conditions", None)
+        data_to_dump["robot"] = self.robot.save(physics)
         for key in ["target_entity", "target_container", "target_entities"]:
             if hasattr(self.config_manager, key):
                 data_to_dump["task"][key] = getattr(self.config_manager, key)

@@ -20,8 +20,14 @@ class SelectBookConfigManager(SelectSpecificTypeBookConfigManager):
         init_container_config = self.config["task"]["components"][-1]
         for i, subentity_config in enumerate(init_container_config["subentities"]):
             subentity_config["position"][1] -= 0.1
-        laptop_config = self.get_entity_config("laptop", position=[random.uniform(-0.2, -0.1), random.uniform(-0.2, -0.15), 0.8])
+        laptop_config = self.get_entity_config("laptop", position=[random.uniform(-0.2, -0.1), random.uniform(-0.1, 0.0), 0.8])
         self.config["task"]["components"].append(laptop_config) 
+    
+    def load_init_containers(self, init_container):
+        if init_container is not None:
+            self.config["task"]["components"].append(self.get_entity_config(init_container, 
+                                                                            position=[random.uniform(-0.1, 0.1), 
+                                                                                      random.uniform(0.35, 0.4), 0.8]))
     
     def get_instruction(self, target_entity, **kwargs):
         instruction = [f"Today I want to review the content about ... Please help me to manage the study table before I come."]
@@ -49,7 +55,7 @@ class SetStudyTableTask(SelectBookTask):
         laptop_pos = np.array(self.entities["laptop"].get_xpos(physics))
         skill_sequence = [
             partial(SkillLib.pick, target_entity_name=self.target_entity, prior_eulers=[[-np.pi/2, -np.pi/2, 0]]),
-            partial(SkillLib.pull, gripper_state=np.zeros(2), pull_distance=0.2),
+            partial(SkillLib.pull, gripper_state=np.zeros(2), pull_distance=0.15),
             partial(SkillLib.place, target_container_name="table", target_pos=laptop_pos + np.array([0.4, 0, 0.1]), target_quat=euler_to_quaternion(-np.pi*3/4,  0, np.pi/2)),
             partial(SkillLib.lift, gripper_state=np.ones(2)*0.04, lift_height=0.1),
             partial(SkillLib.moveto, target_pos=laptop_pos + np.array([0, 0, 0.2]), target_quat=euler_to_quaternion(-np.pi*0.7, 0, 0), gripper_state=np.ones(2)*0.04),

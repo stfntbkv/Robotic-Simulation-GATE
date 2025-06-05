@@ -5,7 +5,7 @@ from VLABench.utils.utils import euler_to_quaternion, expand_mask
 from VLABench.utils.depth2cloud import rotMatList2NPRotMat, quat2Mat, posRotMat2Mat, PointCloudGenerator
 
 class LM4ManipDMEnv(composer.Environment):
-    def __init__(self, reset_wait_step=100, **kwargs):
+    def __init__(self, reset_wait_step=10, **kwargs):
         super().__init__(**kwargs)
         self.timestep = 0
         self.reset_wait_step = reset_wait_step
@@ -26,14 +26,17 @@ class LM4ManipDMEnv(composer.Environment):
         self.reset_gravity_and_fluid(self.physics)
         for _ in range(self.reset_wait_step):
             self.step()
+        self.register_pcd_generator()
         return timestep
         
     def render(self, **kwargs):
         return self.physics.render(**kwargs)
     
     def step(self, action=None):
-        if action is None:
-            return self.physics.step()
+        if action is None: # robot stay in static
+            action = self.robot.get_qpos(self.physics)
+            action = np.concatenate([action, 0.04 * np.ones((2))], axis=-1)
+            return super().step(action)
         self.timestep += 1
         return super().step(action)
     

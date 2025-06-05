@@ -16,7 +16,7 @@ def load_env(task,
              robot="franka", 
              config=None, 
              time_limit=float('inf'), 
-             reset_wait_step=100, 
+             reset_wait_step=10, 
              episode_config=None, 
              random_init=False,
              **kwargs):
@@ -47,4 +47,5 @@ def load_env(task,
     
     task = register.load_task(task)(task, robot, episode_config=episode_config, random_init=random_init, **kwargs)
     env = LM4ManipDMEnv(task=task, time_limit=time_limit, reset_wait_step=reset_wait_step)
+    env.reset()
     return env

@@ -19,7 +19,7 @@ class SkillLib:
                         points, 
                         quats, 
                         gripper_state, 
-                        max_n_substep=100,
+                        max_n_substep=1,
                         tolerance=0.01):
         """
         Universal step function for data generation.
@@ -41,7 +41,9 @@ class SkillLib:
         stage_success = False
         task_success = False
         for i, (point, quat) in enumerate(zip(points, quats)):
-            action = env.robot.get_qpos_from_ee_pos(physics=env.physics, pos=point, quat=quat)[:7]
+            success, action = env.robot.get_qpos_from_ee_pos(physics=env.physics, pos=point, quat=quat)
+            # if not success: # a wrong action beyond the embodied limit
+            #     return None, None, False, False
             action = np.concatenate([action, gripper_state])
             waypoint = np.concatenate([point, quaternion_to_euler(quat), gripper_state])
             for _ in range(max_n_substep):
@@ -102,6 +104,8 @@ class SkillLib:
                                                                    interplate_quat, 
                                                                    gripper_state,
                                                                    **kwargs)
+        # if new_obs is None:
+            # return None, None, False, False
         observations.extend(new_obs)
         waypoints.extend(new_waypoints)
         observations.pop(-1)
@@ -548,7 +552,7 @@ class SkillLib:
         
     
     @staticmethod
-    def close_gripper(env, repeat=10):
+    def close_gripper(env, repeat=1):
         qpos = np.array(env.robot.get_qpos(env.physics)).reshape(-1)
         observations = [env.get_observation()]
         waypoints = []
@@ -577,7 +581,7 @@ class SkillLib:
         return observations, waypoints, True, success
     
     @staticmethod
-    def open_gripper(env, repeat=10):
+    def open_gripper(env, repeat=1):
         qpos = np.array(env.robot.get_qpos(env.physics)).reshape(-1)
         observations = [env.get_observation()]
         waypoints = []
@@ -674,9 +678,9 @@ class SkillLib:
         if task_success:
             observations.pop(-1)
             assert len(observations) == len(waypoints), f"observations and waypoints should have the same length, {len(observations)} and {len(waypoints)}"
-            return observations, waypoints, task_success
+            return observations, waypoints, True, task_success
         
-        new_obs, new_waypoints, task_success = SkillLib.open_gripper(env)
+        new_obs, new_waypoints, _, task_success = SkillLib.open_gripper(env)
         observations.extend(new_obs)
         waypoints.extend(new_waypoints)
         observations.pop(-1)

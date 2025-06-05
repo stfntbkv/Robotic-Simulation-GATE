@@ -1,4 +1,5 @@
 import os
+import numpy as np
 from dm_control.utils.inverse_kinematics import qpos_from_site_pose
 from VLABench.robots.base import Robot
 from VLABench.utils.utils import matrix_to_quaternion
@@ -42,21 +43,21 @@ class SingleArm(Robot):
         for joint in self.joints[:self.n_dof]:
             qpos = physics.bind(joint).qpos
             qposes.append(qpos)
-        return qposes
+        return np.array(qposes).reshape(-1)
     
     def get_qvel(self, physics):
         qvels = []
         for joint in self.joints[:self.n_dof]:
             qvel = physics.bind(joint).qvel
             qvels.append(qvel)
-        return qvels
+        return np.array(qvels).reshape(-1)
     
     def get_qacc(self, physics):
         qaccs = []
         for joint in self.joints[:self.n_dof]:
             qacc = physics.bind(joint).qacc
             qaccs.append(qacc)
-        return qaccs
+        return np.array(qaccs).reshape(-1)
     
     def set_base_position(self, pos):
         """
@@ -85,8 +86,9 @@ class SingleArm(Robot):
                                         target_quat=quat,
                                         inplace=inplace,
                                         **kwargs)
+        success = ik_result.success
         target_qpos = ik_result.qpos
-        return target_qpos
+        return success, target_qpos[:self.n_dof]
     
     def get_end_effector_pos(self, physics=None):
         return physics.bind(self.end_effector_site).xpos
