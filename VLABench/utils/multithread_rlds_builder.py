@@ -2,7 +2,7 @@ from typing import Tuple, Any, Dict, Union, Callable, Iterable, Iterator
 import numpy as np
 import tensorflow as tf
 import tensorflow_datasets as tfds
-
+import json
 import itertools
 from multiprocessing import Pool
 from functools import partial
@@ -19,7 +19,7 @@ from tensorflow_datasets.core import writer as writer_lib
 from tensorflow_datasets.core import example_serializer
 from tensorflow_datasets.core import dataset_builder
 from tensorflow_datasets.core import file_adapters
-
+from scipy.spatial.transform import Rotation as R
 
 Key = Union[str, int]
 # The nested example dict passed to `features.encode_example`
@@ -33,17 +33,17 @@ class DemoBuilder(tfds.core.GeneratorBasedBuilder):
     RELEASE_NOTES = {
       '1.0.0': 'Initial release.',
     }
-    N_WORKERS = 10             # number of parallel workers for data conversion
+    N_WORKERS = 20             # number of parallel workers for data conversion
     MAX_PATHS_IN_MEMORY = 500
 
     def __init__(self, *args, **kwargs):
-        self.path = "*.hdf5"
+        self.path = "**/*.hdf5"
         super().__init__(*args, **kwargs)
     
     def _split_paths(self):
         """Define filepaths for data splits."""
         return {
-            'train': glob.glob('*.hdf5'),
+            'train': glob.glob('**/*.hdf5', recursive=True),
         }
     
     def _split_generators(self, dl_manager: tfds.download.DownloadManager):
@@ -63,15 +63,29 @@ class DemoBuilder(tfds.core.GeneratorBasedBuilder):
                 timestamps = data.keys()
                 for i, ts in enumerate(timestamps):
                     new_data = data[ts]
+                    # load episode config
+                    episode_config_bytes = np.asarray(new_data["meta_info"]["episode_config"]).astype('S')
+                    episode_config = episode_config_bytes.item().decode('utf-8')
+                    episode_config = json.loads(episode_config)
+                    if episode_config.get("robot") is not None:
+                        robot_frame_pos = np.array(episode_config["robot"]["position"])
+                    else:
+                        robot_frame_pos = np.array([0, -0.4, 0.78])
+                    
                     trajectory = np.asarray(new_data['trajectory'])
                     images = np.asarray(new_data["observation"]["rgb"])
                     # qpos = np.asarray(new_data["observation"]["qpos"])
-                    # ee_state = np.asarray(new_data["observation"]["ee_state"])
-                    episode_length = trajectory.shape[0]
-                    assert images.shape[0] == episode_length == trajectory.shape[0]
+                    ee_state = np.asarray(new_data["observation"]["ee_state"])
+                    # process ee_state
+                    ee_pos, ee_quat, gripper = ee_state[:, :3], ee_state[:, 3:7], ee_state[:, 7]
+                    ee_euler = np.array([quat2euler(q) for q in ee_quat])
+                    # transform ee_state to robot frame
+                    ee_pos -= robot_frame_pos
+                    ee_state = np.concatenate([ee_pos, ee_euler, gripper.reshape(-1, 1)], axis=1)
                     # assemble episode --> here we're assuming demos so we set reward to 1 at the end
                     episode = []
-                    # for i, step in enumerate(data):
+                    episode_length = trajectory.shape[0]
+                    assert images.shape[0] == episode_length == ee_state.shape[0]
                     for i in range(episode_length):
                         action = trajectory[i]
                         if action[-1] > 0.03:
@@ -84,6 +98,7 @@ class DemoBuilder(tfds.core.GeneratorBasedBuilder):
                                 'image_1': images[i][1],
                                 'front': images[i][2],
                                 'wrist': images[i][3],
+                                'ee_state':ee_state[i]
                             },
                             'action': action,
                             'discount': 1.0,
@@ -209,6 +224,11 @@ class DemoBuilder(tfds.core.GeneratorBasedBuilder):
                             dtype=np.uint8,
                             encoding_format='png',
                             doc='Main camera RGB observation.',
+                        ),
+                        'ee_state': tfds.features.Tensor(
+                            shape=(7,),
+                            dtype=np.float32,
+                            doc='Robot ee state, [6 joint, 1 gripper]',
                         ),
                     }),
                     'action': tfds.features.Tensor(
@@ -370,3 +390,8 @@ def chunk_max(l, n, max_chunk_sum):
         out.append(list(chunks(l[:max_chunk_sum], n)))
         l = l[max_chunk_sum:]
     return out
+
+def quat2euler(quat, is_degree=False):
+    r = R.from_quat([quat[1], quat[2], quat[3], quat[0]])
+    euler_angles = r.as_euler('xyz', degrees=is_degree)  
+    return euler_angles

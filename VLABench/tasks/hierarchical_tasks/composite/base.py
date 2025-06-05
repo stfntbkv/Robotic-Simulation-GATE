@@ -60,7 +60,7 @@ class ClusterTask(CompositeTask):
                         partial(SkillLib.lift, gripper_state=np.zeros(2)),
                 ]) 
                 target_container = self.entities[container]
-                target_place_point = target_container.get_place_point(physics)[-1]
+                target_place_point = np.array(target_container.get_place_point(physics)[-1])
                 target_place_point[1] += 0.1 * (i-0.5)
                 skill_sequence.append(partial(SkillLib.place, target_container_name=container, target_pos=target_place_point))
                 if index == 1 and i == 1: # wait when last placing

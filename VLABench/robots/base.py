@@ -81,8 +81,8 @@ class Robot(composer.Robot):
     def save(self, physics):
         data_to_save = {
             "name":self.name,
-            "position": physics.bind(self.link_base).xpos,
-            "euler": physics.bind(self.link_base).xquat,
+            "position": physics.bind(self.link_base).xpos.tolist(),
+            "quaternion": physics.bind(self.link_base).xquat.tolist(),
         }
         return data_to_save
     

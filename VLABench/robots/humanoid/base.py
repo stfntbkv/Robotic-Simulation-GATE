@@ -67,8 +67,9 @@ class Humanoid(DualArm):
                                         target_quat=quat,
                                         inplace=inplace,
                                         **kwargs)
+        success = ik_result.success
         target_qpos = ik_result.qpos
-        return target_qpos
+        return success, target_qpos
     
     def set_base_position(self, pos):
         assert len(pos) == 3, "pos must be a 3D vector"

@@ -31,8 +31,8 @@ class H1Humanoid(Humanoid):
         physics.data.ctrl = self.default_qpos
     
     def get_qpos_from_ee_pos(self, physics, pos, quat, inplace=False, target_hand="right", **kwargs):
-        qpos = super().get_qpos_from_ee_pos(physics, pos, quat, inplace, target_hand, **kwargs)
-        return qpos[:45]
+        success, qpos = super().get_qpos_from_ee_pos(physics, pos, quat, inplace, target_hand, **kwargs)
+        return success, qpos[:45]
     
     def get_whole_body_qpos(self, physics):
         qposes = []
