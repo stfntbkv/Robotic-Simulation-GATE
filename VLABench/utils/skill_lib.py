@@ -7,7 +7,7 @@ from VLABench.utils.utils import find_keypoint_and_prepare_grasp, distance, quat
 from VLABench.algorithms.motion_planning.rrt import rrt_motion_planning
 from VLABench.algorithms.utils import interpolate_path, qauternion_slerp
 
-PRIOR_EULERS = [[np.pi, 0, np.pi/2], # face down, horizontal
+PRIOR_EULERS = [[np.pi, 0, -np.pi/2], # face down, horizontal
                 [np.pi, 0, 0], # face down, vertical
                 [-np.pi/2, -np.pi/2, 0], # face forward, horizontal
                 [-np.pi/2, 0, 0], # face forward, vertical
@@ -336,7 +336,7 @@ class SkillLib:
             waypoints.append(np.concatenate([pos, quaternion_to_euler(quat), np.ones(2)*0.04]))
         observations.pop(-1)
         assert len(observations) == len(waypoints), f"observations and waypoints should have the same length, {len(observations)} and {len(waypoints)}"
-        if env.entities[target_container_name].is_open(env.physics):
+        if env.task.entities[target_container_name].is_open(env.physics):
             stage_success = True
         return observations, waypoints, stage_success, task_success
     
@@ -363,7 +363,7 @@ class SkillLib:
         waypoints.extend(new_waypoints)
         observations.pop(-1)
         assert len(observations) == len(waypoints), f"observations and waypoints should have the same length, {len(observations)} and {len(waypoints)}"
-        if env.entities[target_container_name].is_close(env.physics):
+        if env.task.entities[target_container_name].is_closed(env.physics):
             stage_success = True
         return observations, waypoints, stage_success, task_success
     

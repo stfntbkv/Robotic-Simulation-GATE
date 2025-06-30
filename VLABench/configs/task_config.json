@@ -467,6 +467,11 @@
     },
 
     "cluster_dessert": {
+        "engine":{
+            "option":{
+                "impratio": 3
+            }
+        },
         "task":{
             "ngrid": [4, 4],
             "workspace": [-0.15, 0.15 , -0.1, 0.1, 0.8, 1],
@@ -594,6 +599,11 @@
     },
     
     "set_dining_table_series":{
+        "engine":{
+            "option":{
+                "impratio": 5
+            }
+        },
         "task":{
             "asset":{
                 "seen_object": ["knife", "fork", "spoon", "chopstick"],
@@ -944,7 +954,7 @@
     "play_math_game": {
         "task":{
             "ngrid": [2, 6],
-            "workspace": [-0.3, 0.3, 0.1, 0.3, 0.8, 1],
+            "workspace": [-0.3, 0.3, 0.15, 0.3, 0.8, 1],
             "asset":{
                 "seen_container": ["placemat_seen"],
                 "unseen_container": ["placemat_unseen"]

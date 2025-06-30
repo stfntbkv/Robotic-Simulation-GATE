@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HDF5 文件统计</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <div class="max-w-4xl mx-auto p-6">
+    <h1 class="text-2xl font-bold mb-6">📊 HDF5 文件统计</h1>
+
+    <div id="primitive-section" class="mb-10">
+      <h2 class="text-xl font-semibold mb-4">🧱 Primitive Tasks</h2>
+      <div id="primitive-results" class="space-y-2"></div>
+    </div>
+
+    <div id="composite-section">
+      <h2 class="text-xl font-semibold mb-4">🧩 Composite Tasks</h2>
+      <div id="composite-results" class="space-y-2"></div>
+    </div>
+  </div>
+
+  <script>
+    async function loadStats() {
+      const primitive = await fetch('/stats?type=primitive').then(res => res.json());
+      const composite = await fetch('/stats?type=composite').then(res => res.json());
+
+      function renderSection(data, containerId) {
+        const container = document.getElementById(containerId);
+        const maxCount = Math.max(...Object.values(data));
+        for (const [folder, count] of Object.entries(data)) {
+          const percent = maxCount === 0 ? 0 : (count / maxCount) * 100;
+          container.innerHTML += `
+            <div>
+              <div class="flex justify-between text-sm">
+                <span>${folder}</span>
+                <span>${count} files</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-3">
+                <div class="bg-blue-500 h-3 rounded-full" style="width: ${percent}%;"></div>
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      renderSection(primitive, 'primitive-results');
+      renderSection(composite, 'composite-results');
+    }
+
+    loadStats();
+  </script>
+</body>
+</html>

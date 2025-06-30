@@ -1,15 +1,10 @@
 from lerobot.common.datasets.lerobot_dataset import LeRobotDataset
 import h5py
+import json
 import os
 import numpy as np
 import argparse
 from scipy.spatial.transform import Rotation as R
-
-def process_ee_state(ee_state):
-    ee_pos, ee_quat, gripper = ee_state[:3], ee_state[3:7], ee_state[-1]
-    ee_euler = quat2euler(ee_quat)
-    ee_pos -= np.array([0, -0.4, 0.78])
-    return np.concatenate([ee_pos, ee_euler, np.array([gripper]).reshape(-1)])
 
 def quat2euler(quat, is_degree=False):
     r = R.from_quat([quat[1], quat[2], quat[3], quat[0]])
@@ -70,13 +65,22 @@ def create_lerobot_dataset_from_hdf5(args):
     for file in h5py_files:
         with h5py.File(file, "r") as f:
             for timestamp in f["data"].keys():
+                # load episode config
+                episode_config_bytes = np.asarray(f["data"][timestamp]["meta_info"]["episode_config"]).astype('S')
+                episode_config = episode_config_bytes.item().decode('utf-8')
+                episode_config = json.loads(episode_config)
+                if episode_config.get("robot") is not None:
+                    robot_frame_pos = np.array(episode_config["robot"]["position"])
+                else:
+                    robot_frame_pos = np.array([0, -0.4, 0.78])
                 images = f["data"][timestamp]["observation"]["rgb"][()]
                 ee_state = f["data"][timestamp]["observation"]["ee_state"][()]
                 q_state = f["data"][timestamp]["observation"]["q_state"][()]
                 actions = f["data"][timestamp]["trajectory"]
                 ee_pos, ee_quat, gripper = ee_state[:, :3], ee_state[:, 3:7], ee_state[:, 7]
                 ee_euler = np.array([quat2euler(q) for q in ee_quat])
-                ee_pos -= np.array([0, -0.4, 0.78])
+                # transform ee_state to robot frame
+                ee_pos -= robot_frame_pos
                 ee_state = np.concatenate([ee_pos, ee_euler, gripper.reshape(-1, 1)], axis=1)
                 assert images.shape[0] == ee_state.shape[0] == q_state.shape[0] == actions.shape[0]
                 for i in range(images.shape[0]):

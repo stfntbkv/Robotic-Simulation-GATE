@@ -44,7 +44,7 @@ class MathGameConfigManager(BenchTaskConfigManager):
 
     def load_containers(self, target_container):
         super().load_containers(target_container)    
-        self.config["task"]["components"][-1]["position"] = [random.uniform(-0.2, 0.2), random.uniform(-0.1, 0.), 0.78]
+        self.config["task"]["components"][-1]["position"] = [random.uniform(-0.2, 0.2), random.uniform(-0.1, 0.05), 0.78]
     
     def load_objects(self, target_entity):
         assert isinstance(target_entity, list)

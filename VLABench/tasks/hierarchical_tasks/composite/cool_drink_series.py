@@ -134,6 +134,9 @@ class CoolDrinkTask(SelectDrinkTask):
         else:
             return False
     
+    def get_expert_skill_sequence(self, physics):
+        pass
+    
 @register.add_task("take_out_cool_drink")
 class TakeOutCoolDrinkTask(CoolDrinkTask):
     def __init__(self, task_name, robot, random_init=False, **kwargs):

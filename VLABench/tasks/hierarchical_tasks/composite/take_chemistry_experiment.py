@@ -151,7 +151,7 @@ class TakeChemistryExperimentTask(SelectChemistryTubeTask):
         for solution, end_pos in zip(self.target_entity, target_positions):
             grasppoint = np.array(self.entities[solution].get_grasped_keypoints(physics)[-1])
             skill_sequence.extend([
-                partial(SkillLib.pick, target_entity_name=solution, target_pos=grasppoint+np.array([0, 0, 0.02]), target_quat=euler_to_quaternion(-np.pi/2, -np.pi/2, 0)),
+                partial(SkillLib.pick, target_entity_name=solution, target_pos=grasppoint+np.array([0, 0, 0.02]), target_quat=euler_to_quaternion(-np.pi, np.pi/4, -np.pi/2)), 
                 partial(SkillLib.lift, gripper_state=np.zeros(2), lift_height=0.25),
                 partial(SkillLib.moveto, target_pos=place_point, gripper_state=np.zeros(2)),
                 partial(SkillLib.pour, target_delta_qpos=np.pi/2+np.pi/10, n_repeat_step=4),

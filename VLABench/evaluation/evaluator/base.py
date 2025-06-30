@@ -3,6 +3,7 @@ import os
 import numpy as np
 import random
 import mediapy
+import traceback
 from tqdm import tqdm
 from VLABench.envs import load_env
 from VLABench.configs import name2config
@@ -85,6 +86,7 @@ class Evaluator:
                     task_infos.append(info)
                 except Exception as e:
                     print(e)
+                    traceback.print_exc()
                     
             metric_score = self.compute_metric(task_infos)       
             metrics[task] = metric_score
@@ -99,6 +101,7 @@ class Evaluator:
                 previous_metrics.update(metrics)
                 with open(os.path.join(self.save_dir, agent.name, "metrics.json"), "w") as f:
                     json.dump(previous_metrics, f, indent=4)
+                os.makedirs(os.path.join(self.save_dir, agent.name, task), exist_ok=True)
                 with open(os.path.join(self.save_dir, agent.name, task, f"detail_info.json"), "w") as f:
                     json.dump(task_infos, f, indent=4)
         return metrics
@@ -139,7 +142,7 @@ class Evaluator:
                 pos, euler, gripper_state = agent.predict(observation, **kwargs)
                 last_action = np.concatenate([pos, euler])
                 quat = euler_to_quaternion(*euler)
-                success, action = env.robot.get_qpos_from_ee_pos(physics=env.physics, pos=pos, quat=quat)
+                _, action = env.robot.get_qpos_from_ee_pos(physics=env.physics, pos=pos, quat=quat)
                 action = np.concatenate([action, gripper_state])
             elif agent.control_mode == "joint":
                 qpos, gripper_state = agent.predict(observation, **kwargs)
@@ -156,6 +159,7 @@ class Evaluator:
                     and np.min(current_qpos - np.array(action)[:7]) > -self.tolerance:
                     break
             if success:
+                import pdb; pdb.set_trace()
                 break
         info["task"] = task_name
         info["success"] = success
