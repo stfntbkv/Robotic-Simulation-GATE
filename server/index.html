@@ -102,24 +102,46 @@
       try {
         let html = `<div>
           <h2 class="text-2xl font-bold mb-4">Task Visualization</h2>
-          <div class="mb-4">
-            <label class="mr-3 font-medium">Choose Type:</label>
-            <select id="select-type" class="border rounded px-3 py-2 mr-2">
-              <option value="primitive">Primitive</option>
-              <option value="composite">Composite</option>
-            </select>
+          <div class="mb-4 p-4 bg-gray-50 rounded-lg">
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-4">
+              <div>
+                <label class="block text-sm font-medium mb-1">Type:</label>
+                <select id="select-type" class="border rounded px-3 py-2 w-full">
+                  <option value="primitive">Primitive</option>
+                  <option value="composite">Composite</option>
+                </select>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium mb-1">Task:</label>
+                <select id="select-task" class="border rounded px-3 py-2 w-full">
+                  <option value="">Loading...</option>
+                </select>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium mb-1">File:</label>
+                <select id="select-file" class="border rounded px-3 py-2 w-full">
+                  <option value="">Select task first</option>
+                </select>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium mb-1">Frames:</label>
+                <input id="input-frames" type="number" value="200" min="5" max="500" 
+                      class="border rounded px-3 py-2 w-full">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium mb-1">FPS:</label>
+                <input id="input-fps" type="number" value="10" min="1" max="30" 
+                      class="border rounded px-3 py-2 w-full">
+              </div>
+            </div>
             
-            <label class="mr-3 font-medium">Task:</label>
-            <select id="select-task" class="border rounded px-3 py-2 mr-2">
-              <option value="">Loading...</option>
-            </select>
-            
-            <label class="mr-3 font-medium">File:</label>
-            <select id="select-file" class="border rounded px-3 py-2 mr-2">
-              <option value="">Select task first</option>
-            </select>
-            
-            <button id="load-task-btn" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Load</button>
+            <button id="load-task-btn" class="px-6 py-3 bg-blue-500 text-white rounded hover:bg-blue-600 font-medium">
+              🎬 Generate Videos
+            </button>
           </div>
           <div id="taskvis-result" class="mt-6"></div>
         </div>`;
@@ -190,36 +212,37 @@
         document.getElementById('select-type').onchange = populateTasks;
         document.getElementById('select-task').onchange = populateFiles;
         
-        // 加载HDF5内容
+        // 加载HDF5内容并生成视频
         document.getElementById('load-task-btn').onclick = async function() {
           try {
             const type = document.getElementById('select-type').value;
             const task = document.getElementById('select-task').value;
             const file = document.getElementById('select-file').value;
+            const frames = document.getElementById('input-frames').value;
+            const fps = document.getElementById('input-fps').value;
             
             if (!type || !task || !file) {
               document.getElementById('taskvis-result').innerHTML = 
-                '<div class="text-red-500">Please select type, task, and file</div>';
+                '<div class="text-red-500 p-4 bg-red-50 rounded-lg">Please select type, task, and file</div>';
               return;
             }
             
             // 显示加载状态
             document.getElementById('taskvis-result').innerHTML = 
-              '<div class="text-blue-500">Loading HDF5 content...</div>';
+              '<div class="text-blue-500 p-4 bg-blue-50 rounded-lg">🎬 Loading HDF5 content and generating GIF animations... This may take a moment.</div>';
             
             console.log('Loading HDF5 content for:', type, task, file);
             
-            const response = await fetch(`/hdf5_content?type=${type}&task=${task}&file=${file}&n_frame=10`);
+            const response = await fetch(`/hdf5_content?type=${type}&task=${task}&file=${file}&n_frame=${frames}&fps=${fps}`);
             const result = await response.json();
             console.log('HDF5 content loaded:', result);
             
             if (result.error) {
               document.getElementById('taskvis-result').innerHTML = 
-                `<div class="text-red-500">Error: ${result.error}</div>`;
+                `<div class="text-red-500 p-4 bg-red-50 rounded-lg">❌ Error: ${result.error}</div>`;
               return;
             }
             
-            // 展示 instruction 和视频帧
             let resultHtml = '';
             
             // 显示指令
@@ -234,47 +257,71 @@
               `;
             }
             
-            if (result.views_data && result.views_data.length > 0) {
+            // 显示GIF动画
+            if (result.videos_data && result.videos_data.length > 0) {
+              const formatText = result.format === 'gif' ? 'GIF Animations' : 'Videos';
+              
               resultHtml += `
                 <div class="mb-4">
-                  <h3 class="font-bold text-lg mb-3">🎬 Multi-View Video (${result.n_views} views, showing ${result.views_data[0].frames.length} of ${result.total_frames} frames each):</h3>
+                  <h3 class="font-bold text-lg mb-3">🎬 Multi-View ${formatText}</h3>
+                  <div class="mb-2 text-sm text-gray-600">
+                    ${result.n_views} views • ${result.total_frames} total frames • ${result.fps} FPS • Showing ${frames} frames per view
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               `;
               
-              // 为每个时间步创建一行，显示所有视角
-              const maxFrames = Math.max(...result.views_data.map(v => v.frames.length));
-              
-              for (let frameIdx = 0; frameIdx < maxFrames; frameIdx++) {
+              // 为每个视角显示GIF
+              result.videos_data.forEach((mediaData) => {
+                const isGif = mediaData.format === 'gif' || result.format === 'gif';
+                
                 resultHtml += `
-                  <div class="mb-6">
-                    <h4 class="text-md font-medium mb-2 text-gray-700">Frame ${frameIdx + 1}:</h4>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div class="bg-white p-4 rounded-lg shadow-lg border">
+                    <h4 class="text-md font-medium mb-3 text-gray-700 flex items-center">
+                      ${isGif ? '🎞️' : '📹'} View ${mediaData.view_id + 1} 
+                      <span class="ml-2 text-sm text-gray-500">
+                        (${mediaData.frames_count} frames, ${isGif ? 'GIF' : 'Video'})
+                      </span>
+                    </h4>
                 `;
                 
-                // 显示这一帧的所有视角
-                result.views_data.forEach((viewData, viewIdx) => {
-                  if (frameIdx < viewData.frames.length) {
-                    resultHtml += `
-                      <div class="text-center">
-                        <img src="data:image/jpeg;base64,${viewData.frames[frameIdx]}" 
-                            class="w-full h-32 object-cover rounded-lg shadow-lg border" 
-                            alt="View ${viewIdx + 1}, Frame ${frameIdx + 1}"/>
-                        <div class="text-sm text-gray-500 mt-1">View ${viewIdx + 1}</div>
-                      </div>
-                    `;
-                  }
-                });
+                if (isGif) {
+                  // 显示GIF
+                  resultHtml += `
+                    <img 
+                      src="data:image/gif;base64,${mediaData.video_b64}" 
+                      class="w-full h-64 object-contain rounded-lg border shadow-sm bg-gray-100" 
+                      alt="View ${mediaData.view_id + 1} Animation"
+                      style="image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;"
+                      onload="console.log('GIF loaded for view ${mediaData.view_id + 1}')"
+                      onerror="console.error('GIF load error for view ${mediaData.view_id + 1}')"/>
+                  `;
+                } else {
+                  // 显示视频（备用）
+                  resultHtml += `
+                    <video 
+                      class="w-full h-64 rounded-lg border shadow-sm bg-gray-100" 
+                      controls 
+                      loop 
+                      muted
+                      preload="metadata">
+                      <source src="data:video/mp4;base64,${mediaData.video_b64}" type="video/mp4">
+                      Your browser does not support the video tag.
+                    </video>
+                  `;
+                }
                 
-                resultHtml += `
-                    </div>
+                resultHtml += `</div>`;
+              });
+              
+              resultHtml += `
                   </div>
-                `;
-              }
-              
-              resultHtml += `</div>`;
+                </div>
+              `;
             } else {
               resultHtml += `
                 <div class="text-red-500 p-4 bg-red-50 rounded-lg">
-                  ❌ No images found or error loading video frames.
+                  ❌ No animations generated or error creating content.
+                  <br><small>Please check the console for more details.</small>
                 </div>
               `;
             }
@@ -284,20 +331,25 @@
           } catch (error) {
             console.error('Error loading HDF5 content:', error);
             document.getElementById('taskvis-result').innerHTML = 
-              `<div class="text-red-500 p-4 bg-red-50 rounded-lg">Error loading content: ${error.message}</div>`;
+              `<div class="text-red-500 p-4 bg-red-50 rounded-lg">
+                ❌ Error loading content: ${error.message}
+                <br><small>Please check the console for more details.</small>
+              </div>`;
           }
         };
-        
+
         // 首次载入任务列表
         await populateTasks();
         
       } catch (error) {
         console.error('Error initializing task visualization:', error);
         document.getElementById('content-taskvis').innerHTML = 
-          `<div class="text-red-500">Error initializing: ${error.message}</div>`;
+          `<div class="text-red-500 p-4 bg-red-50 rounded-lg">
+            ❌ Error initializing: ${error.message}
+          </div>`;
       }
     }
-    
+
     // 页面加载完成后初始化
     document.addEventListener('DOMContentLoaded', function() {
       loadOverview(); // 默认显示概览页面
