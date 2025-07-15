@@ -257,60 +257,47 @@
               `;
             }
             
-            // 显示GIF动画
+            // 显示视频
             if (result.videos_data && result.videos_data.length > 0) {
-              const formatText = result.format === 'gif' ? 'GIF Animations' : 'Videos';
-              
               resultHtml += `
                 <div class="mb-4">
-                  <h3 class="font-bold text-lg mb-3">🎬 Multi-View ${formatText}</h3>
-                  <div class="mb-2 text-sm text-gray-600">
+                  <h3 class="font-bold text-lg mb-3">🎬 Multi-View Videos</h3>
+                  <div class="mb-3 text-sm text-gray-600">
                     ${result.n_views} views • ${result.total_frames} total frames • ${result.fps} FPS • Showing ${frames} frames per view
                   </div>
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
               `;
               
-              // 为每个视角显示GIF
-              result.videos_data.forEach((mediaData) => {
-                const isGif = mediaData.format === 'gif' || result.format === 'gif';
+              // 为每个视角显示视频
+              result.videos_data.forEach((videoData) => {
+                const encoderInfo = result.encoder === 'ffmpeg' ? 'H.264' : (videoData.codec || 'MP4');
                 
                 resultHtml += `
-                  <div class="bg-white p-4 rounded-lg shadow-lg border">
-                    <h4 class="text-md font-medium mb-3 text-gray-700 flex items-center">
-                      ${isGif ? '🎞️' : '📹'} View ${mediaData.view_id + 1} 
-                      <span class="ml-2 text-sm text-gray-500">
-                        (${mediaData.frames_count} frames, ${isGif ? 'GIF' : 'Video'})
-                      </span>
+                  <div class="bg-white p-3 rounded-lg shadow-lg border">
+                    <h4 class="text-sm font-medium mb-2 text-gray-700 text-center">
+                      📹 View ${videoData.view_id + 1}
                     </h4>
+                    <div class="text-xs text-gray-500 text-center mb-2">
+                      ${videoData.frames_count} frames • ${encoderInfo}
+                    </div>
+                    <div class="aspect-square">
+                      <video 
+                        class="w-full h-full object-cover rounded-lg border shadow-sm bg-gray-100" 
+                        controls 
+                        loop 
+                        muted
+                        preload="metadata"
+                        playsinline
+                        onloadstart="console.log('Video loading started for view ${videoData.view_id + 1}')"
+                        oncanplay="console.log('Video can play for view ${videoData.view_id + 1}')"
+                        onerror="console.error('Video error for view ${videoData.view_id + 1}', this.error)"
+                        onloadedmetadata="console.log('Video metadata loaded for view ${videoData.view_id + 1}', this.videoWidth + 'x' + this.videoHeight)">
+                        <source src="data:video/mp4;base64,${videoData.video_b64}" type="video/mp4">
+                        Your browser does not support the video tag.
+                      </video>
+                    </div>
+                  </div>
                 `;
-                
-                if (isGif) {
-                  // 显示GIF
-                  resultHtml += `
-                    <img 
-                      src="data:image/gif;base64,${mediaData.video_b64}" 
-                      class="w-full h-64 object-contain rounded-lg border shadow-sm bg-gray-100" 
-                      alt="View ${mediaData.view_id + 1} Animation"
-                      style="image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;"
-                      onload="console.log('GIF loaded for view ${mediaData.view_id + 1}')"
-                      onerror="console.error('GIF load error for view ${mediaData.view_id + 1}')"/>
-                  `;
-                } else {
-                  // 显示视频（备用）
-                  resultHtml += `
-                    <video 
-                      class="w-full h-64 rounded-lg border shadow-sm bg-gray-100" 
-                      controls 
-                      loop 
-                      muted
-                      preload="metadata">
-                      <source src="data:video/mp4;base64,${mediaData.video_b64}" type="video/mp4">
-                      Your browser does not support the video tag.
-                    </video>
-                  `;
-                }
-                
-                resultHtml += `</div>`;
               });
               
               resultHtml += `
@@ -320,7 +307,7 @@
             } else {
               resultHtml += `
                 <div class="text-red-500 p-4 bg-red-50 rounded-lg">
-                  ❌ No animations generated or error creating content.
+                  ❌ No videos generated or error creating videos.
                   <br><small>Please check the console for more details.</small>
                 </div>
               `;

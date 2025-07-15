@@ -7,6 +7,7 @@ import tempfile
 import subprocess
 import shutil
 import cv2
+import re
 
 app = Flask(__name__, static_folder='.')
 BASE_PATHS = {
@@ -16,11 +17,13 @@ BASE_PATHS = {
 
 def list_tasks(task_type):
     root = BASE_PATHS[task_type]
-    return [d for d in os.listdir(root) if os.path.isdir(os.path.join(root, d))]
+    tasks = [d for d in os.listdir(root) if os.path.isdir(os.path.join(root, d))]
+    return sorted(tasks)
 
 def list_hdf5_files(task_type, task):
     task_dir = os.path.join(BASE_PATHS[task_type], task)
-    return [f for f in os.listdir(task_dir) if f.endswith('.hdf5')]
+    hdf5_files = [f for f in os.listdir(task_dir) if f.endswith('.hdf5')]
+    return sorted(hdf5_files, key=lambda x: int(x.split('_')[1].split('.')[0]))
 
 def load_instruction_and_video(filepath, n_frame=20, fps=5):
     try:
