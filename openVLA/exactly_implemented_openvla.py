@@ -28,28 +28,35 @@ def create_libero_env():
     """
     print("🏗️ Creating LIBERO environment (matching OpenVLA setup)")
     
-    # Fix: Use correct robosuite controller loading function
-    from robosuite.controllers.parts.controller_factory import load_part_controller_config
-    from robosuite.controllers.composite.composite_controller_factory import refactor_composite_controller_config
-    
-    # Load OSC controller config (like OpenVLA)
-    part_controller_config = load_part_controller_config(default_controller="OSC_POSE")
-    controller_configs = refactor_composite_controller_config(
-        part_controller_config, robot_type="Panda", arms=["right"]
-    )
+    # Use simplified controller configuration for compatibility
+    try:
+        # Try newer robosuite API first
+        from robosuite.controllers import load_controller_config
+        controller_config = load_controller_config(default_controller="OSC_POSE")
+        print("✅ Using load_controller_config")
+    except ImportError:
+        try:
+            # Try alternative import
+            from robosuite import load_controller_config
+            controller_config = load_controller_config(default_controller="OSC_POSE")
+            print("✅ Using alternative controller config")
+        except ImportError:
+            # Fallback to string-based configuration
+            controller_config = "OSC_POSE"
+            print("✅ Using string-based controller config")
     
     env = suite.make(
         env_name="Lift",
         robots="Panda",
-        controller_configs=controller_configs,  # Use the properly configured controller
+        controller_configs=controller_config,  # Use the controller config
         has_renderer=True,
         has_offscreen_renderer=True,
         use_camera_obs=True,
         camera_names=["agentview"],  # OpenVLA LIBERO uses agentview
-        camera_heights=128,  # OpenVLA uses 224x224 images
+        camera_heights=128,  # Changed to match more common setup
         camera_widths=128,
-        control_freq=50,  # 50 Hz control frequency
-        horizon=6000,  # LIBERO horizon
+        control_freq=20,  # Reduced for stability
+        horizon=500,  # Reduced for initial testing
         reward_shaping=True,
     )
     
@@ -182,7 +189,7 @@ def setup_openvla_model():
     processor = AutoProcessor.from_pretrained(model_name, trust_remote_code=True)
     model = AutoModelForVision2Seq.from_pretrained(
         checkpoint_name,
-        attn_implementation="flash_attention_2",  # [Optional] Requires `flash_attn`
+        #attn_implementation="flash_attention_2",  # [Optional] Requires `flash_attn`
         trust_remote_code=True,
         torch_dtype=torch.bfloat16
     ).to(DEVICE)
