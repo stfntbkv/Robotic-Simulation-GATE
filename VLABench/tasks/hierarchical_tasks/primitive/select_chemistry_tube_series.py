@@ -173,6 +173,10 @@ class SelectChemistryTubeTask(PrimitiveTask):
                 if nametag.parent_entity is not None:
                     nametag.detach()
                     nametag.parent_entity.attach(nametag)
+            if "tube_stand" in key:
+                tube_stand = self.entities[key]
+                tube_stand.detach()
+                self._arena.attach(tube_stand)
     
     def get_expert_skill_sequence(self, physics):
         skill_sequence = [

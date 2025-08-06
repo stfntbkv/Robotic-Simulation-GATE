@@ -44,7 +44,7 @@ class MathGameConfigManager(BenchTaskConfigManager):
 
     def load_containers(self, target_container):
         super().load_containers(target_container)    
-        self.config["task"]["components"][-1]["position"] = [random.uniform(-0.2, 0.2), random.uniform(-0.1, 0.), 0.78]
+        self.config["task"]["components"][-1]["position"] = [random.uniform(-0.2, 0.2), random.uniform(-0.1, 0.05), 0.78]
     
     def load_objects(self, target_entity):
         assert isinstance(target_entity, list)
@@ -59,7 +59,7 @@ class MathGameConfigManager(BenchTaskConfigManager):
                                 farthest_sample=False)
         random.shuffle(objects)
         for object, pos in zip(objects, positions):
-            pos = [pos[0], pos[1], 0.78]
+            pos = [pos[0], pos[1], 0.8]
             object_config = dict(
                 name=f"{object}",
                 number=object,

@@ -91,6 +91,7 @@
 
     "select_fruit_series":{
         "task":{
+            "random_init": true,
             "ngrid": [10, 10],
             "asset":{
                 "seen_object":["apple", "banana", "orange", "pear"],
@@ -143,6 +144,9 @@
             "scene":{
                 "name": "kitchen_2"
             }
+        },
+        "evaluation":{
+            "max_episode_length":300
         }
     },
     
@@ -216,6 +220,7 @@
             "position": [0, -0.4, 0.6]
         },
         "task":{
+            "random_init": true, 
             "ngrid": [10, 10],
             "workspace": [-0.3, 0.3, -0.1, 0.3, 0.65, 1.2],
             "random_ignored_entities": ["billinards_table"],
@@ -252,6 +257,7 @@
     
     "select_toy_series":{
         "task":{
+            "random_init": true, 
             "ngrid": [4, 4],
             "workspace": [-0.35, 0.3, -0.2, 0.2, 0.8, 1],
             "asset":{
@@ -467,6 +473,11 @@
     },
 
     "cluster_dessert": {
+        "engine":{
+            "option":{
+                "impratio": 3
+            }
+        },
         "task":{
             "ngrid": [4, 4],
             "workspace": [-0.15, 0.15 , -0.1, 0.1, 0.8, 1],
@@ -594,6 +605,11 @@
     },
     
     "set_dining_table_series":{
+        "engine":{
+            "option":{
+                "impratio": 5
+            }
+        },
         "task":{
             "asset":{
                 "seen_object": ["knife", "fork", "spoon", "chopstick"],
@@ -815,7 +831,8 @@
             ],
             "scene":{
                 "name": "wall_0",
-                "orientation": [0, 0, -1.57]
+                "orientation": [0, 0, -1.57],
+                "use_default_scene": false
             }
         }
     },
@@ -944,7 +961,7 @@
     "play_math_game": {
         "task":{
             "ngrid": [2, 6],
-            "workspace": [-0.3, 0.3, 0.1, 0.3, 0.8, 1],
+            "workspace": [-0.3, 0.3, 0.15, 0.3, 0.8, 1],
             "asset":{
                 "seen_container": ["placemat_seen"],
                 "unseen_container": ["placemat_unseen"]

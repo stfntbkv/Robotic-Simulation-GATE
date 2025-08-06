@@ -140,7 +140,7 @@ class ContainerWithDoor(CommonContainer):
             
     def is_open(self, physics):
         joint_pos = physics.bind(self.door_joint).qpos
-        if abs(joint_pos) > self.threshold: return True
+        if abs(joint_pos) > self.open_threshold: return True
         else: return False
     
     def is_closed(self, physics):
@@ -188,6 +188,10 @@ class ContainerWithDoor(CommonContainer):
         grasp_keypoints = []
         grasp_keypoints.extend([physics.bind(site).xpos for site in grasp_sites])
         return grasp_keypoints
+    
+    def is_grasped(self, physics, robot):
+        # FIXME
+        return True
     
 @register.add_entity("ContainerWithDrawer")
 class ContainerWithDrawer(CommonContainer):

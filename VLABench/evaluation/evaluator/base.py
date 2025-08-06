@@ -3,6 +3,7 @@ import os
 import numpy as np
 import random
 import mediapy
+import traceback
 from tqdm import tqdm
 from VLABench.envs import load_env
 from VLABench.configs import name2config
@@ -19,6 +20,7 @@ class Evaluator:
                  save_dir=None,
                  visulization=False,
                  eval_unseen=False,
+                 unnorm_key='primitive',
                  **kwargs
                  ):
         """
@@ -32,6 +34,7 @@ class Evaluator:
             save_dir: directory to save the evaluation results
             visulization: whether to visualize the evaluation progress as videos
             eval_unseen: whether to evaluate the unseen object categories
+            unnorm_key: the dataset statistics name of the task suite
         """
         if isinstance(episode_config, str):
             with open(episode_config, "r") as f:
@@ -50,7 +53,7 @@ class Evaluator:
         self.target_metrics = metrics
         self.intention_score_threshold = kwargs.get("intention_score_threshold", 0.1)
         self.eval_unseen = eval_unseen
-        
+        self.unnorm_key = unnorm_key
         # log, store and visualization
         self.save_dir = save_dir
         if self.save_dir is not None:
@@ -74,10 +77,11 @@ class Evaluator:
             for i in tqdm(range(self.n_episodes), desc=f"Evaluating {task} of {agent.name}"):
                 agent.reset()
                 kwargs = {
-                    "unnorm_key": task,
+                    "unnorm_key": 'primitive',
                     "max_episode_length": max_episode_length
                 }
                 try:
+                    # BUG some episodes are unstable and lead to crash
                     if self.episode_config is None: 
                         info = self.evaluate_single_episode(agent, task, i, None, seed=42+i, **kwargs)
                     else: 
@@ -85,21 +89,22 @@ class Evaluator:
                     task_infos.append(info)
                 except Exception as e:
                     print(e)
+                    traceback.print_exc()
                     
             metric_score = self.compute_metric(task_infos)       
             metrics[task] = metric_score
             
             if self.save_dir is not None:
-                os.makedirs(os.path.join(self.save_dir, agent.name), exist_ok=True)
-                if os.path.exists(os.path.join(self.save_dir, agent.name, "metrics.json")):
-                    with open(os.path.join(self.save_dir, agent.name, "metrics.json"), "r") as f:
+                if os.path.exists(os.path.join(self.save_dir, "metrics.json")):
+                    with open(os.path.join(self.save_dir, "metrics.json"), "r") as f:
                         previous_metrics = json.load(f)
                 else:
                     previous_metrics = {}
                 previous_metrics.update(metrics)
-                with open(os.path.join(self.save_dir, agent.name, "metrics.json"), "w") as f:
+                with open(os.path.join(self.save_dir, "metrics.json"), "w") as f:
                     json.dump(previous_metrics, f, indent=4)
-                with open(os.path.join(self.save_dir, agent.name, task, f"detail_info.json"), "w") as f:
+                os.makedirs(os.path.join(self.save_dir, task), exist_ok=True)
+                with open(os.path.join(self.save_dir, task, f"detail_info.json"), "w") as f:
                     json.dump(task_infos, f, indent=4)
         return metrics
         
@@ -126,10 +131,13 @@ class Evaluator:
         info = {}
         frames_to_save = []
         last_action = None
-        for i in range(max_episode_length):
-            observation = env.get_observation()
+        i = 0
+        robot_frame = env.get_robot_frame_position()
+        while i < max_episode_length:
+            observation = env.get_observation(require_pcd=False)
             observation["instruction"] = env.task.get_instruction()
             ee_state = observation["ee_state"]
+            observation['robot_frame'] = robot_frame
             if last_action is None:
                 last_action = np.concatenate([ee_state[:3], quaternion_to_euler(ee_state[3:7])])
             observation["last_action"] = last_action
@@ -139,7 +147,7 @@ class Evaluator:
                 pos, euler, gripper_state = agent.predict(observation, **kwargs)
                 last_action = np.concatenate([pos, euler])
                 quat = euler_to_quaternion(*euler)
-                success, action = env.robot.get_qpos_from_ee_pos(physics=env.physics, pos=pos, quat=quat)
+                _, action = env.robot.get_qpos_from_ee_pos(physics=env.physics, pos=pos, quat=quat)
                 action = np.concatenate([action, gripper_state])
             elif agent.control_mode == "joint":
                 qpos, gripper_state = agent.predict(observation, **kwargs)
@@ -157,16 +165,19 @@ class Evaluator:
                     break
             if success:
                 break
+            i += 1
+        intention_score =  env.get_intention_score(threshold=self.intention_score_threshold)
+        progress_score = env.get_task_progress()
         info["task"] = task_name
         info["success"] = success
         info["consumed_step"] = i
-        info["intention_score"] = env.get_intention_score(threshold=self.intention_score_threshold)
-        info["progress_score"] = env.get_task_progress()
+        info["intention_score"] = intention_score
+        info["progress_score"] = progress_score
         
         env.close()
         if self.save_dir is not None and self.visulization:
-            os.makedirs(os.path.join(self.save_dir, agent.name, task_name), exist_ok=True)
-            self.save_video(frames_to_save, os.path.join(self.save_dir, agent.name, task_name, f"{episode_id}.mp4"))
+            os.makedirs(os.path.join(self.save_dir, task_name, "videos"), exist_ok=True)
+            self.save_video(frames_to_save, os.path.join(self.save_dir, task_name, "videos", f"{episode_id}_success_{str(success)}_progress_{progress_score:.2f}.mp4"))
         return info
         
     def compute_metric(self, infos):

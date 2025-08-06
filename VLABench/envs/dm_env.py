@@ -115,7 +115,7 @@ class LM4ManipDMEnv(composer.Environment):
         
         return intrinsic_mat, extrinsic_mat
 
-    def get_observation(self):
+    def get_observation(self, require_pcd=True):
         observation = dict()
         multi_view_rgb, multi_view_depth, multi_view_seg = [], [], []
         instrinsic_matrixs, extrinsic_matrixs = [], []
@@ -136,13 +136,14 @@ class LM4ManipDMEnv(composer.Environment):
         observation["instrinsic"] = np.array(instrinsic_matrixs)
         observation["extrinsic"] = np.array(extrinsic_matrixs)
         self.pcd_generator.physics = self.physics
-        observation["masked_point_cloud"] = self.pcd_generator.generate_pcd_from_rgbd(target_id=list(range(self.physics.model.ncam - 1)), 
-                                                                                         rgb=multi_view_rgb,
-                                                                                         depth=multi_view_depth,
-                                                                                         mask=expand_mask(observation["robot_mask"]))
-        observation["point_cloud"] = self.pcd_generator.generate_pcd_from_rgbd(target_id=list(range(self.physics.model.ncam - 1)),
-                                                                                  rgb=multi_view_rgb,
-                                                                                  depth=multi_view_depth)
+        if require_pcd:
+            observation["masked_point_cloud"] = self.pcd_generator.generate_pcd_from_rgbd(target_id=list(range(self.physics.model.ncam - 1)), 
+                                                                                            rgb=multi_view_rgb,
+                                                                                            depth=multi_view_depth,
+                                                                                            mask=expand_mask(observation["robot_mask"]))
+            observation["point_cloud"] = self.pcd_generator.generate_pcd_from_rgbd(target_id=list(range(self.physics.model.ncam - 1)),
+                                                                                    rgb=multi_view_rgb,
+                                                                                    depth=multi_view_depth)
         observation["ee_state"] = self.robot.get_ee_state(self.physics)
         observation["grasped_obj_name"] = self.get_grasped_entity()
         observation.update(self.task.task_observables)
@@ -232,3 +233,6 @@ class LM4ManipDMEnv(composer.Environment):
         Save the task and env configuration
         """
         return self.task.save(self.physics)
+    
+    def get_robot_frame_position(self):
+        return self.robot.get_base_position(self.physics)

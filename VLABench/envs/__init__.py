@@ -44,7 +44,11 @@ def load_env(task,
     robot_config_overide = default_config.get("robot", {})
     robot_config.update(robot_config_overide)
     robot = register.load_robot(robot)(**robot_config)
-    
+    if default_config['task'] and default_config['task'].get("random_init", None) is not None:
+        random_init = default_config['task']['random_init']
+    if episode_config is not None:
+        # forbid random initialization if given episode config
+        random_init = False 
     task = register.load_task(task)(task, robot, episode_config=episode_config, random_init=random_init, **kwargs)
     env = LM4ManipDMEnv(task=task, time_limit=time_limit, reset_wait_step=reset_wait_step)
     env.reset()

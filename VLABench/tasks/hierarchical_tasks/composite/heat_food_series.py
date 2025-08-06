@@ -94,10 +94,10 @@ class HeatFoodTask(CompositeTask):
         target_container_pos = self.entities[self.target_container].get_xpos(physics)
         start_button_pos = np.array(self.entities[self.target_container].get_start_button_pos(physics))
         skill_sequence = [
-            partial(SkillLib.pick, target_entity_name=self.target_container, prior_eulers=[[-np.pi, 0, np.pi/2]]), 
+            partial(SkillLib.pick, target_entity_name=self.target_container, prior_eulers=[[np.pi, 0, -np.pi/2]]), 
             partial(SkillLib.open_door, target_container_name=self.target_container), 
             partial(SkillLib.lift, gripper_state=np.ones(2)*0.04, lift_height=0.1),
-            partial(SkillLib.pull, gripper_state=np.ones(2)*0.04, target_quat=euler_to_quaternion(-np.pi, 0, -np.pi/2), pull_distance=0.15),
+            partial(SkillLib.pull, gripper_state=np.ones(2)*0.04, target_quat=euler_to_quaternion(np.pi, 0, -np.pi/2), pull_distance=0.15),
             partial(SkillLib.pick, target_entity_name=self.target_entity, prior_eulers=[[-np.pi, 0, np.pi/2]]),
             partial(SkillLib.moveto, target_pos=[target_container_pos[0] - 0.1, target_container_pos[1] - 0.2, target_container_pos[2]+0.1], target_quat=euler_to_quaternion(-np.pi*3/4, 0, 0), gripper_state=np.zeros(2)),
             partial(SkillLib.place, target_container_name=self.target_container, target_quat=euler_to_quaternion(-np.pi*3/4, 0, 0)),
