@@ -1,14 +1,18 @@
 # VLABench: A Large-Scale Benchmark for Language-Conditioned Robotics Manipulation with Long-Horizon Reasoning Tasks
 
-<!-- <span style="font-size:16px"> 🚨 <span style="color:#AB4459;">**NOTICE:**</span> 🎁 The early preview version is released on my birthday (12.25) as a gift for myself🎄! Most codes are still under management or even reconstruction for a more robust and user-friendly version.（Sorry, I’ve been so busy these days). The Complete Version will be open-sourced around the Chinese Lunar New Year🧧! </br> <span style="font-size:14px;font-style: italic;">I don’t like the phrase "code coming soon"; it often feels like I’ll never actually see the code on GitHub, which can be quite frustrating. So this early version is my promise.</span></span> -->
-
 ###  🎓 [**Paper**](docs/pdf/paper.pdf) |  🌐 [**Project Website**](https://vlabench.github.io/) ｜ 🤗 [**Hugging Face**](https://huggingface.co/VLABench) | 🐳 [**Quick Start with Docker**](./QuickStart.md)
 <img src="docs/images/Figure1_overview.png" width="100%" />
 
+<span style="font-size:16px"> 🚨 <span style="color:#AB4459;">**NOTICE:**</span>Please feel free to start an issue or create a PR! If I do not respond to issues in a timely manner, feel free to send me an email directly. I will do my best to build a more user-friendly community ecosystem for VLABench within this year.</span>
 
 ## News
 * **Preview** A complete infra framework will be open-sourced alongside new work, including full training pipelines, VLABench evaluation, a new leaderboard, data processing, and real-device deployment. Stay tuned!  
-* **2025/8/06** Update VLABench with: parrallel data collection; parrallel evaluation example; camera augmentation; rlds/lerobot data format ft dataset on [hf] (https://huggingface.co/VLABench); update on [pi0 codebase](https://github.com/Shiduo-zh/openpi).
+* **2025/8/06** Update VLABench with: 
+    - parrallel data collection; 
+    - parrallel evaluation example; 
+    - camera augmentation; 
+    - rlds/lerobot data format ft dataset on [hf](https://huggingface.co/VLABench); 
+    - update on [pi0 codebase](https://github.com/Shiduo-zh/openpi).
 * **2025/6/26** VLABench has been accepted by ICCV 2025.
 * **2025/4/10** Releasing the finetuned pi0 checkpoint(pi0-base and pi0-fast) on [hf](https://huggingface.co/VLABench).
 * **2025/3/25** Releasing standard evaluation episodes and primitive task finetune dataset.
