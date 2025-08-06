@@ -1,17 +1,40 @@
 # VLABench: A Large-Scale Benchmark for Language-Conditioned Robotics Manipulation with Long-Horizon Reasoning Tasks
 
-<!-- <span style="font-size:16px"> 🚨 <span style="color:#AB4459;">**NOTICE:**</span> 🎁 The early preview version is released on my birthday (12.25) as a gift for myself🎄! Most codes are still under management or even reconstruction for a more robust and user-friendly version.（Sorry, I’ve been so busy these days). The Complete Version will be open-sourced around the Chinese Lunar New Year🧧! </br> <span style="font-size:14px;font-style: italic;">I don’t like the phrase "code coming soon"; it often feels like I’ll never actually see the code on GitHub, which can be quite frustrating. So this early version is my promise.</span></span> -->
-
 ###  🎓 [**Paper**](docs/pdf/paper.pdf) |  🌐 [**Project Website**](https://vlabench.github.io/) ｜ 🤗 [**Hugging Face**](https://huggingface.co/VLABench) | 🐳 [**Quick Start with Docker**](./QuickStart.md)
 <img src="docs/images/Figure1_overview.png" width="100%" />
 
+<span style="font-size:16px"> 🚨 <span style="color:#AB4459;">**NOTICE:**</span>Please feel free to start an issue or create a PR! If I do not respond to issues in a timely manner, feel free to send me an email directly. I will do my best to build a more user-friendly community ecosystem for VLABench within this year.</span>
 
 ## News
+* **Preview** A complete infra framework will be open-sourced alongside new work, including full training pipelines, VLABench evaluation, a new leaderboard, data processing, and real-device deployment. Stay tuned!  
+* **2025/8/06** Update VLABench with: 
+    - parrallel data collection; 
+    - parrallel evaluation example; 
+    - camera augmentation; 
+    - rlds/lerobot data format ft dataset on [hf](https://huggingface.co/VLABench); 
+    - update on [pi0 codebase](https://github.com/Shiduo-zh/openpi).
+* **2025/6/26** VLABench has been accepted by ICCV 2025.
 * **2025/4/10** Releasing the finetuned pi0 checkpoint(pi0-base and pi0-fast) on [hf](https://huggingface.co/VLABench).
 * **2025/3/25** Releasing standard evaluation episodes and primitive task finetune dataset.
 * **2025/2/26** Releasing referenced evaluation pipeline. 
 * **2025/2/14** Releasing the scripts for trajectory generation. 
 * **2024/12/25** The preview verison of VLABench has been released! The preview version showcases most of the designed tasks and structure, but the functionalities are still being managed and tested.
+
+## Recent Work Todo
+- [x] Organize the functional code sections. 
+    - [x] Reconstruct the efficient, user-friendly, and comprehensive evaluation framework. 
+    - [x] Manage the automatic data workflow for existing tasks.
+    - [x] Improve the DSL of skill libarary.
+- [x] Release the trejectory and evaluation scripts.
+- [x] Test the interface of humanoid and dual-arm manipulation.
+- [x] Release the left few tasks not released in preview version.
+- [ ] Leaderboard of VLAs and VLMs in the standard evaluation 
+    - [x] Release standard evaluation datasets/episodes, in different dimension and difficulty level.
+    - [x] Release standard finetune dataset.
+    - [ ] Integrate the commonly used VLA models for facilitate replication. (Continously update)
+- [] Releasing more datasets, including pretraining version, composite tasks once finalizing testing.
+- [] Releasing more checkpoints.
+- [] Update the complete training and evaluation community. 
 
 ## Installation
 
@@ -47,6 +70,11 @@ sh dataset_generation.sh
 ```
 Currently, the version does not support multi-processing environment within the code. We will optimize the collection efficiency as much as possible in future updates. After running the script, each trajectory will be stored as a hdf5 file in the directory you specify.
 
+To run the parrallel data collection on distributed machines, such as 8 GPU, please refer to
+```sh
+bash sh/data_generation/multi_gpu_data_generation.sh
+```
+
 ### Convert to rlds format
 Due to some frameworks such as [Octo](https://github.com/octo-models/octo) and [Openvla](https://github.com/openvla/openvla) using data in the RLDS format for training, we refer to the process from [rlds_dataset_builder](https://github.com/kpertsch/rlds_dataset_builder) to provide an example of converting the aforementioned HDF5 dataset into RLDS format data.
 First, run 
@@ -69,19 +97,6 @@ Run the script by
 python scripts/convert_to_lerobot.py --dataset-name [your-dataset-name] --dataset-path /your/path/to/dataset --max-files 100
 ```
 The processed Lerobot dataset will be stored defaultly in your `HF_HOME/lerobot/dataset-name`.
-
-## Recent Work Todo
-- [x] Organize the functional code sections. 
-    - [x] Reconstruct the efficient, user-friendly, and comprehensive evaluation framework. 
-    - [x] Manage the automatic data workflow for existing tasks.
-    - [x] Improve the DSL of skill libarary.
-- [x] Release the trejectory and evaluation scripts.
-- [x] Test the interface of humanoid and dual-arm manipulation.
-- [ ] Release the left few tasks not released in preview version.
-- [ ] Leaderboard of VLAs and VLMs in the standard evaluation 
-    - [x] Release standard evaluation datasets/episodes, in different dimension and difficulty level.
-    - [x] Release standard finetune dataset.
-    - [ ] Integrate the commonly used VLA models for facilitate replication. (Continously update)
 
 ## Expandation 
 VLABench adopts a flexible modular framework for task construction, offering high adaptability. You can follow the process outlined in [tutorial 6](tutorials/6.expandation.ipynb).
@@ -114,7 +129,7 @@ We provide a standardized fine-tuning dataset, which can be downloaded from [hf-
 
 Since the current version of VLA does not perform well on primitive tasks, we plan to focus on enhancing VLA’s capabilities in this area first. In the future, we will release a more organized dataset for more composite tasks.
 
-1. Evaluate OpenVLA
+**1. Evaluate OpenVLA**
 
 Before evaluate your finetuned OpenVLA, please compute the norm_stat on your dataset and place it to `VLABench/configs/model/openvla_config.json`
 
@@ -123,7 +138,23 @@ Run the evaluation scripts by
 python scirpts/evaluate_policy.py --n-sample 20 --model openvla --model_ckpt xx --lora_ckpt xx --eval_track track_1_in_distribution --tasks task1, task2 ...
 ```
 
-2. Evaluate Openpi
+**Multi-GPU Accelerated Evaluation**
+
+To speed up the evaluation process, VLABench supports multi-GPU parallel evaluation.
+
+Example command:
+```sh
+bash sh/evaluation/example_multi_gpu_eval.sh 
+```
+
+You can specify which tracks and tasks to evaluate by passing the --track and --task arguments, for example:
+```sh
+bash sh/evaluation/example_multi_gpu_eval.sh --track track_1_in_distribution --task select_toy
+```
+- If these parameters are not set, the program will evaluate all tracks and tasks by default.
+- Evaluation of each task in a single process typically takes around 30 minutes to 1 hour.
+
+**2. Evaluate Openpi**
 
 Please use `git submodule update --init --recursive` to ensure that you have correctly installed the repositories for the other models.
 

@@ -59,3 +59,6 @@ from primitive import *
 builder= Primitive()
 ```
 Then the python will report the packages your environment doesn't have.
+
+### Issues about Lerobot Version.
+The lerobot conversion script is accomplished by referencing the openpi implementation. The openpi codebase VLABench used is [openpi](https://github.com/Shiduo-zh/openpi). Make sure the libary `datasets==3.2.0` when converting hdf5/rlds to lerobot format. Otherwise, there will be some incompatible problems. 
