@@ -109,8 +109,8 @@ class InsertFlowerTask(PrimitiveTask):
         target_place_point = np.array(self.entities[self.target_container].get_place_point(physics)[-1]) + np.array([0, 0, 0.05])
         skill_sequence = [
             partial(SkillLib.pick, target_entity_name=self.target_entity),
-            partial(SkillLib.lift, target_quat=euler_to_quaternion(-np.pi/2, -np.pi/2, 0)),
-            partial(SkillLib.moveto, target_pos=target_place_point, target_quat=euler_to_quaternion(-np.pi/2, -np.pi/2, 0)),
+            partial(SkillLib.lift, target_quat=euler_to_quaternion(-np.pi/2, np.pi/2, 0)),
+            partial(SkillLib.moveto, target_pos=target_place_point, target_quat=euler_to_quaternion(-np.pi/2, np.pi/2, 0)),
             partial(SkillLib.lift, lift_height=-0.2)
         ]
         return skill_sequence

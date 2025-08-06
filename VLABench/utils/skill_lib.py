@@ -206,7 +206,8 @@ class SkillLib:
     def place(env, 
               target_container_name, 
               target_pos=None, 
-              target_quat=None):
+              target_quat=None,
+              motion_planning_kwargs=dict()):
         """
         general place function for data generation
         param:
@@ -242,7 +243,8 @@ class SkillLib:
         #FIXME optimize the path with min margin to obstacles for safer moving
         init2target_path = rrt_motion_planning(tuple(start_pos), 
                                                 tuple(target_pos), 
-                                                obstacle_pcd)
+                                                obstacle_pcd,
+                                                **motion_planning_kwargs)
         offset = env.robot.ee_offset(env.physics) # for avoid the collision
         if init2target_path is None:
             print("can not find a path to target position, use default lift")

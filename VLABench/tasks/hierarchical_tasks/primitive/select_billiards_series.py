@@ -121,8 +121,8 @@ class SelectBilliardsTask(PrimitiveTask):
     
     def get_expert_skill_sequence(self, physics):
         skill_sequence = [
-            partial(SkillLib.pick, target_entity_name=self.target_entity),
-            partial(SkillLib.place, target_container_name=self.target_container), 
+            partial(SkillLib.pick, target_entity_name=self.target_entity, motion_planning_kwargs={"z_threshold": 0.6}),
+            partial(SkillLib.place, target_container_name=self.target_container, motion_planning_kwargs={"z_threshold": 0.6}) 
         ]
         return skill_sequence
 

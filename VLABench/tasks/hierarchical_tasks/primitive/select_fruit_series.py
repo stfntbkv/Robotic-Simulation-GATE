@@ -71,6 +71,11 @@ class SelectFruitSpatialConfigManager(SelectFruitConfigManager):
             )
         )
         self.config["task"]["conditions"] = conditions_config
+    
+    def load_init_containers(self, init_container):
+        if init_container is not None:
+            init_container_config = self.get_entity_config(init_container)
+            self.config["task"]["components"].append(init_container_config)
 
 @register.add_config_manager("select_fruit_semantic")
 class SelectFruitSemanticConfigManager(SelectFruitConfigManager):

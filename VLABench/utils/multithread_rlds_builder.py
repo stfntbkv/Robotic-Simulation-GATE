@@ -8,8 +8,8 @@ from multiprocessing import Pool
 from functools import partial
 import glob
 import h5py
+import cv2
 import tensorflow as tf
-import tensorflow_hub as hub
 from tensorflow_datasets.core import download
 from tensorflow_datasets.core import split_builder as split_builder_lib
 from tensorflow_datasets.core import naming
@@ -33,8 +33,8 @@ class DemoBuilder(tfds.core.GeneratorBasedBuilder):
     RELEASE_NOTES = {
       '1.0.0': 'Initial release.',
     }
-    N_WORKERS = 20             # number of parallel workers for data conversion
-    MAX_PATHS_IN_MEMORY = 500
+    N_WORKERS = 100             # number of parallel workers for data conversion
+    MAX_PATHS_IN_MEMORY = 1000
 
     def __init__(self, *args, **kwargs):
         self.path = "**/*.hdf5"
@@ -58,81 +58,93 @@ class DemoBuilder(tfds.core.GeneratorBasedBuilder):
         def _parse_example(episode_path):
             # load raw data --> this should change for your dataset
             # data = np.load(episode_path, allow_pickle=True)     # this is a list of dicts in our case
-            with h5py.File(episode_path, 'a') as f:
-                data = f["data"]
-                timestamps = data.keys()
-                for i, ts in enumerate(timestamps):
-                    new_data = data[ts]
-                    # load episode config
-                    episode_config_bytes = np.asarray(new_data["meta_info"]["episode_config"]).astype('S')
-                    episode_config = episode_config_bytes.item().decode('utf-8')
-                    episode_config = json.loads(episode_config)
-                    if episode_config.get("robot") is not None:
-                        robot_frame_pos = np.array(episode_config["robot"]["position"])
-                    else:
-                        robot_frame_pos = np.array([0, -0.4, 0.78])
-                    
-                    trajectory = np.asarray(new_data['trajectory'])
-                    images = np.asarray(new_data["observation"]["rgb"])
-                    # qpos = np.asarray(new_data["observation"]["qpos"])
-                    ee_state = np.asarray(new_data["observation"]["ee_state"])
-                    # process ee_state
-                    ee_pos, ee_quat, gripper = ee_state[:, :3], ee_state[:, 3:7], ee_state[:, 7]
-                    ee_euler = np.array([quat2euler(q) for q in ee_quat])
-                    # transform ee_state to robot frame
-                    ee_pos -= robot_frame_pos
-                    ee_state = np.concatenate([ee_pos, ee_euler, gripper.reshape(-1, 1)], axis=1)
-                    # assemble episode --> here we're assuming demos so we set reward to 1 at the end
-                    episode = []
-                    episode_length = trajectory.shape[0]
-                    assert images.shape[0] == episode_length == ee_state.shape[0]
-                    for i in range(episode_length):
-                        action = trajectory[i]
-                        if action[-1] > 0.03:
-                            action = np.concatenate([action[:6], np.array([1])]).astype(np.float32)
+            try:
+                with h5py.File(episode_path, 'a') as f:
+                    data = f["data"]
+                    timestamps = data.keys()
+                    for i, ts in enumerate(timestamps):
+                        new_data = data[ts]
+                        # load episode config
+                        episode_config_bytes = np.asarray(new_data["meta_info"]["episode_config"]).astype('S')
+                        episode_config = episode_config_bytes.item().decode('utf-8')
+                        episode_config = json.loads(episode_config)
+                        if episode_config.get("robot") is not None:
+                            robot_frame_pos = np.array(episode_config["robot"]["position"])
                         else:
-                            action = np.concatenate([action[:6], np.array([0])]).astype(np.float32)
-                        episode.append({
-                            'observation': {
-                                'image_0': images[i][0],
-                                'image_1': images[i][1],
-                                'front': images[i][2],
-                                'wrist': images[i][3],
-                                'ee_state':ee_state[i]
-                            },
-                            'action': action,
-                            'discount': 1.0,
-                            'reward': float(i == (episode_length - 1)),
-                            'is_first': i == 0,
-                            'is_last': i == (episode_length - 1),
-                            'is_terminal': i == (episode_length - 1),
-                            'language_instruction': np.asarray(new_data['instruction'])[0].decode('utf-8'),
-                        })
+                            robot_frame_pos = np.array([0, -0.4, 0.78])
+                        
+                        trajectory = np.asarray(new_data['trajectory'])
+                        images = np.asarray(new_data["observation"]["rgb"]) # shape (t, n_image, h, w, c)
+                        t, n_image, h, w, c = images.shape
+                        # resize 
+                        # new_images = np.zeros((t, n_image, 256, 256, c), dtype=images.dtype)
+                        # for i in range(t):
+                        #     for j in range(n_image):
+                        #         new_images[i, j] = cv2.resize(images[i, j], (256, 256))
+                        # qpos = np.asarray(new_data["observation"]["qpos"])
+                        ee_state = np.asarray(new_data["observation"]["ee_state"])
+                        # process ee_state
+                        ee_pos, ee_quat, gripper = ee_state[:, :3], ee_state[:, 3:7], ee_state[:, 7]
+                        ee_euler = np.array([quat2euler(q) for q in ee_quat])
+                        # transform ee_state to robot frame
+                        ee_pos -= robot_frame_pos
+                        ee_state = np.concatenate([ee_pos, ee_euler, gripper.reshape(-1, 1)], axis=1).astype(np.float32)
+                        # assemble episode --> here we're assuming demos so we set reward to 1 at the end
+                        episode = []
+                        episode_length = trajectory.shape[0]
+                        assert images.shape[0] == episode_length == ee_state.shape[0]
+                        for i in range(episode_length):
+                            action = trajectory[i]
+                            if action[-1] > 0.03:
+                                action = np.concatenate([action[:6], np.array([1])]).astype(np.float32)
+                            else:
+                                action = np.concatenate([action[:6], np.array([0])]).astype(np.float32)
+                            episode.append({
+                                'observation': {
+                                    'image_0': images[i][0],
+                                    'image_1': images[i][1],
+                                    'front': images[i][2],
+                                    'wrist': images[i][3],
+                                    'ee_state':ee_state[i]
+                                },
+                                'action': action,
+                                'discount': 1.0,
+                                'reward': float(i == (episode_length - 1)),
+                                'is_first': i == 0,
+                                'is_last': i == (episode_length - 1),
+                                'is_terminal': i == (episode_length - 1),
+                                'language_instruction': np.asarray(new_data['instruction'])[0].decode('utf-8'),
+                            })
 
-                    # create output data sample
-                    sample = {
-                        'steps': episode,
-                        'episode_metadata': {
-                            'file_path': episode_path
+                        # create output data sample
+                        sample = {
+                            'steps': episode,
+                            'episode_metadata': {
+                                'file_path': episode_path
+                            }
                         }
-                    }
 
-                    # if you want to skip an example for whatever reason, simply return None
-                    return episode_path, sample
-
+                        # if you want to skip an example for whatever reason, simply return None
+                        return episode_path, sample
+            except Exception as e:
+                print(f"[WARN] Error reading {episode_path}: {e}, skipping this file.")
+                return None
         # create list of all examples
         episode_paths = path
 
         # for smallish datasets, use single-thread parsing
         for sample in episode_paths:
-            # if sample.endswith("hdf5"):
-            #     try:
-            #         with h5py.File(sample, 'a') as f:
-            #             data = f["data"]
-            #     except Exception as e:
-            #         print(f"Error reading {sample}: {e}, pass")
-            #         continue
-            yield _parse_example(sample)
+            if sample.endswith("hdf5"):
+                try:
+                    with h5py.File(sample, 'a') as f:
+                        data = f["data"]
+                except Exception as e:
+                    print(f"Error reading {sample}: {e}, pass")
+                    continue
+            result = _parse_example(sample)
+            if result is not None:
+                yield result
+            
 
     def _download_and_prepare(  # pytype: disable=signature-mismatch  # overriding-parameter-type-checks
             self,

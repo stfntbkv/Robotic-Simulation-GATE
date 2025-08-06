@@ -59,7 +59,7 @@ class MathGameConfigManager(BenchTaskConfigManager):
                                 farthest_sample=False)
         random.shuffle(objects)
         for object, pos in zip(objects, positions):
-            pos = [pos[0], pos[1], 0.78]
+            pos = [pos[0], pos[1], 0.8]
             object_config = dict(
                 name=f"{object}",
                 number=object,
