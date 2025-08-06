@@ -201,31 +201,11 @@ def write_results(filename, results):
 if __name__ == "__main__":
     config = AutoGPTPEvaluationConfig(ModelEnum.GPT_4, ScenarioEnum.COMPLEX)
     file_name = FILE_FORMAT.format(config.model, config.scenario)
-    
-    # Use your custom log file path for all logging
-    log_file_path = "/home/dimitar/Robotics/Robotic-Simulation-GATE/autogpt-p/autogpt_p/autogpt_p/evaluation/our_results.log"
-    
-    
-    logging.basicConfig(
-        filename=log_file_path,
-        level=logging.INFO,
-        format='%(message)s',
-        filemode='a'  # append mode
-    )
-    
-    # Also log to console so you can see progress
-    console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.INFO)
-    logging.getLogger().addHandler(console_handler)
-    
+    logging.basicConfig(filename=os.path.join(AUTOGPTP_LOGS_DIR, file_name + ".log"),
+                        level=logging.INFO,
+                        format='%(message)s')
+    results_file_path = os.path.join(AUTOGPTP_RESULTS_DIR, file_name + ".csv")
     evaluation = AutoGPTPEvaluation.from_config(config)
     result = evaluation.evaluate()
-    
-    # Write final results to the same log file
-    with open(log_file_path, 'a') as f:
-        f.write(f"\n\nFINAL RESULTS:\n")
-        f.write(f"Success Rate: {result[0]}\n")
-        f.write(f"Plan is Min Rate: {result[1]}\n") 
-        f.write(f"Plan Cost Rate: {result[2]}\n")
-        f.write(f"Tools is Min Rate: {result[3]}\n")
-        f.write(f"Tools Cost Rate: {result[4]}\n")
+    write_results(results_file_path, result)
+    # evaluation.validate()
