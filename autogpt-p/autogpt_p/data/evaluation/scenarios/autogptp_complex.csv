@@ -1,6 +1,4 @@
 task,scene_file,explored,substitutions_file,desired_goal,min_tool_calls,min_costs
-Heat the milk in the oven,complex_kitchen6.txt,counter0,oven.csv,and (liquid_warm milk0) (liquid_in milk0 pot0) (in pot0 microwave0),5,9
-I want an apple,simple_kitchen_no_apple.txt,table0,apple.csv,or (inhand banana0 human0) (inhand tomato0 human0),5,3
 I want to have an apple,simple_kitchen_no_apple.txt,table0,apple.csv,or (inhand banana0 human0) (inhand tomato0 human0),5,3
 I want dine an apple,simple_kitchen_no_apple.txt,table0,apple.csv,or (inhand banana0 human0) (inhand tomato0 human0),5,3
 I want an orange,simple_kitchen.txt,table0,orange.csv,or (inhand banana0 human0) (inhand apple0 human0) (inhand tomato0 human0),5,3
@@ -29,3 +27,5 @@ I want to heat the water in the tea_pot,complex_kitchen5.txt,counter0,tea_pot.cs
 I want to eat at the table,desk_cleaning_alt.txt,counter0,table.csv,and (on plate0 desk0) (on apple0 plate0),3,7
 I want to drink water from a plastic_cup,simple_kitchen_no_cup_glass.txt,table0,bottle.csv,and (inhand bottle0 human0),5,3
 Cut the apple with the kitchen_knife on the cutting_board so I can eat it,simple_kitchen_no_apple_knife_board.txt,table0,apple_knife_board.csv,and (on banana0 tablet0) (chopped banana0),5,6
+Heat the milk in the oven,complex_kitchen6.txt,counter0,oven.csv,and (liquid_warm milk0) (liquid_in milk0 pot0) (in pot0 microwave0),5,9
+I want an apple,simple_kitchen_no_apple.txt,table0,apple.csv,or (inhand banana0 human0) (inhand tomato0 human0),5,3

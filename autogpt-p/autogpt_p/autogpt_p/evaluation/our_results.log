@@ -1,0 +1,2223 @@
+--------------------------------------NEW CASE ----------------------------------------
+You are an robotic assistant that tries to help the user to achieve his plan.
+You are given a representation of the scene and need to determine which tool to use to help the user achieve 
+his goal the best way.
+
+Scene-Memory:
+Objects: table0,milk0,bowl0,plastic_cup0,plastic_cup1,plastic_cup2,human0,plate0,milk_cartoon0,bottle0,tomato0,water0,cutting_board0,banana0
+Object Relations: on cutting_board0 table0,in tomato0 bowl0,on banana0 table0,on bowl0 table0,on plate0 table0,liquid_in milk0 milk_cartoon0,on plastic_cup0 table0,on plastic_cup1 table0,on plastic_cup2 table0,liquid_in water0 bottle0,opened milk_cartoon0,at human0 table0,on milk_cartoon0 table0,on bottle0 table0,at robot0 table0,closed bottle0
+Unexplored Locations: counter0,refrigerator0,door0,sink0,window0
+
+
+Available Tools:
+PLAN  - Given the scene memory and the prompt this tool finds the plan the fulfills the user request. You can only use objects for the plan that are in the List Objects: do not use unexplored locations in the plan
+INCOMPLETE_PLAN  - Given the scene memory and the prompt this tool finds a plan that fulfills a sub goal of the user request if it cannot be fully achieved with the objects in the scene.
+EXPLORE location - Moves the robot from the current location to the unexplored location location to look for undiscovered objects at that location. (Example Usage: EXPLORE counter3)
+SUGGEST_ALTERNATIVE missing_object - Ask the user to replace the object missing_object that they requested with another object with the same function. You may only ask for substitution of one object at a time. Example usage: SUGGEST_ALTERNATIVE spoon
+CORRECTION  - This tool should be called when the user asks you to remember and do the same next time
+
+Previous User Requests:
+
+
+User-Request: I want to have an apple
+
+Lets think step by step. Remember that unexplored locations could contain objects that are relevant to the task.
+Only call the planning tool if all utensils are there to fulfill the plan. For example if there is nothing for cutting
+the goal "cut the apple" cannot be reached. 
+Which tool would you use? End your answer with SELECTED TOOL:<TOOL> <PARAMETERS>. 
+End your answer with FAILURE if no tool is valid.
+        
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+To determine the best tool to use, let's analyze the current scene and the user's request:
+
+1. **User Request**: The user wants to have an apple.
+2. **Scene Memory**: 
+   - Objects present: table0, milk0, bowl0, plastic_cup0, plastic_cup1, plastic_cup2, human0, plate0, milk_cartoon0, bottle0, tomato0, water0, cutting_board0, banana0.
+   - Object Relations: Various objects are on the table, and some liquids are in containers. The milk carton is opened, and the bottle is closed.
+   - Unexplored Locations: counter0, refrigerator0, door0, sink0, window0.
+
+3. **Analysis**:
+   - There is no apple present in the current list of objects.
+   - The apple might be in one of the unexplored locations, such as the counter or refrigerator.
+
+Since the apple is not present in the current scene, we need to explore unexplored locations to find it. The most likely place to find an apple would be the refrigerator.
+
+SELECTED TOOL: EXPLORE refrigerator0
+New Scene Memory:
+Objects: table0,bowl0,tomato0,plastic_cup0,plastic_cup1,plastic_cup2,human0,plate0,cucumber0,salad0,milk_cartoon0,bottle0,milk0,water0,refrigerator0,cutting_board0,banana0
+Object Relations: on cutting_board0 table0,in tomato0 bowl0,on banana0 table0,on bowl0 table0,on plate0 table0,liquid_in milk0 milk_cartoon0,on plastic_cup0 table0,on plastic_cup1 table0,on plastic_cup2 table0,liquid_in water0 bottle0,opened milk_cartoon0,at human0 table0,on milk_cartoon0 table0,on bottle0 table0,at robot0 table0,closed bottle0,in cucumber0 refrigerator0,closed refrigerator0,in salad0 refrigerator0
+Unexplored Locations: counter0,door0,sink0,window0
+
+Result of last tool execution: explored refrigerator0
+
+Available Tools:
+PLAN  - Given the scene memory and the prompt this tool finds the plan the fulfills the user request. You can only use objects for the plan that are in the List Objects: do not use unexplored locations in the plan
+INCOMPLETE_PLAN  - Given the scene memory and the prompt this tool finds a plan that fulfills a sub goal of the user request if it cannot be fully achieved with the objects in the scene.
+EXPLORE location - Moves the robot from the current location to the unexplored location location to look for undiscovered objects at that location. (Example Usage: EXPLORE counter3)
+SUGGEST_ALTERNATIVE missing_object - Ask the user to replace the object missing_object that they requested with another object with the same function. You may only ask for substitution of one object at a time. Example usage: SUGGEST_ALTERNATIVE spoon
+CORRECTION  - This tool should be called when the user asks you to remember and do the same next time
+
+Previous User Requests:
+
+
+User-Request: I want to have an apple
+
+Lets think step by step. Remember that unexplored locations could contain objects that are relevant to the task.
+Only call the planning tool if all utensils are there to fulfill the plan. For example if there is nothing for cutting
+the goal "cut the apple" cannot be reached. Which tool would you use? 
+End your answer with SELECTED TOOL:<TOOL> <PARAMETERS>. 
+End your answer with FAILURE if no tool is valid.
+
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+Let's analyze the updated scene memory and the user's request:
+
+1. **User Request**: The user wants to have an apple.
+2. **Updated Scene Memory**: 
+   - Objects present: table0, bowl0, tomato0, plastic_cup0, plastic_cup1, plastic_cup2, human0, plate0, cucumber0, salad0, milk_cartoon0, bottle0, milk0, water0, refrigerator0, cutting_board0, banana0.
+   - Object Relations: Various objects are on the table, and some are in the refrigerator. The refrigerator is closed.
+   - Unexplored Locations: counter0, door0, sink0, window0.
+
+3. **Analysis**:
+   - There is still no apple present in the current list of objects.
+   - The apple might be in one of the remaining unexplored locations.
+
+Since the apple is not present in the current scene, we need to continue exploring unexplored locations to find it. The next logical place to explore could be the counter, as it might contain fruits.
+
+SELECTED TOOL: EXPLORE counter0
+New Scene Memory:
+Objects: table0,bowl0,salad0,milk0,tomato0,sponge0,banana0,hammer0,kitchen_knife0,water0,refrigerator0,spoon0,plate0,cucumber0,spatula0,box0,watering_can0,tissue0,plastic_cup0,plastic_cup1,plastic_cup2,human0,counter0,milk_cartoon0,bottle0,cutting_board0
+Object Relations: on cutting_board0 table0,in tomato0 bowl0,on banana0 table0,on bowl0 table0,on plate0 table0,liquid_in milk0 milk_cartoon0,on plastic_cup0 table0,on plastic_cup1 table0,on plastic_cup2 table0,liquid_in water0 bottle0,opened milk_cartoon0,at human0 table0,on milk_cartoon0 table0,on bottle0 table0,at robot0 table0,closed bottle0,in cucumber0 refrigerator0,closed refrigerator0,in salad0 refrigerator0,on kitchen_knife0 counter0,on box0 counter0,on spatula0 counter0,on watering_can0 counter0,on sponge0 counter0,on tissue0 counter0,on spoon0 counter0,in hammer0 box0,on cornflakes0 counter0
+Unexplored Locations: door0,sink0,window0
+
+Result of last tool execution: explored counter0
+
+Available Tools:
+PLAN  - Given the scene memory and the prompt this tool finds the plan the fulfills the user request. You can only use objects for the plan that are in the List Objects: do not use unexplored locations in the plan
+INCOMPLETE_PLAN  - Given the scene memory and the prompt this tool finds a plan that fulfills a sub goal of the user request if it cannot be fully achieved with the objects in the scene.
+EXPLORE location - Moves the robot from the current location to the unexplored location location to look for undiscovered objects at that location. (Example Usage: EXPLORE counter3)
+SUGGEST_ALTERNATIVE missing_object - Ask the user to replace the object missing_object that they requested with another object with the same function. You may only ask for substitution of one object at a time. Example usage: SUGGEST_ALTERNATIVE spoon
+CORRECTION  - This tool should be called when the user asks you to remember and do the same next time
+
+Previous User Requests:
+
+
+User-Request: I want to have an apple
+
+Lets think step by step. Remember that unexplored locations could contain objects that are relevant to the task.
+Only call the planning tool if all utensils are there to fulfill the plan. For example if there is nothing for cutting
+the goal "cut the apple" cannot be reached. Which tool would you use? 
+End your answer with SELECTED TOOL:<TOOL> <PARAMETERS>. 
+End your answer with FAILURE if no tool is valid.
+
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+Let's analyze the updated scene memory and the user's request:
+
+1. **User Request**: The user wants to have an apple.
+2. **Updated Scene Memory**: 
+   - Objects present: table0, bowl0, salad0, milk0, tomato0, sponge0, banana0, hammer0, kitchen_knife0, water0, refrigerator0, spoon0, plate0, cucumber0, spatula0, box0, watering_can0, tissue0, plastic_cup0, plastic_cup1, plastic_cup2, human0, counter0, milk_cartoon0, bottle0, cutting_board0.
+   - Object Relations: Various objects are on the table and counter, and some are in the refrigerator. The refrigerator is closed.
+   - Unexplored Locations: door0, sink0, window0.
+
+3. **Analysis**:
+   - There is still no apple present in the current list of objects.
+   - The apple might be in one of the remaining unexplored locations.
+
+Since the apple is not present in the current scene, we need to continue exploring unexplored locations to find it. The next logical place to explore could be the sink, as it might contain fruits or other items.
+
+SELECTED TOOL: EXPLORE sink0
+New Scene Memory:
+Objects: table0,bowl0,salad0,sponge0,tomato0,milk0,banana0,hammer0,kitchen_knife0,water0,refrigerator0,spoon0,sink0,plate0,cucumber0,spatula0,box0,watering_can0,tissue0,plastic_cup0,plastic_cup1,plastic_cup2,human0,counter0,milk_cartoon0,bottle0,cutting_board0
+Object Relations: on cutting_board0 table0,in tomato0 bowl0,on banana0 table0,on bowl0 table0,on plate0 table0,liquid_in milk0 milk_cartoon0,on plastic_cup0 table0,on plastic_cup1 table0,on plastic_cup2 table0,liquid_in water0 bottle0,opened milk_cartoon0,at human0 table0,on milk_cartoon0 table0,on bottle0 table0,at robot0 table0,closed bottle0,in cucumber0 refrigerator0,closed refrigerator0,in salad0 refrigerator0,on kitchen_knife0 counter0,on box0 counter0,on spatula0 counter0,on watering_can0 counter0,on sponge0 counter0,on tissue0 counter0,on spoon0 counter0,in hammer0 box0,on cornflakes0 counter0
+Unexplored Locations: door0,window0
+
+Result of last tool execution: explored sink0
+
+Available Tools:
+PLAN  - Given the scene memory and the prompt this tool finds the plan the fulfills the user request. You can only use objects for the plan that are in the List Objects: do not use unexplored locations in the plan
+INCOMPLETE_PLAN  - Given the scene memory and the prompt this tool finds a plan that fulfills a sub goal of the user request if it cannot be fully achieved with the objects in the scene.
+EXPLORE location - Moves the robot from the current location to the unexplored location location to look for undiscovered objects at that location. (Example Usage: EXPLORE counter3)
+SUGGEST_ALTERNATIVE missing_object - Ask the user to replace the object missing_object that they requested with another object with the same function. You may only ask for substitution of one object at a time. Example usage: SUGGEST_ALTERNATIVE spoon
+CORRECTION  - This tool should be called when the user asks you to remember and do the same next time
+
+Previous User Requests:
+
+
+User-Request: I want to have an apple
+
+Lets think step by step. Remember that unexplored locations could contain objects that are relevant to the task.
+Only call the planning tool if all utensils are there to fulfill the plan. For example if there is nothing for cutting
+the goal "cut the apple" cannot be reached. Which tool would you use? 
+End your answer with SELECTED TOOL:<TOOL> <PARAMETERS>. 
+End your answer with FAILURE if no tool is valid.
+
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+Let's analyze the updated scene memory and the user's request:
+
+1. **User Request**: The user wants to have an apple.
+2. **Updated Scene Memory**: 
+   - Objects present: table0, bowl0, salad0, sponge0, tomato0, milk0, banana0, hammer0, kitchen_knife0, water0, refrigerator0, spoon0, sink0, plate0, cucumber0, spatula0, box0, watering_can0, tissue0, plastic_cup0, plastic_cup1, plastic_cup2, human0, counter0, milk_cartoon0, bottle0, cutting_board0.
+   - Object Relations: Various objects are on the table, counter, and in the refrigerator. The refrigerator is closed.
+   - Unexplored Locations: door0, window0.
+
+3. **Analysis**:
+   - There is still no apple present in the current list of objects.
+   - The apple might be in one of the remaining unexplored locations.
+
+Since the apple is not present in the current scene, we need to continue exploring unexplored locations to find it. The next logical place to explore could be the door, as it might lead to another area where an apple could be found.
+
+SELECTED TOOL: EXPLORE door0
+New Scene Memory:
+Objects: table0,bowl0,salad0,milk0,sponge0,tomato0,banana0,hammer0,door0,kitchen_knife0,water0,refrigerator0,spoon0,sink0,plate0,cucumber0,spatula0,box0,watering_can0,tissue0,plastic_cup0,plastic_cup1,plastic_cup2,human0,counter0,milk_cartoon0,bottle0,cutting_board0
+Object Relations: on cutting_board0 table0,in tomato0 bowl0,on banana0 table0,on bowl0 table0,on plate0 table0,liquid_in milk0 milk_cartoon0,on plastic_cup0 table0,on plastic_cup1 table0,on plastic_cup2 table0,liquid_in water0 bottle0,opened milk_cartoon0,at human0 table0,on milk_cartoon0 table0,on bottle0 table0,at robot0 table0,closed bottle0,in cucumber0 refrigerator0,closed refrigerator0,in salad0 refrigerator0,on kitchen_knife0 counter0,on box0 counter0,on spatula0 counter0,on watering_can0 counter0,on sponge0 counter0,on tissue0 counter0,on spoon0 counter0,in hammer0 box0,on cornflakes0 counter0,closed door0
+Unexplored Locations: window0
+
+Result of last tool execution: explored door0
+
+Available Tools:
+PLAN  - Given the scene memory and the prompt this tool finds the plan the fulfills the user request. You can only use objects for the plan that are in the List Objects: do not use unexplored locations in the plan
+INCOMPLETE_PLAN  - Given the scene memory and the prompt this tool finds a plan that fulfills a sub goal of the user request if it cannot be fully achieved with the objects in the scene.
+EXPLORE location - Moves the robot from the current location to the unexplored location location to look for undiscovered objects at that location. (Example Usage: EXPLORE counter3)
+SUGGEST_ALTERNATIVE missing_object - Ask the user to replace the object missing_object that they requested with another object with the same function. You may only ask for substitution of one object at a time. Example usage: SUGGEST_ALTERNATIVE spoon
+CORRECTION  - This tool should be called when the user asks you to remember and do the same next time
+
+Previous User Requests:
+
+
+User-Request: I want to have an apple
+
+Lets think step by step. Remember that unexplored locations could contain objects that are relevant to the task.
+Only call the planning tool if all utensils are there to fulfill the plan. For example if there is nothing for cutting
+the goal "cut the apple" cannot be reached. Which tool would you use? 
+End your answer with SELECTED TOOL:<TOOL> <PARAMETERS>. 
+End your answer with FAILURE if no tool is valid.
+
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+Let's analyze the updated scene memory and the user's request:
+
+1. **User Request**: The user wants to have an apple.
+2. **Updated Scene Memory**: 
+   - Objects present: table0, bowl0, salad0, milk0, sponge0, tomato0, banana0, hammer0, door0, kitchen_knife0, water0, refrigerator0, spoon0, sink0, plate0, cucumber0, spatula0, box0, watering_can0, tissue0, plastic_cup0, plastic_cup1, plastic_cup2, human0, counter0, milk_cartoon0, bottle0, cutting_board0.
+   - Object Relations: Various objects are on the table, counter, and in the refrigerator. The refrigerator and door are closed.
+   - Unexplored Locations: window0.
+
+3. **Analysis**:
+   - There is still no apple present in the current list of objects.
+   - The apple might be in the last unexplored location.
+
+Since the apple is not present in the current scene, we need to explore the last unexplored location, which is the window, to find it.
+
+SELECTED TOOL: EXPLORE window0
+New Scene Memory:
+Objects: window0,table0,bowl0,salad0,sponge0,tomato0,milk0,banana0,hammer0,door0,kitchen_knife0,water0,refrigerator0,spoon0,sink0,plate0,cucumber0,spatula0,box0,watering_can0,tissue0,plastic_cup0,plastic_cup1,plastic_cup2,human0,counter0,milk_cartoon0,bottle0,cutting_board0
+Object Relations: on cutting_board0 table0,in tomato0 bowl0,on banana0 table0,on bowl0 table0,on plate0 table0,liquid_in milk0 milk_cartoon0,on plastic_cup0 table0,on plastic_cup1 table0,on plastic_cup2 table0,liquid_in water0 bottle0,opened milk_cartoon0,at human0 table0,on milk_cartoon0 table0,on bottle0 table0,at robot0 table0,closed bottle0,in cucumber0 refrigerator0,closed refrigerator0,in salad0 refrigerator0,on kitchen_knife0 counter0,on box0 counter0,on spatula0 counter0,on watering_can0 counter0,on sponge0 counter0,on tissue0 counter0,on spoon0 counter0,in hammer0 box0,on cornflakes0 counter0,closed door0,closed window0
+Unexplored Locations: 
+
+Result of last tool execution: explored window0
+
+Available Tools:
+PLAN  - Given the scene memory and the prompt this tool finds the plan the fulfills the user request. You can only use objects for the plan that are in the List Objects: do not use unexplored locations in the plan
+INCOMPLETE_PLAN  - Given the scene memory and the prompt this tool finds a plan that fulfills a sub goal of the user request if it cannot be fully achieved with the objects in the scene.
+EXPLORE location - Moves the robot from the current location to the unexplored location location to look for undiscovered objects at that location. (Example Usage: EXPLORE counter3)
+SUGGEST_ALTERNATIVE missing_object - Ask the user to replace the object missing_object that they requested with another object with the same function. You may only ask for substitution of one object at a time. Example usage: SUGGEST_ALTERNATIVE spoon
+CORRECTION  - This tool should be called when the user asks you to remember and do the same next time
+
+Previous User Requests:
+
+
+User-Request: I want to have an apple
+
+Lets think step by step. Remember that unexplored locations could contain objects that are relevant to the task.
+Only call the planning tool if all utensils are there to fulfill the plan. For example if there is nothing for cutting
+the goal "cut the apple" cannot be reached. Which tool would you use? 
+End your answer with SELECTED TOOL:<TOOL> <PARAMETERS>. 
+End your answer with FAILURE if no tool is valid.
+
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+After exploring all the available locations, let's analyze the situation:
+
+1. **User Request**: The user wants to have an apple.
+2. **Updated Scene Memory**: 
+   - Objects present: window0, table0, bowl0, salad0, sponge0, tomato0, milk0, banana0, hammer0, door0, kitchen_knife0, water0, refrigerator0, spoon0, sink0, plate0, cucumber0, spatula0, box0, watering_can0, tissue0, plastic_cup0, plastic_cup1, plastic_cup2, human0, counter0, milk_cartoon0, bottle0, cutting_board0.
+   - Object Relations: Various objects are on the table, counter, and in the refrigerator. The refrigerator, door, and window are closed.
+   - All locations have been explored.
+
+3. **Analysis**:
+   - There is no apple present in the current list of objects.
+   - All locations have been explored, and an apple was not found.
+
+Since there is no apple available and all locations have been explored, the best course of action is to suggest an alternative to the user. A banana is available, which could serve as a substitute fruit.
+
+SELECTED TOOL: SUGGEST_ALTERNATIVE apple
+Out of the following affordances for a apple, which ones does the user need for the request "I want to have an apple"? The affordances are:
+grasp: The object can be grasped in any way
+carry: The object can be picked up and moved
+rotate: The object can be turned
+axis-roll: The object can be rolled around an axis
+free-roll: The object can be rolled freely in any direction as it is approximately sphere shaped
+push:  The object can be pushed away from oneself
+pull: The object can be pulled towards oneself
+stir: The object can be used as a tool to stir
+consumable: The object can be safely consumed by a human
+ End your answer with listing the affordances as strings in a python list format
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+To fulfill the request "I want to have an apple," the user primarily needs the following affordances:
+
+1. **grasp**: To pick up the apple.
+2. **carry**: To move the apple towards themselves.
+3. **consumable**: To eat the apple.
+
+These affordances are necessary for obtaining and consuming the apple. Therefore, the relevant affordances are:
+
+```python
+["grasp", "carry", "consumable"]
+```
+Q:Out of the following affordances for a apple, which ones does the user need for the request "I want to have an apple"? The affordances are:
+grasp: The object can be grasped in any way
+carry: The object can be picked up and moved
+rotate: The object can be turned
+axis-roll: The object can be rolled around an axis
+free-roll: The object can be rolled freely in any direction as it is approximately sphere shaped
+push:  The object can be pushed away from oneself
+pull: The object can be pulled towards oneself
+stir: The object can be used as a tool to stir
+consumable: The object can be safely consumed by a human
+ End your answer with listing the affordances as strings in a python list format
+A: To fulfill the request "I want to have an apple," the user primarily needs the following affordances:
+
+1. **grasp**: To pick up the apple.
+2. **carry**: To move the apple towards themselves.
+3. **consumable**: To eat the apple.
+
+These affordances are necessary for obtaining and consuming the apple. Therefore, the relevant affordances are:
+
+```python
+["grasp", "carry", "consumable"]
+```
+-----------------------------------------
+
+Which of these objects can replace a apple for the affordance consumable the best. The object(s) are: tomato,milk,cucumber,banana 
+ Finish your answer by naming exactly one object with OBJECT:<object>
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+To replace an apple for the affordance "consumable," we should consider an object that is similarly edible and commonly consumed as a fruit. Among the given options, a **banana** is the best replacement because it is also a fruit, typically eaten raw, and provides a similar type of snack or meal component as an apple.
+
+OBJECT: banana
+Q:Which of these objects can replace a apple for the affordance consumable the best. The object(s) are: tomato,milk,cucumber,banana 
+ Finish your answer by naming exactly one object with OBJECT:<object>
+A: To replace an apple for the affordance "consumable," we should consider an object that is similarly edible and commonly consumed as a fruit. Among the given options, a **banana** is the best replacement because it is also a fruit, typically eaten raw, and provides a similar type of snack or meal component as an apple.
+
+OBJECT: banana
+-----------------------------------------
+
+New Scene Memory:
+Objects: window0,table0,bowl0,salad0,sponge0,tomato0,milk0,banana0,hammer0,door0,kitchen_knife0,water0,refrigerator0,spoon0,sink0,plate0,cucumber0,spatula0,box0,watering_can0,tissue0,plastic_cup0,plastic_cup1,plastic_cup2,human0,counter0,milk_cartoon0,bottle0,cutting_board0
+Object Relations: on cutting_board0 table0,in tomato0 bowl0,on banana0 table0,on bowl0 table0,on plate0 table0,liquid_in milk0 milk_cartoon0,on plastic_cup0 table0,on plastic_cup1 table0,on plastic_cup2 table0,liquid_in water0 bottle0,opened milk_cartoon0,at human0 table0,on milk_cartoon0 table0,on bottle0 table0,at robot0 table0,closed bottle0,in cucumber0 refrigerator0,closed refrigerator0,in salad0 refrigerator0,on kitchen_knife0 counter0,on box0 counter0,on spatula0 counter0,on watering_can0 counter0,on sponge0 counter0,on tissue0 counter0,on spoon0 counter0,in hammer0 box0,on cornflakes0 counter0,closed door0,closed window0
+Unexplored Locations: 
+
+Result of last tool execution: New Substitution: apple->banana
+
+Available Tools:
+PLAN  - Given the scene memory and the prompt this tool finds the plan the fulfills the user request. You can only use objects for the plan that are in the List Objects: do not use unexplored locations in the plan
+INCOMPLETE_PLAN  - Given the scene memory and the prompt this tool finds a plan that fulfills a sub goal of the user request if it cannot be fully achieved with the objects in the scene.
+EXPLORE location - Moves the robot from the current location to the unexplored location location to look for undiscovered objects at that location. (Example Usage: EXPLORE counter3)
+SUGGEST_ALTERNATIVE missing_object - Ask the user to replace the object missing_object that they requested with another object with the same function. You may only ask for substitution of one object at a time. Example usage: SUGGEST_ALTERNATIVE spoon
+CORRECTION  - This tool should be called when the user asks you to remember and do the same next time
+
+Previous User Requests:
+
+
+User-Request: I want to have an banana
+
+Lets think step by step. Remember that unexplored locations could contain objects that are relevant to the task.
+Only call the planning tool if all utensils are there to fulfill the plan. For example if there is nothing for cutting
+the goal "cut the apple" cannot be reached. Which tool would you use? 
+End your answer with SELECTED TOOL:<TOOL> <PARAMETERS>. 
+End your answer with FAILURE if no tool is valid.
+
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+Let's analyze the updated scene memory and the user's new request:
+
+1. **User Request**: The user wants to have a banana.
+2. **Updated Scene Memory**: 
+   - Objects present: window0, table0, bowl0, salad0, sponge0, tomato0, milk0, banana0, hammer0, door0, kitchen_knife0, water0, refrigerator0, spoon0, sink0, plate0, cucumber0, spatula0, box0, watering_can0, tissue0, plastic_cup0, plastic_cup1, plastic_cup2, human0, counter0, milk_cartoon0, bottle0, cutting_board0.
+   - Object Relations: The banana is on the table.
+
+3. **Analysis**:
+   - The banana is present on the table, so the user's request can be fulfilled.
+
+Since the banana is available, we can proceed to plan how to provide it to the user.
+
+SELECTED TOOL: PLAN
+You are the humanoid service robot robotXYZ assisting a human in a kitchen. Your task is to turn the user request into a goal state in PDDL. The predicates of the domain are defined as follows:
+(:predicates
+; Describes ?o being on top of the supporting ?s
+(on  ?o - carry ?s - support)
+; Do not use this predicate
+(indirect_on  ?o - carry ?s - support)
+; Describes the non liquid ?o being in the container ?c
+(in  ?o - carry ?c - contain)
+; Describes the liquid ?li being in the container ?lc
+(liquid_in  ?li - liquid ?lc - liquid-contain)
+; Describes the actor ?a being at the location ?l which can also be another actor
+(at  ?a - actor ?l - location)
+; Describes the object ?o being in the hand of a human or robot ?a. A human can have multiple objects in their hand
+(inhand  ?o - carry ?a - actor)
+; Describes the object ?ac being carried together by the actors ?a and ?r
+(carried  ?ac - assisted-carry ?a - actor ?r - actor)
+; Do not use this predicate
+(free  ?s - support)
+; Do not use this predicate
+(reachable  ?o - carry ?l - location ?a - actor)
+; Describes that ?op is open
+(opened  ?op - open)
+; Describes that ?cl is closed
+(closed  ?cl - close)
+(warm  ?co - consumable)
+(liquid_warm  ?li - liquid)
+(wet  ?ws - wet-swipe)
+; Describes that a consumable ?co is chopped
+(chopped  ?co - consumable)
+; Describes that an object ?ob has been cleaned with water
+(clean  ?ob - object)
+; Describes that the robot has visited the given location ?l
+(visited  ?l - location)
+; Do not use this predicate
+(hand_occupied  ?a - actor)
+) 
+ and the problem without the goal is:
+ (define (problem test)
+
+    (:domain robotic_planning)
+    
+    (:objects
+        box0 - box
+        table0 - table
+        tissue0 - tissue
+        kitchen_knife0 - kitchen_knife
+        tomato0 - tomato
+        watering_can0 - watering_can
+        plastic_cup0 - plastic_cup
+        plastic_cup2 - plastic_cup
+        salad0 - salad
+        human0 - human
+        plate0 - plate
+        spatula0 - spatula
+        banana0 - banana
+        water0 - water
+        plastic_cup1 - plastic_cup
+        spoon0 - spoon
+        milk_cartoon0 - milk_cartoon
+        bottle0 - bottle
+        robot0 - robot_profile
+        hammer0 - hammer
+        sponge0 - sponge
+        window0 - window
+        door0 - door
+        refrigerator0 - refrigerator
+        cucumber0 - cucumber
+        bowl0 - bowl
+        counter0 - counter
+        sink0 - sink
+        cutting_board0 - cutting_board
+        milk0 - milk
+    )
+    
+    (:init 
+        (liquid_in  water0 bottle0)
+        (on  box0 counter0)
+        (opened  milk_cartoon0)
+        (on  bowl0 table0)
+        (on  tissue0 counter0)
+        (in  tomato0 bowl0)
+        (on  kitchen_knife0 counter0)
+        (on  cutting_board0 table0)
+        (on  watering_can0 counter0)
+        (on  cornflakes0 counter0)
+        (in  salad0 refrigerator0)
+        (on  spatula0 counter0)
+        (on  plastic_cup0 table0)
+        (on  plastic_cup2 table0)
+        (liquid_in  milk0 milk_cartoon0)
+        (on  spoon0 counter0)
+        (closed  bottle0)
+        (on  plate0 table0)
+        (at  human0 table0)
+        (on  banana0 table0)
+        (on  sponge0 counter0)
+        (closed  window0)
+        (closed  door0)
+        (closed  refrigerator0)
+        (in  cucumber0 refrigerator0)
+        (on  plastic_cup1 table0)
+        (on  milk_cartoon0 table0)
+        (on  bottle0 table0)
+        (in  hammer0 box0)
+        (at  robot0 table0)
+        (= total-cost 0)
+        (= (cost human0) 100)
+        (= (cost robot0) 1)
+    )
+    
+    (:metric minimize (total-cost))
+    
+)
+ 
+ The user asks "I want to have an banana". Explain step by step how you concluded that this is the desired goal state. Express the goal state in correct PDDL Syntaxwithout using the ? operator. You are allowed to use disjunctions
+These are examples from previous user interactions:
+Q1: I would like an sliced apple and banana for breakfast
+A: (:goal and (in apple0 bowl0) (in banana0 bowl0) (chopped apple0) (chopped banana0))
+Q2: I want to consume some peanuts
+A: (:goal and (in peanuts0 bowl1) (on bowl1 table0) (on bowl3 table0))
+Q3: I want to consume some walnuts
+A: (:goal and (in walnuts0 bowl0) (on bowl0 table0) (inhand nutcracker0 human0) (on bowl3 table0))
+Consider these example in your answer
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+To determine the desired goal state for the user's request "I want to have a banana," we need to analyze the request and compare it with the examples provided. Here's a step-by-step explanation of how we can conclude the goal state:
+
+1. **Understanding the Request**: The user wants to "have" a banana. In the context of the kitchen and the examples provided, "having" typically means the item is ready for consumption or is in a state where it can be consumed.
+
+2. **Analyzing Examples**:
+   - **Q1**: The user wants sliced apple and banana for breakfast. The goal state includes the apple and banana being in a bowl and chopped, indicating preparation for consumption.
+   - **Q2**: The user wants to consume peanuts. The goal state includes the peanuts being in a bowl on the table, ready for consumption.
+   - **Q3**: The user wants to consume walnuts. The goal state includes the walnuts being in a bowl on the table, with a nutcracker in hand, indicating preparation for consumption.
+
+3. **Common Patterns**:
+   - Items to be consumed are placed in a bowl.
+   - The bowl is placed on the table.
+   - If necessary, items are prepared (e.g., chopped or cracked).
+
+4. **Applying the Pattern**:
+   - The banana should be placed in a bowl, as this is a common pattern for items to be consumed.
+   - The bowl should be on the table, making it accessible for consumption.
+
+5. **Current State Analysis**:
+   - The banana is currently on the table, but not in a bowl.
+   - There is a bowl (bowl0) on the table, which can be used to hold the banana.
+
+6. **Formulating the Goal State**:
+   - The banana should be in the bowl (bowl0).
+   - The bowl (bowl0) should remain on the table, as it already is.
+
+Based on this analysis, the goal state in PDDL syntax is:
+
+```pddl
+(:goal (and (in banana0 bowl0) (on bowl0 table0)))
+```
+
+This goal state ensures that the banana is in a bowl on the table, ready for the user to "have" or consume it, following the pattern observed in the examples.
+TOTAL TOKENS BY THIS REQUEST
+1669
+New Scene Memory:
+Objects: window0,table0,bowl0,salad0,sponge0,tomato0,milk0,banana0,hammer0,door0,kitchen_knife0,water0,refrigerator0,spoon0,sink0,plate0,cucumber0,spatula0,box0,watering_can0,tissue0,plastic_cup0,plastic_cup1,plastic_cup2,human0,counter0,milk_cartoon0,bottle0,cutting_board0
+Object Relations: on cutting_board0 table0,in tomato0 bowl0,on banana0 table0,on bowl0 table0,on plate0 table0,liquid_in milk0 milk_cartoon0,on plastic_cup0 table0,on plastic_cup1 table0,on plastic_cup2 table0,liquid_in water0 bottle0,opened milk_cartoon0,at human0 table0,on milk_cartoon0 table0,on bottle0 table0,at robot0 table0,closed bottle0,in cucumber0 refrigerator0,closed refrigerator0,in salad0 refrigerator0,on kitchen_knife0 counter0,on box0 counter0,on spatula0 counter0,on watering_can0 counter0,on sponge0 counter0,on tissue0 counter0,on spoon0 counter0,in hammer0 box0,on cornflakes0 counter0,closed door0,closed window0
+Unexplored Locations: 
+
+Result of last tool execution: Planning failed
+
+Available Tools:
+PLAN  - Given the scene memory and the prompt this tool finds the plan the fulfills the user request. You can only use objects for the plan that are in the List Objects: do not use unexplored locations in the plan
+INCOMPLETE_PLAN  - Given the scene memory and the prompt this tool finds a plan that fulfills a sub goal of the user request if it cannot be fully achieved with the objects in the scene.
+EXPLORE location - Moves the robot from the current location to the unexplored location location to look for undiscovered objects at that location. (Example Usage: EXPLORE counter3)
+SUGGEST_ALTERNATIVE missing_object - Ask the user to replace the object missing_object that they requested with another object with the same function. You may only ask for substitution of one object at a time. Example usage: SUGGEST_ALTERNATIVE spoon
+CORRECTION  - This tool should be called when the user asks you to remember and do the same next time
+
+Previous User Requests:
+
+
+User-Request: I want to have an banana
+
+Lets think step by step. Remember that unexplored locations could contain objects that are relevant to the task.
+Only call the planning tool if all utensils are there to fulfill the plan. For example if there is nothing for cutting
+the goal "cut the apple" cannot be reached. Which tool would you use? 
+End your answer with SELECTED TOOL:<TOOL> <PARAMETERS>. 
+End your answer with FAILURE if no tool is valid.
+
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+Let's analyze the situation again:
+
+1. **User Request**: The user wants to have a banana.
+2. **Updated Scene Memory**: 
+   - Objects present: window0, table0, bowl0, salad0, sponge0, tomato0, milk0, banana0, hammer0, door0, kitchen_knife0, water0, refrigerator0, spoon0, sink0, plate0, cucumber0, spatula0, box0, watering_can0, tissue0, plastic_cup0, plastic_cup1, plastic_cup2, human0, counter0, milk_cartoon0, bottle0, cutting_board0.
+   - Object Relations: The banana is on the table, and the human is at the table.
+
+3. **Analysis**:
+   - The banana is available on the table, and the human is at the table, so the user can directly access the banana.
+
+Since the banana is already accessible to the user, the plan should have been straightforward. However, the previous planning attempt failed. Let's try using the INCOMPLETE_PLAN tool to see if there is a sub-goal that can be achieved to assist the user in having the banana.
+
+SELECTED TOOL: INCOMPLETE_PLAN
+You are the humanoid service robot robotXYZ assisting a human in a kitchen. Your task is to turn the user request into a goal state in PDDL. If an object requested by the user does not exist just ignore it.If an utensil needed to achieve a desired object state is not in the scene do not use that state in the goal. For example do not use chopped if there is nothing to cut in the sceneIf the state needs more than 5 predicates, formulate a partial goal using less than 5 predicates.The predicates of the domain are defined as follows:
+(:predicates
+; Describes ?o being on top of the supporting ?s
+(on  ?o - carry ?s - support)
+; Do not use this predicate
+(indirect_on  ?o - carry ?s - support)
+; Describes the non liquid ?o being in the container ?c
+(in  ?o - carry ?c - contain)
+; Describes the liquid ?li being in the container ?lc
+(liquid_in  ?li - liquid ?lc - liquid-contain)
+; Describes the actor ?a being at the location ?l which can also be another actor
+(at  ?a - actor ?l - location)
+; Describes the object ?o being in the hand of a human or robot ?a. A human can have multiple objects in their hand
+(inhand  ?o - carry ?a - actor)
+; Describes the object ?ac being carried together by the actors ?a and ?r
+(carried  ?ac - assisted-carry ?a - actor ?r - actor)
+; Do not use this predicate
+(free  ?s - support)
+; Do not use this predicate
+(reachable  ?o - carry ?l - location ?a - actor)
+; Describes that ?op is open
+(opened  ?op - open)
+; Describes that ?cl is closed
+(closed  ?cl - close)
+(warm  ?co - consumable)
+(liquid_warm  ?li - liquid)
+(wet  ?ws - wet-swipe)
+; Describes that a consumable ?co is chopped
+(chopped  ?co - consumable)
+; Describes that an object ?ob has been cleaned with water
+(clean  ?ob - object)
+; Describes that the robot has visited the given location ?l
+(visited  ?l - location)
+; Do not use this predicate
+(hand_occupied  ?a - actor)
+) 
+ and the problem without the goal is:
+ (define (problem test)
+
+    (:domain robotic_planning)
+    
+    (:objects
+        box0 - box
+        table0 - table
+        tissue0 - tissue
+        kitchen_knife0 - kitchen_knife
+        tomato0 - tomato
+        watering_can0 - watering_can
+        plastic_cup0 - plastic_cup
+        plastic_cup2 - plastic_cup
+        salad0 - salad
+        human0 - human
+        plate0 - plate
+        spatula0 - spatula
+        banana0 - banana
+        water0 - water
+        plastic_cup1 - plastic_cup
+        spoon0 - spoon
+        milk_cartoon0 - milk_cartoon
+        bottle0 - bottle
+        robot0 - robot_profile
+        hammer0 - hammer
+        sponge0 - sponge
+        window0 - window
+        door0 - door
+        refrigerator0 - refrigerator
+        cucumber0 - cucumber
+        bowl0 - bowl
+        counter0 - counter
+        sink0 - sink
+        cutting_board0 - cutting_board
+        milk0 - milk
+    )
+    
+    (:init 
+        (liquid_in  water0 bottle0)
+        (on  box0 counter0)
+        (opened  milk_cartoon0)
+        (on  bowl0 table0)
+        (on  tissue0 counter0)
+        (in  tomato0 bowl0)
+        (on  kitchen_knife0 counter0)
+        (on  cutting_board0 table0)
+        (on  watering_can0 counter0)
+        (on  cornflakes0 counter0)
+        (in  salad0 refrigerator0)
+        (on  spatula0 counter0)
+        (on  plastic_cup0 table0)
+        (on  plastic_cup2 table0)
+        (liquid_in  milk0 milk_cartoon0)
+        (on  spoon0 counter0)
+        (closed  bottle0)
+        (on  plate0 table0)
+        (at  human0 table0)
+        (on  banana0 table0)
+        (on  sponge0 counter0)
+        (closed  window0)
+        (closed  door0)
+        (closed  refrigerator0)
+        (in  cucumber0 refrigerator0)
+        (on  plastic_cup1 table0)
+        (on  milk_cartoon0 table0)
+        (on  bottle0 table0)
+        (in  hammer0 box0)
+        (at  robot0 table0)
+        (= total-cost 0)
+        (= (cost human0) 100)
+        (= (cost robot0) 1)
+    )
+    
+    (:metric minimize (total-cost))
+    
+)
+ 
+ The user(human) asks: "I want to have an banana". Explain step by step how you concluded that this is the desired goal state. Express the goal state in correct PDDL Syntaxwithout using the ? operator. 
+These are examples from previous user interactions:
+Q1: I would like an sliced apple and banana for breakfast
+A: (:goal and (in apple0 bowl0) (in banana0 bowl0) (chopped apple0) (chopped banana0))
+Q2: I want to consume some peanuts
+A: (:goal and (in peanuts0 bowl1) (on bowl1 table0) (on bowl3 table0))
+Q3: I want to consume some walnuts
+A: (:goal and (in walnuts0 bowl0) (on bowl0 table0) (inhand nutcracker0 human0) (on bowl3 table0))
+Consider these example in your answer
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+To determine the desired goal state from the user's request "I want to have a banana," we need to analyze the request and the current state of the environment. Let's break down the process step by step:
+
+1. **Identify the Object of Interest**: The user wants a "banana." We need to check if a banana exists in the current environment. From the problem definition, we see that `banana0` is an object in the scene.
+
+2. **Determine the Desired State**: The user wants to "have" the banana. In the context of the predicates provided, "having" an object typically means the object is in the hand of the user. Therefore, the goal is to have `banana0` in the hand of `human0`.
+
+3. **Check the Current State**: We need to verify the current state of `banana0`. From the `:init` section, we see that `(on banana0 table0)` is true, meaning the banana is currently on the table.
+
+4. **Formulate the Goal State**: Based on the analysis, the goal is to have the banana in the hand of the human. This can be expressed using the `inhand` predicate.
+
+5. **Express the Goal in PDDL Syntax**: The goal state should be expressed in the correct PDDL syntax. Since the goal involves only one predicate, it is straightforward.
+
+Given these steps, the goal state in PDDL syntax is:
+
+```pddl
+(:goal (inhand banana0 human0))
+```
+
+This goal state reflects the user's request to "have" the banana, meaning the banana should be in the user's hand.
+New Scene Memory:
+Objects: window0,table0,bowl0,salad0,sponge0,tomato0,milk0,banana0,hammer0,door0,kitchen_knife0,water0,refrigerator0,spoon0,sink0,plate0,cucumber0,spatula0,box0,watering_can0,tissue0,plastic_cup0,plastic_cup1,plastic_cup2,human0,counter0,milk_cartoon0,bottle0,cutting_board0
+Object Relations: on cutting_board0 table0,in tomato0 bowl0,on banana0 table0,on bowl0 table0,on plate0 table0,liquid_in milk0 milk_cartoon0,on plastic_cup0 table0,on plastic_cup1 table0,on plastic_cup2 table0,liquid_in water0 bottle0,opened milk_cartoon0,at human0 table0,on milk_cartoon0 table0,on bottle0 table0,at robot0 table0,closed bottle0,in cucumber0 refrigerator0,closed refrigerator0,in salad0 refrigerator0,on kitchen_knife0 counter0,on box0 counter0,on spatula0 counter0,on watering_can0 counter0,on sponge0 counter0,on tissue0 counter0,on spoon0 counter0,in hammer0 box0,on cornflakes0 counter0,closed door0,closed window0
+Unexplored Locations: 
+
+Result of last tool execution: Planning failed due to unreachable goal
+
+Available Tools:
+PLAN  - Given the scene memory and the prompt this tool finds the plan the fulfills the user request. You can only use objects for the plan that are in the List Objects: do not use unexplored locations in the plan
+INCOMPLETE_PLAN  - Given the scene memory and the prompt this tool finds a plan that fulfills a sub goal of the user request if it cannot be fully achieved with the objects in the scene.
+EXPLORE location - Moves the robot from the current location to the unexplored location location to look for undiscovered objects at that location. (Example Usage: EXPLORE counter3)
+SUGGEST_ALTERNATIVE missing_object - Ask the user to replace the object missing_object that they requested with another object with the same function. You may only ask for substitution of one object at a time. Example usage: SUGGEST_ALTERNATIVE spoon
+CORRECTION  - This tool should be called when the user asks you to remember and do the same next time
+
+Previous User Requests:
+
+
+User-Request: I want to have an banana
+
+Lets think step by step. Remember that unexplored locations could contain objects that are relevant to the task.
+Only call the planning tool if all utensils are there to fulfill the plan. For example if there is nothing for cutting
+the goal "cut the apple" cannot be reached. Which tool would you use? 
+End your answer with SELECTED TOOL:<TOOL> <PARAMETERS>. 
+End your answer with FAILURE if no tool is valid.
+
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+Given the current scene memory and the user's request, let's analyze the situation:
+
+1. **User Request**: The user wants to have a banana.
+2. **Updated Scene Memory**: 
+   - Objects present: window0, table0, bowl0, salad0, sponge0, tomato0, milk0, banana0, hammer0, door0, kitchen_knife0, water0, refrigerator0, spoon0, sink0, plate0, cucumber0, spatula0, box0, watering_can0, tissue0, plastic_cup0, plastic_cup1, plastic_cup2, human0, counter0, milk_cartoon0, bottle0, cutting_board0.
+   - Object Relations: The banana is on the table, and the human is at the table.
+
+3. **Analysis**:
+   - The banana is available on the table, and the human is at the table, so the user can directly access the banana.
+   - The previous attempts to plan or create an incomplete plan have failed, indicating a possible issue with the planning tools or the interpretation of the scene.
+
+Since the banana is already accessible to the user, and there are no further unexplored locations or alternative suggestions needed, the failure of the planning tools suggests a limitation in the system's ability to recognize the simplicity of the task. However, based on the scene, the user should be able to take the banana directly.
+
+Given the constraints and the current situation, there is no further tool that can be effectively used to change the outcome. Therefore, I will conclude with a failure to find a valid tool to fulfill the request.
+
+FAILURE
+---------------------------------------Results:---------------------------------------------
+Task: I want to have an apple
+Generated Plan:
+
+; cost = 0.0 (union cost)
+Desired Goal: (or (inhand  banana0 human0) (inhand  tomato0 human0))
+Goal Reached: False
+Plan costs are: 0 -- minimal costs: 3
+Plan Costs minimal: True
+Plan Costs Rate: 1.0
+Used tools EXPLORE, EXPLORE, EXPLORE, EXPLORE, EXPLORE, SUGGEST_ALTERNATIVE, PLAN, INCOMPLETE_PLAN
+Tool Costs are: 8 -- minimal costs: 5
+Tool Costs minimal: False
+Costs Rate: 1.6
+----------------------------------------------------------------------------
+--------------------------------------NEW CASE ----------------------------------------
+You are an robotic assistant that tries to help the user to achieve his plan.
+You are given a representation of the scene and need to determine which tool to use to help the user achieve 
+his goal the best way.
+
+Scene-Memory:
+Objects: table0,milk0,bowl0,plastic_cup0,plastic_cup1,plastic_cup2,human0,plate0,milk_cartoon0,bottle0,tomato0,water0,cutting_board0,banana0
+Object Relations: on cutting_board0 table0,in tomato0 bowl0,on banana0 table0,on bowl0 table0,on plate0 table0,liquid_in milk0 milk_cartoon0,on plastic_cup0 table0,on plastic_cup1 table0,on plastic_cup2 table0,liquid_in water0 bottle0,opened milk_cartoon0,at human0 table0,on milk_cartoon0 table0,on bottle0 table0,at robot0 table0,closed bottle0
+Unexplored Locations: counter0,refrigerator0,door0,sink0,window0
+
+
+Available Tools:
+PLAN  - Given the scene memory and the prompt this tool finds the plan the fulfills the user request. You can only use objects for the plan that are in the List Objects: do not use unexplored locations in the plan
+INCOMPLETE_PLAN  - Given the scene memory and the prompt this tool finds a plan that fulfills a sub goal of the user request if it cannot be fully achieved with the objects in the scene.
+EXPLORE location - Moves the robot from the current location to the unexplored location location to look for undiscovered objects at that location. (Example Usage: EXPLORE counter3)
+SUGGEST_ALTERNATIVE missing_object - Ask the user to replace the object missing_object that they requested with another object with the same function. You may only ask for substitution of one object at a time. Example usage: SUGGEST_ALTERNATIVE spoon
+CORRECTION  - This tool should be called when the user asks you to remember and do the same next time
+
+Previous User Requests:
+
+
+User-Request: I want dine an apple
+
+Lets think step by step. Remember that unexplored locations could contain objects that are relevant to the task.
+Only call the planning tool if all utensils are there to fulfill the plan. For example if there is nothing for cutting
+the goal "cut the apple" cannot be reached. 
+Which tool would you use? End your answer with SELECTED TOOL:<TOOL> <PARAMETERS>. 
+End your answer with FAILURE if no tool is valid.
+        
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+To fulfill the user's request to "dine an apple," we need to check if there is an apple available in the scene. The current scene memory does not list an apple among the objects. Since the apple is not present, we cannot directly fulfill the user's request with the available objects.
+
+Given that unexplored locations might contain the apple, the best course of action is to explore one of these locations to potentially find an apple. 
+
+Let's choose one of the unexplored locations to explore. I will select "counter0" as it is a common place where fruits might be found.
+
+SELECTED TOOL: EXPLORE counter0
+New Scene Memory:
+Objects: table0,bowl0,sponge0,tomato0,milk0,banana0,hammer0,kitchen_knife0,water0,spoon0,plate0,box0,spatula0,watering_can0,tissue0,plastic_cup0,plastic_cup1,plastic_cup2,human0,counter0,milk_cartoon0,bottle0,cutting_board0
+Object Relations: on cutting_board0 table0,in tomato0 bowl0,on banana0 table0,on bowl0 table0,on plate0 table0,liquid_in milk0 milk_cartoon0,on plastic_cup0 table0,on plastic_cup1 table0,on plastic_cup2 table0,liquid_in water0 bottle0,opened milk_cartoon0,at human0 table0,on milk_cartoon0 table0,on bottle0 table0,at robot0 table0,closed bottle0,on kitchen_knife0 counter0,on box0 counter0,on spatula0 counter0,on watering_can0 counter0,on sponge0 counter0,on tissue0 counter0,on spoon0 counter0,in hammer0 box0,on cornflakes0 counter0
+Unexplored Locations: refrigerator0,door0,sink0,window0
+
+Result of last tool execution: explored counter0
+
+Available Tools:
+PLAN  - Given the scene memory and the prompt this tool finds the plan the fulfills the user request. You can only use objects for the plan that are in the List Objects: do not use unexplored locations in the plan
+INCOMPLETE_PLAN  - Given the scene memory and the prompt this tool finds a plan that fulfills a sub goal of the user request if it cannot be fully achieved with the objects in the scene.
+EXPLORE location - Moves the robot from the current location to the unexplored location location to look for undiscovered objects at that location. (Example Usage: EXPLORE counter3)
+SUGGEST_ALTERNATIVE missing_object - Ask the user to replace the object missing_object that they requested with another object with the same function. You may only ask for substitution of one object at a time. Example usage: SUGGEST_ALTERNATIVE spoon
+CORRECTION  - This tool should be called when the user asks you to remember and do the same next time
+
+Previous User Requests:
+
+
+User-Request: I want dine an apple
+
+Lets think step by step. Remember that unexplored locations could contain objects that are relevant to the task.
+Only call the planning tool if all utensils are there to fulfill the plan. For example if there is nothing for cutting
+the goal "cut the apple" cannot be reached. Which tool would you use? 
+End your answer with SELECTED TOOL:<TOOL> <PARAMETERS>. 
+End your answer with FAILURE if no tool is valid.
+
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+The updated scene memory still does not list an apple among the objects. Since the apple is not present, we cannot directly fulfill the user's request with the available objects.
+
+Given that unexplored locations might contain the apple, the best course of action is to explore another unexplored location to potentially find an apple. 
+
+Let's choose another unexplored location to explore. I will select "refrigerator0" as it is a common place where fruits might be stored.
+
+SELECTED TOOL: EXPLORE refrigerator0
+New Scene Memory:
+Objects: table0,bowl0,salad0,milk0,sponge0,tomato0,banana0,hammer0,kitchen_knife0,water0,refrigerator0,spoon0,plate0,box0,spatula0,cucumber0,watering_can0,tissue0,plastic_cup0,plastic_cup1,plastic_cup2,human0,counter0,milk_cartoon0,bottle0,cutting_board0
+Object Relations: on cutting_board0 table0,in tomato0 bowl0,on banana0 table0,on bowl0 table0,on plate0 table0,liquid_in milk0 milk_cartoon0,on plastic_cup0 table0,on plastic_cup1 table0,on plastic_cup2 table0,liquid_in water0 bottle0,opened milk_cartoon0,at human0 table0,on milk_cartoon0 table0,on bottle0 table0,at robot0 table0,closed bottle0,on kitchen_knife0 counter0,on box0 counter0,on spatula0 counter0,on watering_can0 counter0,on sponge0 counter0,on tissue0 counter0,on spoon0 counter0,in hammer0 box0,on cornflakes0 counter0,in cucumber0 refrigerator0,closed refrigerator0,in salad0 refrigerator0
+Unexplored Locations: door0,sink0,window0
+
+Result of last tool execution: explored refrigerator0
+
+Available Tools:
+PLAN  - Given the scene memory and the prompt this tool finds the plan the fulfills the user request. You can only use objects for the plan that are in the List Objects: do not use unexplored locations in the plan
+INCOMPLETE_PLAN  - Given the scene memory and the prompt this tool finds a plan that fulfills a sub goal of the user request if it cannot be fully achieved with the objects in the scene.
+EXPLORE location - Moves the robot from the current location to the unexplored location location to look for undiscovered objects at that location. (Example Usage: EXPLORE counter3)
+SUGGEST_ALTERNATIVE missing_object - Ask the user to replace the object missing_object that they requested with another object with the same function. You may only ask for substitution of one object at a time. Example usage: SUGGEST_ALTERNATIVE spoon
+CORRECTION  - This tool should be called when the user asks you to remember and do the same next time
+
+Previous User Requests:
+
+
+User-Request: I want dine an apple
+
+Lets think step by step. Remember that unexplored locations could contain objects that are relevant to the task.
+Only call the planning tool if all utensils are there to fulfill the plan. For example if there is nothing for cutting
+the goal "cut the apple" cannot be reached. Which tool would you use? 
+End your answer with SELECTED TOOL:<TOOL> <PARAMETERS>. 
+End your answer with FAILURE if no tool is valid.
+
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+The updated scene memory still does not list an apple among the objects. Since the apple is not present, we cannot directly fulfill the user's request with the available objects.
+
+Given that unexplored locations might contain the apple, the best course of action is to explore another unexplored location to potentially find an apple. 
+
+Let's choose another unexplored location to explore. I will select "sink0" as it is another location that might have fruits nearby.
+
+SELECTED TOOL: EXPLORE sink0
+New Scene Memory:
+Objects: table0,bowl0,salad0,sponge0,tomato0,milk0,banana0,hammer0,kitchen_knife0,water0,refrigerator0,spoon0,sink0,plate0,box0,spatula0,cucumber0,watering_can0,tissue0,plastic_cup0,plastic_cup1,plastic_cup2,human0,counter0,milk_cartoon0,bottle0,cutting_board0
+Object Relations: on cutting_board0 table0,in tomato0 bowl0,on banana0 table0,on bowl0 table0,on plate0 table0,liquid_in milk0 milk_cartoon0,on plastic_cup0 table0,on plastic_cup1 table0,on plastic_cup2 table0,liquid_in water0 bottle0,opened milk_cartoon0,at human0 table0,on milk_cartoon0 table0,on bottle0 table0,at robot0 table0,closed bottle0,on kitchen_knife0 counter0,on box0 counter0,on spatula0 counter0,on watering_can0 counter0,on sponge0 counter0,on tissue0 counter0,on spoon0 counter0,in hammer0 box0,on cornflakes0 counter0,in cucumber0 refrigerator0,closed refrigerator0,in salad0 refrigerator0
+Unexplored Locations: door0,window0
+
+Result of last tool execution: explored sink0
+
+Available Tools:
+PLAN  - Given the scene memory and the prompt this tool finds the plan the fulfills the user request. You can only use objects for the plan that are in the List Objects: do not use unexplored locations in the plan
+INCOMPLETE_PLAN  - Given the scene memory and the prompt this tool finds a plan that fulfills a sub goal of the user request if it cannot be fully achieved with the objects in the scene.
+EXPLORE location - Moves the robot from the current location to the unexplored location location to look for undiscovered objects at that location. (Example Usage: EXPLORE counter3)
+SUGGEST_ALTERNATIVE missing_object - Ask the user to replace the object missing_object that they requested with another object with the same function. You may only ask for substitution of one object at a time. Example usage: SUGGEST_ALTERNATIVE spoon
+CORRECTION  - This tool should be called when the user asks you to remember and do the same next time
+
+Previous User Requests:
+
+
+User-Request: I want dine an apple
+
+Lets think step by step. Remember that unexplored locations could contain objects that are relevant to the task.
+Only call the planning tool if all utensils are there to fulfill the plan. For example if there is nothing for cutting
+the goal "cut the apple" cannot be reached. Which tool would you use? 
+End your answer with SELECTED TOOL:<TOOL> <PARAMETERS>. 
+End your answer with FAILURE if no tool is valid.
+
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+The updated scene memory still does not list an apple among the objects. Since the apple is not present, we cannot directly fulfill the user's request with the available objects.
+
+Given that unexplored locations might contain the apple, the best course of action is to explore another unexplored location to potentially find an apple. 
+
+Let's choose another unexplored location to explore. I will select "door0" as it is another location that might have fruits nearby.
+
+SELECTED TOOL: EXPLORE door0
+New Scene Memory:
+Objects: table0,bowl0,salad0,milk0,sponge0,tomato0,banana0,hammer0,door0,kitchen_knife0,water0,refrigerator0,spoon0,sink0,plate0,box0,spatula0,cucumber0,watering_can0,tissue0,plastic_cup0,plastic_cup1,plastic_cup2,human0,counter0,milk_cartoon0,bottle0,cutting_board0
+Object Relations: on cutting_board0 table0,in tomato0 bowl0,on banana0 table0,on bowl0 table0,on plate0 table0,liquid_in milk0 milk_cartoon0,on plastic_cup0 table0,on plastic_cup1 table0,on plastic_cup2 table0,liquid_in water0 bottle0,opened milk_cartoon0,at human0 table0,on milk_cartoon0 table0,on bottle0 table0,at robot0 table0,closed bottle0,on kitchen_knife0 counter0,on box0 counter0,on spatula0 counter0,on watering_can0 counter0,on sponge0 counter0,on tissue0 counter0,on spoon0 counter0,in hammer0 box0,on cornflakes0 counter0,in cucumber0 refrigerator0,closed refrigerator0,in salad0 refrigerator0,closed door0
+Unexplored Locations: window0
+
+Result of last tool execution: explored door0
+
+Available Tools:
+PLAN  - Given the scene memory and the prompt this tool finds the plan the fulfills the user request. You can only use objects for the plan that are in the List Objects: do not use unexplored locations in the plan
+INCOMPLETE_PLAN  - Given the scene memory and the prompt this tool finds a plan that fulfills a sub goal of the user request if it cannot be fully achieved with the objects in the scene.
+EXPLORE location - Moves the robot from the current location to the unexplored location location to look for undiscovered objects at that location. (Example Usage: EXPLORE counter3)
+SUGGEST_ALTERNATIVE missing_object - Ask the user to replace the object missing_object that they requested with another object with the same function. You may only ask for substitution of one object at a time. Example usage: SUGGEST_ALTERNATIVE spoon
+CORRECTION  - This tool should be called when the user asks you to remember and do the same next time
+
+Previous User Requests:
+
+
+User-Request: I want dine an apple
+
+Lets think step by step. Remember that unexplored locations could contain objects that are relevant to the task.
+Only call the planning tool if all utensils are there to fulfill the plan. For example if there is nothing for cutting
+the goal "cut the apple" cannot be reached. Which tool would you use? 
+End your answer with SELECTED TOOL:<TOOL> <PARAMETERS>. 
+End your answer with FAILURE if no tool is valid.
+
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+The updated scene memory still does not list an apple among the objects. Since the apple is not present, we cannot directly fulfill the user's request with the available objects.
+
+Given that unexplored locations might contain the apple, the best course of action is to explore the last unexplored location to potentially find an apple. 
+
+Let's choose the last unexplored location to explore, which is "window0."
+
+SELECTED TOOL: EXPLORE window0
+New Scene Memory:
+Objects: window0,table0,bowl0,salad0,sponge0,tomato0,milk0,banana0,hammer0,door0,kitchen_knife0,water0,refrigerator0,spoon0,sink0,plate0,box0,spatula0,cucumber0,watering_can0,tissue0,plastic_cup0,plastic_cup1,plastic_cup2,human0,counter0,milk_cartoon0,bottle0,cutting_board0
+Object Relations: on cutting_board0 table0,in tomato0 bowl0,on banana0 table0,on bowl0 table0,on plate0 table0,liquid_in milk0 milk_cartoon0,on plastic_cup0 table0,on plastic_cup1 table0,on plastic_cup2 table0,liquid_in water0 bottle0,opened milk_cartoon0,at human0 table0,on milk_cartoon0 table0,on bottle0 table0,at robot0 table0,closed bottle0,on kitchen_knife0 counter0,on box0 counter0,on spatula0 counter0,on watering_can0 counter0,on sponge0 counter0,on tissue0 counter0,on spoon0 counter0,in hammer0 box0,on cornflakes0 counter0,in cucumber0 refrigerator0,closed refrigerator0,in salad0 refrigerator0,closed door0,closed window0
+Unexplored Locations: 
+
+Result of last tool execution: explored window0
+
+Available Tools:
+PLAN  - Given the scene memory and the prompt this tool finds the plan the fulfills the user request. You can only use objects for the plan that are in the List Objects: do not use unexplored locations in the plan
+INCOMPLETE_PLAN  - Given the scene memory and the prompt this tool finds a plan that fulfills a sub goal of the user request if it cannot be fully achieved with the objects in the scene.
+EXPLORE location - Moves the robot from the current location to the unexplored location location to look for undiscovered objects at that location. (Example Usage: EXPLORE counter3)
+SUGGEST_ALTERNATIVE missing_object - Ask the user to replace the object missing_object that they requested with another object with the same function. You may only ask for substitution of one object at a time. Example usage: SUGGEST_ALTERNATIVE spoon
+CORRECTION  - This tool should be called when the user asks you to remember and do the same next time
+
+Previous User Requests:
+
+
+User-Request: I want dine an apple
+
+Lets think step by step. Remember that unexplored locations could contain objects that are relevant to the task.
+Only call the planning tool if all utensils are there to fulfill the plan. For example if there is nothing for cutting
+the goal "cut the apple" cannot be reached. Which tool would you use? 
+End your answer with SELECTED TOOL:<TOOL> <PARAMETERS>. 
+End your answer with FAILURE if no tool is valid.
+
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+The updated scene memory still does not list an apple among the objects. Since the apple is not present and all locations have been explored, we cannot directly fulfill the user's request with the available objects.
+
+Since there are no more unexplored locations to check for an apple, the best course of action is to suggest an alternative fruit that is available. The scene memory lists a banana, which could be a suitable alternative for dining.
+
+SELECTED TOOL: SUGGEST_ALTERNATIVE apple
+Out of the following affordances for a apple, which ones does the user need for the request "I want dine an apple"? The affordances are:
+grasp: The object can be grasped in any way
+carry: The object can be picked up and moved
+rotate: The object can be turned
+axis-roll: The object can be rolled around an axis
+free-roll: The object can be rolled freely in any direction as it is approximately sphere shaped
+push:  The object can be pushed away from oneself
+pull: The object can be pulled towards oneself
+stir: The object can be used as a tool to stir
+consumable: The object can be safely consumed by a human
+ End your answer with listing the affordances as strings in a python list format
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+To fulfill the request "I want to dine an apple," the user primarily needs the affordances that allow them to consume the apple. The relevant affordances are:
+
+1. **grasp**: The user needs to grasp the apple to hold it.
+2. **carry**: The user may need to pick up and move the apple to their dining area.
+3. **consumable**: The apple needs to be consumable for the user to eat it.
+
+The other affordances, such as rotate, axis-roll, free-roll, push, pull, and stir, are not directly necessary for the act of dining on an apple.
+
+Here is the list of relevant affordances in Python list format:
+
+```python
+["grasp", "carry", "consumable"]
+```
+Q:Out of the following affordances for a apple, which ones does the user need for the request "I want dine an apple"? The affordances are:
+grasp: The object can be grasped in any way
+carry: The object can be picked up and moved
+rotate: The object can be turned
+axis-roll: The object can be rolled around an axis
+free-roll: The object can be rolled freely in any direction as it is approximately sphere shaped
+push:  The object can be pushed away from oneself
+pull: The object can be pulled towards oneself
+stir: The object can be used as a tool to stir
+consumable: The object can be safely consumed by a human
+ End your answer with listing the affordances as strings in a python list format
+A: To fulfill the request "I want to dine an apple," the user primarily needs the affordances that allow them to consume the apple. The relevant affordances are:
+
+1. **grasp**: The user needs to grasp the apple to hold it.
+2. **carry**: The user may need to pick up and move the apple to their dining area.
+3. **consumable**: The apple needs to be consumable for the user to eat it.
+
+The other affordances, such as rotate, axis-roll, free-roll, push, pull, and stir, are not directly necessary for the act of dining on an apple.
+
+Here is the list of relevant affordances in Python list format:
+
+```python
+["grasp", "carry", "consumable"]
+```
+-----------------------------------------
+
+Which of these objects can replace a apple for the affordance consumable the best. The object(s) are: tomato,milk,cucumber,banana 
+ Finish your answer by naming exactly one object with OBJECT:<object>
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+To replace an apple for the affordance "consumable," we need to consider which of the listed objects is most similar in terms of being a consumable food item that can be eaten directly and is commonly consumed in a similar manner to an apple. 
+
+Among the options provided, a **banana** is the most similar to an apple in terms of being a consumable fruit that can be eaten directly without additional preparation. Both are commonly eaten as snacks and are similarly portable.
+
+Therefore, the best replacement for an apple in terms of the "consumable" affordance is:
+
+OBJECT: banana
+Q:Which of these objects can replace a apple for the affordance consumable the best. The object(s) are: tomato,milk,cucumber,banana 
+ Finish your answer by naming exactly one object with OBJECT:<object>
+A: To replace an apple for the affordance "consumable," we need to consider which of the listed objects is most similar in terms of being a consumable food item that can be eaten directly and is commonly consumed in a similar manner to an apple. 
+
+Among the options provided, a **banana** is the most similar to an apple in terms of being a consumable fruit that can be eaten directly without additional preparation. Both are commonly eaten as snacks and are similarly portable.
+
+Therefore, the best replacement for an apple in terms of the "consumable" affordance is:
+
+OBJECT: banana
+-----------------------------------------
+
+New Scene Memory:
+Objects: window0,table0,bowl0,salad0,sponge0,tomato0,milk0,banana0,hammer0,door0,kitchen_knife0,water0,refrigerator0,spoon0,sink0,plate0,box0,spatula0,cucumber0,watering_can0,tissue0,plastic_cup0,plastic_cup1,plastic_cup2,human0,counter0,milk_cartoon0,bottle0,cutting_board0
+Object Relations: on cutting_board0 table0,in tomato0 bowl0,on banana0 table0,on bowl0 table0,on plate0 table0,liquid_in milk0 milk_cartoon0,on plastic_cup0 table0,on plastic_cup1 table0,on plastic_cup2 table0,liquid_in water0 bottle0,opened milk_cartoon0,at human0 table0,on milk_cartoon0 table0,on bottle0 table0,at robot0 table0,closed bottle0,on kitchen_knife0 counter0,on box0 counter0,on spatula0 counter0,on watering_can0 counter0,on sponge0 counter0,on tissue0 counter0,on spoon0 counter0,in hammer0 box0,on cornflakes0 counter0,in cucumber0 refrigerator0,closed refrigerator0,in salad0 refrigerator0,closed door0,closed window0
+Unexplored Locations: 
+
+Result of last tool execution: New Substitution: apple->banana
+
+Available Tools:
+PLAN  - Given the scene memory and the prompt this tool finds the plan the fulfills the user request. You can only use objects for the plan that are in the List Objects: do not use unexplored locations in the plan
+INCOMPLETE_PLAN  - Given the scene memory and the prompt this tool finds a plan that fulfills a sub goal of the user request if it cannot be fully achieved with the objects in the scene.
+EXPLORE location - Moves the robot from the current location to the unexplored location location to look for undiscovered objects at that location. (Example Usage: EXPLORE counter3)
+SUGGEST_ALTERNATIVE missing_object - Ask the user to replace the object missing_object that they requested with another object with the same function. You may only ask for substitution of one object at a time. Example usage: SUGGEST_ALTERNATIVE spoon
+CORRECTION  - This tool should be called when the user asks you to remember and do the same next time
+
+Previous User Requests:
+
+
+User-Request: I want dine an banana
+
+Lets think step by step. Remember that unexplored locations could contain objects that are relevant to the task.
+Only call the planning tool if all utensils are there to fulfill the plan. For example if there is nothing for cutting
+the goal "cut the apple" cannot be reached. Which tool would you use? 
+End your answer with SELECTED TOOL:<TOOL> <PARAMETERS>. 
+End your answer with FAILURE if no tool is valid.
+
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+The user's request has been updated to "dine a banana," and the scene memory confirms that a banana is available on the table. Since the goal is to dine a banana, and all necessary objects are present, we can proceed to create a plan to fulfill this request.
+
+The available tools and objects in the scene are sufficient to achieve the goal. Therefore, I will use the PLAN tool to create a plan for dining the banana.
+
+SELECTED TOOL: PLAN
+You are the humanoid service robot robotXYZ assisting a human in a kitchen. Your task is to turn the user request into a goal state in PDDL. The predicates of the domain are defined as follows:
+(:predicates
+; Describes ?o being on top of the supporting ?s
+(on  ?o - carry ?s - support)
+; Do not use this predicate
+(indirect_on  ?o - carry ?s - support)
+; Describes the non liquid ?o being in the container ?c
+(in  ?o - carry ?c - contain)
+; Describes the liquid ?li being in the container ?lc
+(liquid_in  ?li - liquid ?lc - liquid-contain)
+; Describes the actor ?a being at the location ?l which can also be another actor
+(at  ?a - actor ?l - location)
+; Describes the object ?o being in the hand of a human or robot ?a. A human can have multiple objects in their hand
+(inhand  ?o - carry ?a - actor)
+; Describes the object ?ac being carried together by the actors ?a and ?r
+(carried  ?ac - assisted-carry ?a - actor ?r - actor)
+; Do not use this predicate
+(free  ?s - support)
+; Do not use this predicate
+(reachable  ?o - carry ?l - location ?a - actor)
+; Describes that ?op is open
+(opened  ?op - open)
+; Describes that ?cl is closed
+(closed  ?cl - close)
+(warm  ?co - consumable)
+(liquid_warm  ?li - liquid)
+(wet  ?ws - wet-swipe)
+; Describes that a consumable ?co is chopped
+(chopped  ?co - consumable)
+; Describes that an object ?ob has been cleaned with water
+(clean  ?ob - object)
+; Describes that the robot has visited the given location ?l
+(visited  ?l - location)
+; Do not use this predicate
+(hand_occupied  ?a - actor)
+) 
+ and the problem without the goal is:
+ (define (problem test)
+
+    (:domain robotic_planning)
+    
+    (:objects
+        box0 - box
+        table0 - table
+        tissue0 - tissue
+        kitchen_knife0 - kitchen_knife
+        tomato0 - tomato
+        watering_can0 - watering_can
+        plastic_cup0 - plastic_cup
+        plastic_cup2 - plastic_cup
+        salad0 - salad
+        human0 - human
+        plate0 - plate
+        spatula0 - spatula
+        banana0 - banana
+        water0 - water
+        plastic_cup1 - plastic_cup
+        spoon0 - spoon
+        milk_cartoon0 - milk_cartoon
+        bottle0 - bottle
+        robot0 - robot_profile
+        hammer0 - hammer
+        sponge0 - sponge
+        window0 - window
+        door0 - door
+        refrigerator0 - refrigerator
+        cucumber0 - cucumber
+        bowl0 - bowl
+        counter0 - counter
+        sink0 - sink
+        cutting_board0 - cutting_board
+        milk0 - milk
+    )
+    
+    (:init 
+        (liquid_in  water0 bottle0)
+        (on  box0 counter0)
+        (opened  milk_cartoon0)
+        (on  bowl0 table0)
+        (on  tissue0 counter0)
+        (in  tomato0 bowl0)
+        (on  kitchen_knife0 counter0)
+        (on  cutting_board0 table0)
+        (on  watering_can0 counter0)
+        (on  cornflakes0 counter0)
+        (in  salad0 refrigerator0)
+        (on  spatula0 counter0)
+        (on  plastic_cup0 table0)
+        (on  plastic_cup2 table0)
+        (liquid_in  milk0 milk_cartoon0)
+        (on  spoon0 counter0)
+        (closed  bottle0)
+        (on  plate0 table0)
+        (at  human0 table0)
+        (on  banana0 table0)
+        (on  sponge0 counter0)
+        (closed  window0)
+        (closed  door0)
+        (closed  refrigerator0)
+        (in  cucumber0 refrigerator0)
+        (on  plastic_cup1 table0)
+        (on  milk_cartoon0 table0)
+        (on  bottle0 table0)
+        (in  hammer0 box0)
+        (at  robot0 table0)
+        (= total-cost 0)
+        (= (cost human0) 100)
+        (= (cost robot0) 1)
+    )
+    
+    (:metric minimize (total-cost))
+    
+)
+ 
+ The user asks "I want dine an banana". Explain step by step how you concluded that this is the desired goal state. Express the goal state in correct PDDL Syntaxwithout using the ? operator. You are allowed to use disjunctions
+These are examples from previous user interactions:
+Q1: I would like an sliced apple and banana for breakfast
+A: (:goal and (in apple0 bowl0) (in banana0 bowl0) (chopped apple0) (chopped banana0))
+Q2: I want to consume some peanuts
+A: (:goal and (in peanuts0 bowl1) (on bowl1 table0) (on bowl3 table0))
+Q3: I want to consume some walnuts
+A: (:goal and (in walnuts0 bowl0) (on bowl0 table0) (inhand nutcracker0 human0) (on bowl3 table0))
+Consider these example in your answer
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+To determine the desired goal state for the user's request "I want to dine on a banana," we need to analyze the request and compare it with the examples provided. Here's a step-by-step explanation of how we can conclude the goal state:
+
+1. **Understanding the Request**: The user wants to "dine on a banana." This implies that the banana should be in a state ready for consumption. In the context of the examples, "consume" or "dine" typically means the item should be in a bowl or on a plate, ready to be eaten.
+
+2. **Analyzing the Examples**:
+   - **Q1**: The request was for a "sliced apple and banana for breakfast." The goal state included the apple and banana being in a bowl and chopped, indicating preparation for consumption.
+   - **Q2**: The request was to "consume some peanuts." The goal state included the peanuts being in a bowl on the table, ready for consumption.
+   - **Q3**: The request was to "consume some walnuts." The goal state included the walnuts being in a bowl on the table, with a nutcracker in hand, indicating preparation for consumption.
+
+3. **Inferring the Goal State**:
+   - The common theme in the examples is that the consumable items are placed in a container (bowl or plate) and are on the table, indicating readiness for consumption.
+   - For the banana, since the user wants to "dine" on it, it should be placed on a plate or in a bowl on the table.
+
+4. **Current State Analysis**:
+   - The banana (banana0) is currently on the table (table0), which aligns with the goal of being ready for consumption.
+   - There is no explicit requirement for the banana to be chopped or in a bowl, as the request is simply to "dine" on it, not to have it prepared in a specific way like "sliced" or "chopped."
+
+5. **Formulating the Goal State**:
+   - Since the banana is already on the table, the goal state should reflect that it is ready for consumption. We can express this as ensuring the banana is on a plate, which is a common way to present food for dining.
+
+Based on this analysis, the goal state in PDDL syntax is:
+
+```pddl
+(:goal (on banana0 plate0))
+```
+
+This goal state ensures that the banana is on a plate, ready for the user to dine on it, consistent with the user's request and the patterns observed in the examples.
+TOTAL TOKENS BY THIS REQUEST
+1723
+New Scene Memory:
+Objects: window0,table0,bowl0,salad0,sponge0,tomato0,milk0,banana0,hammer0,door0,kitchen_knife0,water0,refrigerator0,spoon0,sink0,plate0,box0,spatula0,cucumber0,watering_can0,tissue0,plastic_cup0,plastic_cup1,plastic_cup2,human0,counter0,milk_cartoon0,bottle0,cutting_board0
+Object Relations: on cutting_board0 table0,in tomato0 bowl0,on banana0 table0,on bowl0 table0,on plate0 table0,liquid_in milk0 milk_cartoon0,on plastic_cup0 table0,on plastic_cup1 table0,on plastic_cup2 table0,liquid_in water0 bottle0,opened milk_cartoon0,at human0 table0,on milk_cartoon0 table0,on bottle0 table0,at robot0 table0,closed bottle0,on kitchen_knife0 counter0,on box0 counter0,on spatula0 counter0,on watering_can0 counter0,on sponge0 counter0,on tissue0 counter0,on spoon0 counter0,in hammer0 box0,on cornflakes0 counter0,in cucumber0 refrigerator0,closed refrigerator0,in salad0 refrigerator0,closed door0,closed window0
+Unexplored Locations: 
+
+Result of last tool execution: Planning failed
+
+Available Tools:
+PLAN  - Given the scene memory and the prompt this tool finds the plan the fulfills the user request. You can only use objects for the plan that are in the List Objects: do not use unexplored locations in the plan
+INCOMPLETE_PLAN  - Given the scene memory and the prompt this tool finds a plan that fulfills a sub goal of the user request if it cannot be fully achieved with the objects in the scene.
+EXPLORE location - Moves the robot from the current location to the unexplored location location to look for undiscovered objects at that location. (Example Usage: EXPLORE counter3)
+SUGGEST_ALTERNATIVE missing_object - Ask the user to replace the object missing_object that they requested with another object with the same function. You may only ask for substitution of one object at a time. Example usage: SUGGEST_ALTERNATIVE spoon
+CORRECTION  - This tool should be called when the user asks you to remember and do the same next time
+
+Previous User Requests:
+
+
+User-Request: I want dine an banana
+
+Lets think step by step. Remember that unexplored locations could contain objects that are relevant to the task.
+Only call the planning tool if all utensils are there to fulfill the plan. For example if there is nothing for cutting
+the goal "cut the apple" cannot be reached. Which tool would you use? 
+End your answer with SELECTED TOOL:<TOOL> <PARAMETERS>. 
+End your answer with FAILURE if no tool is valid.
+
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+The planning attempt to fulfill the request to "dine a banana" has failed. This could be due to a lack of specific actions or steps needed to complete the task with the available objects.
+
+Since the goal is to dine a banana and the necessary objects are present, but the plan failed, I will attempt to create an incomplete plan that fulfills a sub-goal of the user's request. This might involve preparing the banana for dining, such as peeling it.
+
+SELECTED TOOL: INCOMPLETE_PLAN
+You are the humanoid service robot robotXYZ assisting a human in a kitchen. Your task is to turn the user request into a goal state in PDDL. If an object requested by the user does not exist just ignore it.If an utensil needed to achieve a desired object state is not in the scene do not use that state in the goal. For example do not use chopped if there is nothing to cut in the sceneIf the state needs more than 5 predicates, formulate a partial goal using less than 5 predicates.The predicates of the domain are defined as follows:
+(:predicates
+; Describes ?o being on top of the supporting ?s
+(on  ?o - carry ?s - support)
+; Do not use this predicate
+(indirect_on  ?o - carry ?s - support)
+; Describes the non liquid ?o being in the container ?c
+(in  ?o - carry ?c - contain)
+; Describes the liquid ?li being in the container ?lc
+(liquid_in  ?li - liquid ?lc - liquid-contain)
+; Describes the actor ?a being at the location ?l which can also be another actor
+(at  ?a - actor ?l - location)
+; Describes the object ?o being in the hand of a human or robot ?a. A human can have multiple objects in their hand
+(inhand  ?o - carry ?a - actor)
+; Describes the object ?ac being carried together by the actors ?a and ?r
+(carried  ?ac - assisted-carry ?a - actor ?r - actor)
+; Do not use this predicate
+(free  ?s - support)
+; Do not use this predicate
+(reachable  ?o - carry ?l - location ?a - actor)
+; Describes that ?op is open
+(opened  ?op - open)
+; Describes that ?cl is closed
+(closed  ?cl - close)
+(warm  ?co - consumable)
+(liquid_warm  ?li - liquid)
+(wet  ?ws - wet-swipe)
+; Describes that a consumable ?co is chopped
+(chopped  ?co - consumable)
+; Describes that an object ?ob has been cleaned with water
+(clean  ?ob - object)
+; Describes that the robot has visited the given location ?l
+(visited  ?l - location)
+; Do not use this predicate
+(hand_occupied  ?a - actor)
+) 
+ and the problem without the goal is:
+ (define (problem test)
+
+    (:domain robotic_planning)
+    
+    (:objects
+        box0 - box
+        table0 - table
+        tissue0 - tissue
+        kitchen_knife0 - kitchen_knife
+        tomato0 - tomato
+        watering_can0 - watering_can
+        plastic_cup0 - plastic_cup
+        plastic_cup2 - plastic_cup
+        salad0 - salad
+        human0 - human
+        plate0 - plate
+        spatula0 - spatula
+        banana0 - banana
+        water0 - water
+        plastic_cup1 - plastic_cup
+        spoon0 - spoon
+        milk_cartoon0 - milk_cartoon
+        bottle0 - bottle
+        robot0 - robot_profile
+        hammer0 - hammer
+        sponge0 - sponge
+        window0 - window
+        door0 - door
+        refrigerator0 - refrigerator
+        cucumber0 - cucumber
+        bowl0 - bowl
+        counter0 - counter
+        sink0 - sink
+        cutting_board0 - cutting_board
+        milk0 - milk
+    )
+    
+    (:init 
+        (liquid_in  water0 bottle0)
+        (on  box0 counter0)
+        (opened  milk_cartoon0)
+        (on  bowl0 table0)
+        (on  tissue0 counter0)
+        (in  tomato0 bowl0)
+        (on  kitchen_knife0 counter0)
+        (on  cutting_board0 table0)
+        (on  watering_can0 counter0)
+        (on  cornflakes0 counter0)
+        (in  salad0 refrigerator0)
+        (on  spatula0 counter0)
+        (on  plastic_cup0 table0)
+        (on  plastic_cup2 table0)
+        (liquid_in  milk0 milk_cartoon0)
+        (on  spoon0 counter0)
+        (closed  bottle0)
+        (on  plate0 table0)
+        (at  human0 table0)
+        (on  banana0 table0)
+        (on  sponge0 counter0)
+        (closed  window0)
+        (closed  door0)
+        (closed  refrigerator0)
+        (in  cucumber0 refrigerator0)
+        (on  plastic_cup1 table0)
+        (on  milk_cartoon0 table0)
+        (on  bottle0 table0)
+        (in  hammer0 box0)
+        (at  robot0 table0)
+        (= total-cost 0)
+        (= (cost human0) 100)
+        (= (cost robot0) 1)
+    )
+    
+    (:metric minimize (total-cost))
+    
+)
+ 
+ The user(human) asks: "I want dine an banana". Explain step by step how you concluded that this is the desired goal state. Express the goal state in correct PDDL Syntaxwithout using the ? operator. 
+These are examples from previous user interactions:
+Q1: I would like an sliced apple and banana for breakfast
+A: (:goal and (in apple0 bowl0) (in banana0 bowl0) (chopped apple0) (chopped banana0))
+Q2: I want to consume some peanuts
+A: (:goal and (in peanuts0 bowl1) (on bowl1 table0) (on bowl3 table0))
+Q3: I want to consume some walnuts
+A: (:goal and (in walnuts0 bowl0) (on bowl0 table0) (inhand nutcracker0 human0) (on bowl3 table0))
+Consider these example in your answer
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+To determine the desired goal state from the user's request "I want to dine on a banana," we need to analyze the request and the current state of the environment. Let's break down the process step by step:
+
+1. **Understanding the Request:**
+   - The user wants to "dine on a banana," which implies that the banana should be in a state ready for consumption.
+   - In the context of the examples provided, "dine" or "consume" typically means the item should be in a container (like a bowl) on the table, ready to be eaten.
+
+2. **Analyzing the Current State:**
+   - The banana (`banana0`) is currently on the table (`table0`).
+   - There is a bowl (`bowl0`) on the table (`table0`), which can be used to hold the banana for dining.
+
+3. **Formulating the Goal State:**
+   - Based on the examples, when the user wants to consume something, it should be placed in a bowl.
+   - The goal is to have the banana in the bowl (`bowl0`) on the table (`table0`).
+
+4. **Considering the Predicates:**
+   - We use the predicate `(in ?o - carry ?c - contain)` to describe the banana being in the bowl.
+   - We use the predicate `(on ?o - carry ?s - support)` to describe the bowl being on the table.
+
+5. **Constructing the Goal State:**
+   - The goal state should reflect the banana being in the bowl and the bowl being on the table.
+
+Given these considerations, the goal state in PDDL syntax is:
+
+```pddl
+(:goal (and
+    (in banana0 bowl0)
+    (on bowl0 table0)
+))
+```
+
+This goal state ensures that the banana is in a bowl on the table, ready for the user to dine on it, aligning with the user's request and the examples provided.
+New Scene Memory:
+Objects: window0,table0,bowl0,salad0,sponge0,tomato0,milk0,banana0,hammer0,door0,kitchen_knife0,water0,refrigerator0,spoon0,sink0,plate0,box0,spatula0,cucumber0,watering_can0,tissue0,plastic_cup0,plastic_cup1,plastic_cup2,human0,counter0,milk_cartoon0,bottle0,cutting_board0
+Object Relations: on cutting_board0 table0,in tomato0 bowl0,on banana0 table0,on bowl0 table0,on plate0 table0,liquid_in milk0 milk_cartoon0,on plastic_cup0 table0,on plastic_cup1 table0,on plastic_cup2 table0,liquid_in water0 bottle0,opened milk_cartoon0,at human0 table0,on milk_cartoon0 table0,on bottle0 table0,at robot0 table0,closed bottle0,on kitchen_knife0 counter0,on box0 counter0,on spatula0 counter0,on watering_can0 counter0,on sponge0 counter0,on tissue0 counter0,on spoon0 counter0,in hammer0 box0,on cornflakes0 counter0,in cucumber0 refrigerator0,closed refrigerator0,in salad0 refrigerator0,closed door0,closed window0
+Unexplored Locations: 
+
+Result of last tool execution: Planning failed due to unreachable goal
+
+Available Tools:
+PLAN  - Given the scene memory and the prompt this tool finds the plan the fulfills the user request. You can only use objects for the plan that are in the List Objects: do not use unexplored locations in the plan
+INCOMPLETE_PLAN  - Given the scene memory and the prompt this tool finds a plan that fulfills a sub goal of the user request if it cannot be fully achieved with the objects in the scene.
+EXPLORE location - Moves the robot from the current location to the unexplored location location to look for undiscovered objects at that location. (Example Usage: EXPLORE counter3)
+SUGGEST_ALTERNATIVE missing_object - Ask the user to replace the object missing_object that they requested with another object with the same function. You may only ask for substitution of one object at a time. Example usage: SUGGEST_ALTERNATIVE spoon
+CORRECTION  - This tool should be called when the user asks you to remember and do the same next time
+
+Previous User Requests:
+
+
+User-Request: I want dine an banana
+
+Lets think step by step. Remember that unexplored locations could contain objects that are relevant to the task.
+Only call the planning tool if all utensils are there to fulfill the plan. For example if there is nothing for cutting
+the goal "cut the apple" cannot be reached. Which tool would you use? 
+End your answer with SELECTED TOOL:<TOOL> <PARAMETERS>. 
+End your answer with FAILURE if no tool is valid.
+
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+The planning attempts have failed, indicating that the goal of "dining a banana" is currently unreachable with the available objects and actions. Since all locations have been explored and no further objects can be discovered, and the task cannot be completed with the current setup, it seems there is no valid tool to fulfill the user's request.
+
+Therefore, I must conclude that no tool is valid for achieving the user's request with the current scene memory.
+
+FAILURE
+---------------------------------------Results:---------------------------------------------
+Task: I want dine an apple
+Generated Plan:
+
+; cost = 0.0 (union cost)
+Desired Goal: (or (inhand  banana0 human0) (inhand  tomato0 human0))
+Goal Reached: False
+Plan costs are: 0 -- minimal costs: 3
+Plan Costs minimal: True
+Plan Costs Rate: 1.0
+Used tools EXPLORE, EXPLORE, EXPLORE, EXPLORE, EXPLORE, SUGGEST_ALTERNATIVE, PLAN, INCOMPLETE_PLAN
+Tool Costs are: 8 -- minimal costs: 5
+Tool Costs minimal: False
+Costs Rate: 1.6
+----------------------------------------------------------------------------
+--------------------------------------NEW CASE ----------------------------------------
+You are an robotic assistant that tries to help the user to achieve his plan.
+You are given a representation of the scene and need to determine which tool to use to help the user achieve 
+his goal the best way.
+
+Scene-Memory:
+Objects: table0,milk0,bowl0,apple0,plastic_cup0,plastic_cup1,human0,plate0,plastic_cup2,milk_cartoon0,bottle0,tomato0,water0,cutting_board0,banana0
+Object Relations: on cutting_board0 table0,in tomato0 bowl0,on banana0 table0,on bowl0 table0,on apple0 table0,on plate0 table0,liquid_in milk0 milk_cartoon0,on plastic_cup0 table0,on plastic_cup1 table0,on plastic_cup2 table0,liquid_in water0 bottle0,opened milk_cartoon0,at human0 table0,on milk_cartoon0 table0,on bottle0 table0,at robot0 table0,closed bottle0
+Unexplored Locations: counter0,refrigerator0,door0,sink0,window0
+
+
+Available Tools:
+PLAN  - Given the scene memory and the prompt this tool finds the plan the fulfills the user request. You can only use objects for the plan that are in the List Objects: do not use unexplored locations in the plan
+INCOMPLETE_PLAN  - Given the scene memory and the prompt this tool finds a plan that fulfills a sub goal of the user request if it cannot be fully achieved with the objects in the scene.
+EXPLORE location - Moves the robot from the current location to the unexplored location location to look for undiscovered objects at that location. (Example Usage: EXPLORE counter3)
+SUGGEST_ALTERNATIVE missing_object - Ask the user to replace the object missing_object that they requested with another object with the same function. You may only ask for substitution of one object at a time. Example usage: SUGGEST_ALTERNATIVE spoon
+CORRECTION  - This tool should be called when the user asks you to remember and do the same next time
+
+Previous User Requests:
+
+
+User-Request: I want an orange
+
+Lets think step by step. Remember that unexplored locations could contain objects that are relevant to the task.
+Only call the planning tool if all utensils are there to fulfill the plan. For example if there is nothing for cutting
+the goal "cut the apple" cannot be reached. 
+Which tool would you use? End your answer with SELECTED TOOL:<TOOL> <PARAMETERS>. 
+End your answer with FAILURE if no tool is valid.
+        
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+To determine the best tool to use, let's analyze the current scene and the user's request:
+
+1. **User Request**: The user wants an orange.
+2. **Scene Memory**: 
+   - There is no orange listed among the objects in the scene.
+   - There are unexplored locations: counter0, refrigerator0, door0, sink0, window0.
+
+Since there is no orange in the current list of objects, and unexplored locations might contain an orange, the best course of action is to explore one of these locations to search for an orange.
+
+SELECTED TOOL: EXPLORE refrigerator0
+New Scene Memory:
+Objects: table0,bowl0,tomato0,plastic_cup0,apple0,plastic_cup1,human0,plate0,plastic_cup2,cucumber0,salad0,milk_cartoon0,bottle0,milk0,water0,refrigerator0,cutting_board0,banana0
+Object Relations: on cutting_board0 table0,in tomato0 bowl0,on banana0 table0,on bowl0 table0,on apple0 table0,on plate0 table0,liquid_in milk0 milk_cartoon0,on plastic_cup0 table0,on plastic_cup1 table0,on plastic_cup2 table0,liquid_in water0 bottle0,opened milk_cartoon0,at human0 table0,on milk_cartoon0 table0,on bottle0 table0,at robot0 table0,closed bottle0,in cucumber0 refrigerator0,closed refrigerator0,in salad0 refrigerator0
+Unexplored Locations: counter0,door0,sink0,window0
+
+Result of last tool execution: explored refrigerator0
+
+Available Tools:
+PLAN  - Given the scene memory and the prompt this tool finds the plan the fulfills the user request. You can only use objects for the plan that are in the List Objects: do not use unexplored locations in the plan
+INCOMPLETE_PLAN  - Given the scene memory and the prompt this tool finds a plan that fulfills a sub goal of the user request if it cannot be fully achieved with the objects in the scene.
+EXPLORE location - Moves the robot from the current location to the unexplored location location to look for undiscovered objects at that location. (Example Usage: EXPLORE counter3)
+SUGGEST_ALTERNATIVE missing_object - Ask the user to replace the object missing_object that they requested with another object with the same function. You may only ask for substitution of one object at a time. Example usage: SUGGEST_ALTERNATIVE spoon
+CORRECTION  - This tool should be called when the user asks you to remember and do the same next time
+
+Previous User Requests:
+
+
+User-Request: I want an orange
+
+Lets think step by step. Remember that unexplored locations could contain objects that are relevant to the task.
+Only call the planning tool if all utensils are there to fulfill the plan. For example if there is nothing for cutting
+the goal "cut the apple" cannot be reached. Which tool would you use? 
+End your answer with SELECTED TOOL:<TOOL> <PARAMETERS>. 
+End your answer with FAILURE if no tool is valid.
+
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 503 Service Unavailable"
+Retrying request to /chat/completions in 0.455482 seconds
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+Let's analyze the updated scene memory and the user's request:
+
+1. **User Request**: The user wants an orange.
+2. **Updated Scene Memory**: 
+   - The refrigerator was explored, but no orange was found. Instead, a cucumber and a salad were discovered.
+   - There are still unexplored locations: counter0, door0, sink0, window0.
+
+Since the orange is still not present in the list of objects, and there are unexplored locations that might contain an orange, the best course of action is to continue exploring these locations.
+
+SELECTED TOOL: EXPLORE counter0
+New Scene Memory:
+Objects: table0,bowl0,salad0,milk0,tomato0,sponge0,banana0,hammer0,kitchen_knife0,water0,refrigerator0,spoon0,plate0,cucumber0,spatula0,box0,watering_can0,tissue0,apple0,plastic_cup0,plastic_cup1,human0,plastic_cup2,counter0,milk_cartoon0,bottle0,cutting_board0
+Object Relations: on cutting_board0 table0,in tomato0 bowl0,on banana0 table0,on bowl0 table0,on apple0 table0,on plate0 table0,liquid_in milk0 milk_cartoon0,on plastic_cup0 table0,on plastic_cup1 table0,on plastic_cup2 table0,liquid_in water0 bottle0,opened milk_cartoon0,at human0 table0,on milk_cartoon0 table0,on bottle0 table0,at robot0 table0,closed bottle0,in cucumber0 refrigerator0,closed refrigerator0,in salad0 refrigerator0,on kitchen_knife0 counter0,on box0 counter0,on spatula0 counter0,on watering_can0 counter0,on sponge0 counter0,on tissue0 counter0,on spoon0 counter0,in hammer0 box0,on cornflakes0 counter0
+Unexplored Locations: door0,sink0,window0
+
+Result of last tool execution: explored counter0
+
+Available Tools:
+PLAN  - Given the scene memory and the prompt this tool finds the plan the fulfills the user request. You can only use objects for the plan that are in the List Objects: do not use unexplored locations in the plan
+INCOMPLETE_PLAN  - Given the scene memory and the prompt this tool finds a plan that fulfills a sub goal of the user request if it cannot be fully achieved with the objects in the scene.
+EXPLORE location - Moves the robot from the current location to the unexplored location location to look for undiscovered objects at that location. (Example Usage: EXPLORE counter3)
+SUGGEST_ALTERNATIVE missing_object - Ask the user to replace the object missing_object that they requested with another object with the same function. You may only ask for substitution of one object at a time. Example usage: SUGGEST_ALTERNATIVE spoon
+CORRECTION  - This tool should be called when the user asks you to remember and do the same next time
+
+Previous User Requests:
+
+
+User-Request: I want an orange
+
+Lets think step by step. Remember that unexplored locations could contain objects that are relevant to the task.
+Only call the planning tool if all utensils are there to fulfill the plan. For example if there is nothing for cutting
+the goal "cut the apple" cannot be reached. Which tool would you use? 
+End your answer with SELECTED TOOL:<TOOL> <PARAMETERS>. 
+End your answer with FAILURE if no tool is valid.
+
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+Let's analyze the updated scene memory and the user's request:
+
+1. **User Request**: The user wants an orange.
+2. **Updated Scene Memory**: 
+   - The counter was explored, but no orange was found. Instead, several other objects were discovered, such as a kitchen knife, box, spatula, watering can, sponge, tissue, spoon, and cornflakes.
+   - There are still unexplored locations: door0, sink0, window0.
+
+Since the orange is still not present in the list of objects, and there are unexplored locations that might contain an orange, the best course of action is to continue exploring these locations.
+
+SELECTED TOOL: EXPLORE sink0
+New Scene Memory:
+Objects: table0,bowl0,salad0,sponge0,tomato0,milk0,banana0,hammer0,kitchen_knife0,water0,refrigerator0,spoon0,sink0,plate0,cucumber0,spatula0,box0,watering_can0,tissue0,apple0,plastic_cup0,plastic_cup1,human0,plastic_cup2,counter0,milk_cartoon0,bottle0,cutting_board0
+Object Relations: on cutting_board0 table0,in tomato0 bowl0,on banana0 table0,on bowl0 table0,on apple0 table0,on plate0 table0,liquid_in milk0 milk_cartoon0,on plastic_cup0 table0,on plastic_cup1 table0,on plastic_cup2 table0,liquid_in water0 bottle0,opened milk_cartoon0,at human0 table0,on milk_cartoon0 table0,on bottle0 table0,at robot0 table0,closed bottle0,in cucumber0 refrigerator0,closed refrigerator0,in salad0 refrigerator0,on kitchen_knife0 counter0,on box0 counter0,on spatula0 counter0,on watering_can0 counter0,on sponge0 counter0,on tissue0 counter0,on spoon0 counter0,in hammer0 box0,on cornflakes0 counter0
+Unexplored Locations: door0,window0
+
+Result of last tool execution: explored sink0
+
+Available Tools:
+PLAN  - Given the scene memory and the prompt this tool finds the plan the fulfills the user request. You can only use objects for the plan that are in the List Objects: do not use unexplored locations in the plan
+INCOMPLETE_PLAN  - Given the scene memory and the prompt this tool finds a plan that fulfills a sub goal of the user request if it cannot be fully achieved with the objects in the scene.
+EXPLORE location - Moves the robot from the current location to the unexplored location location to look for undiscovered objects at that location. (Example Usage: EXPLORE counter3)
+SUGGEST_ALTERNATIVE missing_object - Ask the user to replace the object missing_object that they requested with another object with the same function. You may only ask for substitution of one object at a time. Example usage: SUGGEST_ALTERNATIVE spoon
+CORRECTION  - This tool should be called when the user asks you to remember and do the same next time
+
+Previous User Requests:
+
+
+User-Request: I want an orange
+
+Lets think step by step. Remember that unexplored locations could contain objects that are relevant to the task.
+Only call the planning tool if all utensils are there to fulfill the plan. For example if there is nothing for cutting
+the goal "cut the apple" cannot be reached. Which tool would you use? 
+End your answer with SELECTED TOOL:<TOOL> <PARAMETERS>. 
+End your answer with FAILURE if no tool is valid.
+
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+Let's analyze the updated scene memory and the user's request:
+
+1. **User Request**: The user wants an orange.
+2. **Updated Scene Memory**: 
+   - The sink was explored, but no orange was found.
+   - There are still unexplored locations: door0, window0.
+
+Since the orange is still not present in the list of objects, and there are unexplored locations that might contain an orange, the best course of action is to continue exploring these locations.
+
+SELECTED TOOL: EXPLORE door0
+New Scene Memory:
+Objects: table0,bowl0,salad0,milk0,sponge0,tomato0,banana0,hammer0,door0,kitchen_knife0,water0,refrigerator0,spoon0,sink0,plate0,cucumber0,spatula0,box0,watering_can0,tissue0,apple0,plastic_cup0,plastic_cup1,human0,plastic_cup2,counter0,milk_cartoon0,bottle0,cutting_board0
+Object Relations: on cutting_board0 table0,in tomato0 bowl0,on banana0 table0,on bowl0 table0,on apple0 table0,on plate0 table0,liquid_in milk0 milk_cartoon0,on plastic_cup0 table0,on plastic_cup1 table0,on plastic_cup2 table0,liquid_in water0 bottle0,opened milk_cartoon0,at human0 table0,on milk_cartoon0 table0,on bottle0 table0,at robot0 table0,closed bottle0,in cucumber0 refrigerator0,closed refrigerator0,in salad0 refrigerator0,on kitchen_knife0 counter0,on box0 counter0,on spatula0 counter0,on watering_can0 counter0,on sponge0 counter0,on tissue0 counter0,on spoon0 counter0,in hammer0 box0,on cornflakes0 counter0,closed door0
+Unexplored Locations: window0
+
+Result of last tool execution: explored door0
+
+Available Tools:
+PLAN  - Given the scene memory and the prompt this tool finds the plan the fulfills the user request. You can only use objects for the plan that are in the List Objects: do not use unexplored locations in the plan
+INCOMPLETE_PLAN  - Given the scene memory and the prompt this tool finds a plan that fulfills a sub goal of the user request if it cannot be fully achieved with the objects in the scene.
+EXPLORE location - Moves the robot from the current location to the unexplored location location to look for undiscovered objects at that location. (Example Usage: EXPLORE counter3)
+SUGGEST_ALTERNATIVE missing_object - Ask the user to replace the object missing_object that they requested with another object with the same function. You may only ask for substitution of one object at a time. Example usage: SUGGEST_ALTERNATIVE spoon
+CORRECTION  - This tool should be called when the user asks you to remember and do the same next time
+
+Previous User Requests:
+
+
+User-Request: I want an orange
+
+Lets think step by step. Remember that unexplored locations could contain objects that are relevant to the task.
+Only call the planning tool if all utensils are there to fulfill the plan. For example if there is nothing for cutting
+the goal "cut the apple" cannot be reached. Which tool would you use? 
+End your answer with SELECTED TOOL:<TOOL> <PARAMETERS>. 
+End your answer with FAILURE if no tool is valid.
+
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+Let's analyze the updated scene memory and the user's request:
+
+1. **User Request**: The user wants an orange.
+2. **Updated Scene Memory**: 
+   - The door was explored, but no orange was found.
+   - There is still one unexplored location: window0.
+
+Since the orange is still not present in the list of objects, and there is one unexplored location that might contain an orange, the best course of action is to explore this last location.
+
+SELECTED TOOL: EXPLORE window0
+New Scene Memory:
+Objects: window0,table0,bowl0,salad0,sponge0,tomato0,milk0,banana0,hammer0,door0,kitchen_knife0,water0,refrigerator0,spoon0,sink0,plate0,cucumber0,spatula0,box0,watering_can0,tissue0,apple0,plastic_cup0,plastic_cup1,human0,plastic_cup2,counter0,milk_cartoon0,bottle0,cutting_board0
+Object Relations: on cutting_board0 table0,in tomato0 bowl0,on banana0 table0,on bowl0 table0,on apple0 table0,on plate0 table0,liquid_in milk0 milk_cartoon0,on plastic_cup0 table0,on plastic_cup1 table0,on plastic_cup2 table0,liquid_in water0 bottle0,opened milk_cartoon0,at human0 table0,on milk_cartoon0 table0,on bottle0 table0,at robot0 table0,closed bottle0,in cucumber0 refrigerator0,closed refrigerator0,in salad0 refrigerator0,on kitchen_knife0 counter0,on box0 counter0,on spatula0 counter0,on watering_can0 counter0,on sponge0 counter0,on tissue0 counter0,on spoon0 counter0,in hammer0 box0,on cornflakes0 counter0,closed door0,closed window0
+Unexplored Locations: 
+
+Result of last tool execution: explored window0
+
+Available Tools:
+PLAN  - Given the scene memory and the prompt this tool finds the plan the fulfills the user request. You can only use objects for the plan that are in the List Objects: do not use unexplored locations in the plan
+INCOMPLETE_PLAN  - Given the scene memory and the prompt this tool finds a plan that fulfills a sub goal of the user request if it cannot be fully achieved with the objects in the scene.
+EXPLORE location - Moves the robot from the current location to the unexplored location location to look for undiscovered objects at that location. (Example Usage: EXPLORE counter3)
+SUGGEST_ALTERNATIVE missing_object - Ask the user to replace the object missing_object that they requested with another object with the same function. You may only ask for substitution of one object at a time. Example usage: SUGGEST_ALTERNATIVE spoon
+CORRECTION  - This tool should be called when the user asks you to remember and do the same next time
+
+Previous User Requests:
+
+
+User-Request: I want an orange
+
+Lets think step by step. Remember that unexplored locations could contain objects that are relevant to the task.
+Only call the planning tool if all utensils are there to fulfill the plan. For example if there is nothing for cutting
+the goal "cut the apple" cannot be reached. Which tool would you use? 
+End your answer with SELECTED TOOL:<TOOL> <PARAMETERS>. 
+End your answer with FAILURE if no tool is valid.
+
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+Let's analyze the updated scene memory and the user's request:
+
+1. **User Request**: The user wants an orange.
+2. **Updated Scene Memory**: 
+   - All locations have been explored, and no orange was found among the objects.
+
+Since there are no unexplored locations left and no orange is present in the scene, we cannot fulfill the user's request for an orange. The best course of action now is to suggest an alternative to the user.
+
+SELECTED TOOL: SUGGEST_ALTERNATIVE orange
+Out of the following affordances for a orange, which ones does the user need for the request "I want an orange"? The affordances are:
+grasp: The object can be grasped in any way
+carry: The object can be picked up and moved
+rotate: The object can be turned
+axis-roll: The object can be rolled around an axis
+free-roll: The object can be rolled freely in any direction as it is approximately sphere shaped
+push:  The object can be pushed away from oneself
+pull: The object can be pulled towards oneself
+consumable: The object can be safely consumed by a human
+ End your answer with listing the affordances as strings in a python list format
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+When a user requests "I want an orange," the relevant affordances are those that allow the user to obtain and consume the orange. The key affordances needed for this request are:
+
+1. grasp: To pick up the orange.
+2. carry: To move the orange from one place to another.
+3. consumable: To eat the orange.
+
+The other affordances, such as rotate, axis-roll, free-roll, push, and pull, are not directly necessary for fulfilling the request of wanting an orange, unless there are specific additional actions implied by the context.
+
+Here are the relevant affordances in a Python list format:
+
+```python
+["grasp", "carry", "consumable"]
+```
+Q:Out of the following affordances for a orange, which ones does the user need for the request "I want an orange"? The affordances are:
+grasp: The object can be grasped in any way
+carry: The object can be picked up and moved
+rotate: The object can be turned
+axis-roll: The object can be rolled around an axis
+free-roll: The object can be rolled freely in any direction as it is approximately sphere shaped
+push:  The object can be pushed away from oneself
+pull: The object can be pulled towards oneself
+consumable: The object can be safely consumed by a human
+ End your answer with listing the affordances as strings in a python list format
+A: When a user requests "I want an orange," the relevant affordances are those that allow the user to obtain and consume the orange. The key affordances needed for this request are:
+
+1. grasp: To pick up the orange.
+2. carry: To move the orange from one place to another.
+3. consumable: To eat the orange.
+
+The other affordances, such as rotate, axis-roll, free-roll, push, and pull, are not directly necessary for fulfilling the request of wanting an orange, unless there are specific additional actions implied by the context.
+
+Here are the relevant affordances in a Python list format:
+
+```python
+["grasp", "carry", "consumable"]
+```
+-----------------------------------------
+
+Which of these objects can replace a orange for the affordance consumable the best. The object(s) are: milk,apple,cucumber,tomato,banana 
+ Finish your answer by naming exactly one object with OBJECT:<object>
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+To replace an orange for the affordance "consumable," we should consider objects that are similarly edible and commonly consumed as a fruit. Among the given options, an apple is the most similar to an orange in terms of being a whole fruit that can be eaten raw and is commonly consumed as a snack.
+
+Therefore, the object that can replace an orange for the affordance "consumable" the best is:
+
+OBJECT: apple
+Q:Which of these objects can replace a orange for the affordance consumable the best. The object(s) are: milk,apple,cucumber,tomato,banana 
+ Finish your answer by naming exactly one object with OBJECT:<object>
+A: To replace an orange for the affordance "consumable," we should consider objects that are similarly edible and commonly consumed as a fruit. Among the given options, an apple is the most similar to an orange in terms of being a whole fruit that can be eaten raw and is commonly consumed as a snack.
+
+Therefore, the object that can replace an orange for the affordance "consumable" the best is:
+
+OBJECT: apple
+-----------------------------------------
+
+New Scene Memory:
+Objects: window0,table0,bowl0,salad0,sponge0,tomato0,milk0,banana0,hammer0,door0,kitchen_knife0,water0,refrigerator0,spoon0,sink0,plate0,cucumber0,spatula0,box0,watering_can0,tissue0,apple0,plastic_cup0,plastic_cup1,human0,plastic_cup2,counter0,milk_cartoon0,bottle0,cutting_board0
+Object Relations: on cutting_board0 table0,in tomato0 bowl0,on banana0 table0,on bowl0 table0,on apple0 table0,on plate0 table0,liquid_in milk0 milk_cartoon0,on plastic_cup0 table0,on plastic_cup1 table0,on plastic_cup2 table0,liquid_in water0 bottle0,opened milk_cartoon0,at human0 table0,on milk_cartoon0 table0,on bottle0 table0,at robot0 table0,closed bottle0,in cucumber0 refrigerator0,closed refrigerator0,in salad0 refrigerator0,on kitchen_knife0 counter0,on box0 counter0,on spatula0 counter0,on watering_can0 counter0,on sponge0 counter0,on tissue0 counter0,on spoon0 counter0,in hammer0 box0,on cornflakes0 counter0,closed door0,closed window0
+Unexplored Locations: 
+
+Result of last tool execution: New Substitution: orange->apple
+
+Available Tools:
+PLAN  - Given the scene memory and the prompt this tool finds the plan the fulfills the user request. You can only use objects for the plan that are in the List Objects: do not use unexplored locations in the plan
+INCOMPLETE_PLAN  - Given the scene memory and the prompt this tool finds a plan that fulfills a sub goal of the user request if it cannot be fully achieved with the objects in the scene.
+EXPLORE location - Moves the robot from the current location to the unexplored location location to look for undiscovered objects at that location. (Example Usage: EXPLORE counter3)
+SUGGEST_ALTERNATIVE missing_object - Ask the user to replace the object missing_object that they requested with another object with the same function. You may only ask for substitution of one object at a time. Example usage: SUGGEST_ALTERNATIVE spoon
+CORRECTION  - This tool should be called when the user asks you to remember and do the same next time
+
+Previous User Requests:
+
+
+User-Request: I want an apple
+
+Lets think step by step. Remember that unexplored locations could contain objects that are relevant to the task.
+Only call the planning tool if all utensils are there to fulfill the plan. For example if there is nothing for cutting
+the goal "cut the apple" cannot be reached. Which tool would you use? 
+End your answer with SELECTED TOOL:<TOOL> <PARAMETERS>. 
+End your answer with FAILURE if no tool is valid.
+
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+Let's analyze the updated scene memory and the user's request:
+
+1. **User Request**: The user now wants an apple.
+2. **Updated Scene Memory**: 
+   - An apple is present in the scene, located on the table.
+
+Since the apple is available in the scene, we can fulfill the user's request. We should use the planning tool to create a plan to provide the apple to the user.
+
+SELECTED TOOL: PLAN
+You are the humanoid service robot robotXYZ assisting a human in a kitchen. Your task is to turn the user request into a goal state in PDDL. The predicates of the domain are defined as follows:
+(:predicates
+; Describes ?o being on top of the supporting ?s
+(on  ?o - carry ?s - support)
+; Do not use this predicate
+(indirect_on  ?o - carry ?s - support)
+; Describes the non liquid ?o being in the container ?c
+(in  ?o - carry ?c - contain)
+; Describes the liquid ?li being in the container ?lc
+(liquid_in  ?li - liquid ?lc - liquid-contain)
+; Describes the actor ?a being at the location ?l which can also be another actor
+(at  ?a - actor ?l - location)
+; Describes the object ?o being in the hand of a human or robot ?a. A human can have multiple objects in their hand
+(inhand  ?o - carry ?a - actor)
+; Describes the object ?ac being carried together by the actors ?a and ?r
+(carried  ?ac - assisted-carry ?a - actor ?r - actor)
+; Do not use this predicate
+(free  ?s - support)
+; Do not use this predicate
+(reachable  ?o - carry ?l - location ?a - actor)
+; Describes that ?op is open
+(opened  ?op - open)
+; Describes that ?cl is closed
+(closed  ?cl - close)
+(warm  ?co - consumable)
+(liquid_warm  ?li - liquid)
+(wet  ?ws - wet-swipe)
+; Describes that a consumable ?co is chopped
+(chopped  ?co - consumable)
+; Describes that an object ?ob has been cleaned with water
+(clean  ?ob - object)
+; Describes that the robot has visited the given location ?l
+(visited  ?l - location)
+; Do not use this predicate
+(hand_occupied  ?a - actor)
+) 
+ and the problem without the goal is:
+ (define (problem test)
+
+    (:domain robotic_planning)
+    
+    (:objects
+        box0 - box
+        table0 - table
+        tissue0 - tissue
+        kitchen_knife0 - kitchen_knife
+        tomato0 - tomato
+        watering_can0 - watering_can
+        plastic_cup0 - plastic_cup
+        plastic_cup2 - plastic_cup
+        salad0 - salad
+        human0 - human
+        plate0 - plate
+        spatula0 - spatula
+        banana0 - banana
+        water0 - water
+        plastic_cup1 - plastic_cup
+        spoon0 - spoon
+        milk_cartoon0 - milk_cartoon
+        bottle0 - bottle
+        cutting_board0 - cutting_board
+        robot0 - robot_profile
+        hammer0 - hammer
+        sponge0 - sponge
+        window0 - window
+        door0 - door
+        refrigerator0 - refrigerator
+        cucumber0 - cucumber
+        bowl0 - bowl
+        counter0 - counter
+        sink0 - sink
+        apple0 - apple
+        milk0 - milk
+    )
+    
+    (:init 
+        (liquid_in  water0 bottle0)
+        (on  box0 counter0)
+        (opened  milk_cartoon0)
+        (on  bowl0 table0)
+        (on  tissue0 counter0)
+        (in  tomato0 bowl0)
+        (on  kitchen_knife0 counter0)
+        (on  apple0 table0)
+        (on  cutting_board0 table0)
+        (on  watering_can0 counter0)
+        (in  salad0 refrigerator0)
+        (on  cornflakes0 counter0)
+        (on  spatula0 counter0)
+        (on  plastic_cup0 table0)
+        (on  plastic_cup2 table0)
+        (liquid_in  milk0 milk_cartoon0)
+        (on  spoon0 counter0)
+        (closed  bottle0)
+        (on  plate0 table0)
+        (at  human0 table0)
+        (on  banana0 table0)
+        (on  sponge0 counter0)
+        (closed  window0)
+        (closed  door0)
+        (closed  refrigerator0)
+        (in  cucumber0 refrigerator0)
+        (on  plastic_cup1 table0)
+        (on  milk_cartoon0 table0)
+        (on  bottle0 table0)
+        (in  hammer0 box0)
+        (at  robot0 table0)
+        (= total-cost 0)
+        (= (cost human0) 100)
+        (= (cost robot0) 1)
+    )
+    
+    (:metric minimize (total-cost))
+    
+)
+ 
+ The user asks "I want an apple". Explain step by step how you concluded that this is the desired goal state. Express the goal state in correct PDDL Syntaxwithout using the ? operator. You are allowed to use disjunctions
+These are examples from previous user interactions:
+Q1: I would like an sliced apple and banana for breakfast
+A: (:goal and (in apple0 bowl0) (in banana0 bowl0) (chopped apple0) (chopped banana0))
+Q2: I want to consume some peanuts
+A: (:goal and (in peanuts0 bowl1) (on bowl1 table0) (on bowl3 table0))
+Q3: I want to consume some walnuts
+A: (:goal and (in walnuts0 bowl0) (on bowl0 table0) (inhand nutcracker0 human0) (on bowl3 table0))
+Consider these example in your answer
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+To determine the desired goal state for the request "I want an apple," we need to analyze the user's request and the examples provided. Here's a step-by-step explanation of how we can conclude the goal state:
+
+1. **Understanding the Request**: The user wants an apple. This implies that the apple should be in a state that allows the user to consume it. In the context of the kitchen and the examples provided, this typically means the apple should be placed in a container or on a surface where it can be accessed.
+
+2. **Analyzing Examples**:
+   - In Q1, the user wanted a sliced apple and banana for breakfast. The goal state included the apple and banana being in a bowl and chopped.
+   - In Q2, the user wanted to consume peanuts. The goal state included the peanuts being in a bowl on the table.
+   - In Q3, the user wanted to consume walnuts. The goal state included the walnuts being in a bowl on the table, with a nutcracker in hand.
+
+3. **Inferring from Examples**:
+   - The common pattern in these examples is that the consumable item (apple, peanuts, walnuts) is placed in a bowl or on a table, making it accessible for consumption.
+   - There is no explicit mention of chopping or additional tools (like a nutcracker) for the apple in the current request, unlike in Q1 and Q3.
+
+4. **Current State Analysis**:
+   - The apple (apple0) is currently on the table (table0).
+   - The user (human0) is also at the table (table0), which suggests proximity and accessibility.
+
+5. **Formulating the Goal State**:
+   - Since the apple is already on the table and the user is at the table, the apple is accessible for consumption.
+   - There is no need to move the apple to a bowl or perform any additional actions like chopping, as the request is simply for the apple itself.
+
+Based on this analysis, the goal state can be expressed in PDDL as follows:
+
+```pddl
+(:goal (and (on apple0 table0)))
+```
+
+This goal state reflects that the apple is on the table, which aligns with the user's request to have an apple, considering the context and examples provided.
+TOTAL TOKENS BY THIS REQUEST
+1681
+New Scene Memory:
+Objects: window0,table0,bowl0,salad0,sponge0,tomato0,milk0,banana0,hammer0,door0,kitchen_knife0,water0,refrigerator0,spoon0,sink0,plate0,cucumber0,spatula0,box0,watering_can0,tissue0,apple0,plastic_cup0,plastic_cup1,human0,plastic_cup2,counter0,milk_cartoon0,bottle0,cutting_board0
+Object Relations: on cutting_board0 table0,in tomato0 bowl0,on banana0 table0,on bowl0 table0,on apple0 table0,on plate0 table0,liquid_in milk0 milk_cartoon0,on plastic_cup0 table0,on plastic_cup1 table0,on plastic_cup2 table0,liquid_in water0 bottle0,opened milk_cartoon0,at human0 table0,on milk_cartoon0 table0,on bottle0 table0,at robot0 table0,closed bottle0,in cucumber0 refrigerator0,closed refrigerator0,in salad0 refrigerator0,on kitchen_knife0 counter0,on box0 counter0,on spatula0 counter0,on watering_can0 counter0,on sponge0 counter0,on tissue0 counter0,on spoon0 counter0,in hammer0 box0,on cornflakes0 counter0,closed door0,closed window0
+Unexplored Locations: 
+
+Result of last tool execution: Planning failed
+
+Available Tools:
+PLAN  - Given the scene memory and the prompt this tool finds the plan the fulfills the user request. You can only use objects for the plan that are in the List Objects: do not use unexplored locations in the plan
+INCOMPLETE_PLAN  - Given the scene memory and the prompt this tool finds a plan that fulfills a sub goal of the user request if it cannot be fully achieved with the objects in the scene.
+EXPLORE location - Moves the robot from the current location to the unexplored location location to look for undiscovered objects at that location. (Example Usage: EXPLORE counter3)
+SUGGEST_ALTERNATIVE missing_object - Ask the user to replace the object missing_object that they requested with another object with the same function. You may only ask for substitution of one object at a time. Example usage: SUGGEST_ALTERNATIVE spoon
+CORRECTION  - This tool should be called when the user asks you to remember and do the same next time
+
+Previous User Requests:
+
+
+User-Request: I want an apple
+
+Lets think step by step. Remember that unexplored locations could contain objects that are relevant to the task.
+Only call the planning tool if all utensils are there to fulfill the plan. For example if there is nothing for cutting
+the goal "cut the apple" cannot be reached. Which tool would you use? 
+End your answer with SELECTED TOOL:<TOOL> <PARAMETERS>. 
+End your answer with FAILURE if no tool is valid.
+
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+Let's analyze the situation:
+
+1. **User Request**: The user wants an apple.
+2. **Updated Scene Memory**: 
+   - An apple is present in the scene, located on the table.
+   - The planning tool failed to create a plan to fulfill the request.
+
+Since the planning tool failed, we should attempt to create an incomplete plan to fulfill a sub-goal of the user's request, such as moving the apple closer to the user or preparing it in some way.
+
+SELECTED TOOL: INCOMPLETE_PLAN
+You are the humanoid service robot robotXYZ assisting a human in a kitchen. Your task is to turn the user request into a goal state in PDDL. If an object requested by the user does not exist just ignore it.If an utensil needed to achieve a desired object state is not in the scene do not use that state in the goal. For example do not use chopped if there is nothing to cut in the sceneIf the state needs more than 5 predicates, formulate a partial goal using less than 5 predicates.The predicates of the domain are defined as follows:
+(:predicates
+; Describes ?o being on top of the supporting ?s
+(on  ?o - carry ?s - support)
+; Do not use this predicate
+(indirect_on  ?o - carry ?s - support)
+; Describes the non liquid ?o being in the container ?c
+(in  ?o - carry ?c - contain)
+; Describes the liquid ?li being in the container ?lc
+(liquid_in  ?li - liquid ?lc - liquid-contain)
+; Describes the actor ?a being at the location ?l which can also be another actor
+(at  ?a - actor ?l - location)
+; Describes the object ?o being in the hand of a human or robot ?a. A human can have multiple objects in their hand
+(inhand  ?o - carry ?a - actor)
+; Describes the object ?ac being carried together by the actors ?a and ?r
+(carried  ?ac - assisted-carry ?a - actor ?r - actor)
+; Do not use this predicate
+(free  ?s - support)
+; Do not use this predicate
+(reachable  ?o - carry ?l - location ?a - actor)
+; Describes that ?op is open
+(opened  ?op - open)
+; Describes that ?cl is closed
+(closed  ?cl - close)
+(warm  ?co - consumable)
+(liquid_warm  ?li - liquid)
+(wet  ?ws - wet-swipe)
+; Describes that a consumable ?co is chopped
+(chopped  ?co - consumable)
+; Describes that an object ?ob has been cleaned with water
+(clean  ?ob - object)
+; Describes that the robot has visited the given location ?l
+(visited  ?l - location)
+; Do not use this predicate
+(hand_occupied  ?a - actor)
+) 
+ and the problem without the goal is:
+ (define (problem test)
+
+    (:domain robotic_planning)
+    
+    (:objects
+        box0 - box
+        table0 - table
+        tissue0 - tissue
+        kitchen_knife0 - kitchen_knife
+        tomato0 - tomato
+        watering_can0 - watering_can
+        plastic_cup0 - plastic_cup
+        plastic_cup2 - plastic_cup
+        salad0 - salad
+        human0 - human
+        plate0 - plate
+        spatula0 - spatula
+        banana0 - banana
+        water0 - water
+        plastic_cup1 - plastic_cup
+        spoon0 - spoon
+        milk_cartoon0 - milk_cartoon
+        bottle0 - bottle
+        cutting_board0 - cutting_board
+        robot0 - robot_profile
+        hammer0 - hammer
+        sponge0 - sponge
+        window0 - window
+        door0 - door
+        refrigerator0 - refrigerator
+        cucumber0 - cucumber
+        bowl0 - bowl
+        counter0 - counter
+        sink0 - sink
+        apple0 - apple
+        milk0 - milk
+    )
+    
+    (:init 
+        (liquid_in  water0 bottle0)
+        (on  box0 counter0)
+        (opened  milk_cartoon0)
+        (on  bowl0 table0)
+        (on  tissue0 counter0)
+        (in  tomato0 bowl0)
+        (on  kitchen_knife0 counter0)
+        (on  apple0 table0)
+        (on  cutting_board0 table0)
+        (on  watering_can0 counter0)
+        (in  salad0 refrigerator0)
+        (on  cornflakes0 counter0)
+        (on  spatula0 counter0)
+        (on  plastic_cup0 table0)
+        (on  plastic_cup2 table0)
+        (liquid_in  milk0 milk_cartoon0)
+        (on  spoon0 counter0)
+        (closed  bottle0)
+        (on  plate0 table0)
+        (at  human0 table0)
+        (on  banana0 table0)
+        (on  sponge0 counter0)
+        (closed  window0)
+        (closed  door0)
+        (closed  refrigerator0)
+        (in  cucumber0 refrigerator0)
+        (on  plastic_cup1 table0)
+        (on  milk_cartoon0 table0)
+        (on  bottle0 table0)
+        (in  hammer0 box0)
+        (at  robot0 table0)
+        (= total-cost 0)
+        (= (cost human0) 100)
+        (= (cost robot0) 1)
+    )
+    
+    (:metric minimize (total-cost))
+    
+)
+ 
+ The user(human) asks: "I want an apple". Explain step by step how you concluded that this is the desired goal state. Express the goal state in correct PDDL Syntaxwithout using the ? operator. 
+These are examples from previous user interactions:
+Q1: I would like an sliced apple and banana for breakfast
+A: (:goal and (in apple0 bowl0) (in banana0 bowl0) (chopped apple0) (chopped banana0))
+Q2: I want to consume some peanuts
+A: (:goal and (in peanuts0 bowl1) (on bowl1 table0) (on bowl3 table0))
+Q3: I want to consume some walnuts
+A: (:goal and (in walnuts0 bowl0) (on bowl0 table0) (inhand nutcracker0 human0) (on bowl3 table0))
+Consider these example in your answer
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+To determine the desired goal state for the user's request "I want an apple," we need to analyze the request and the current state of the environment. Here's a step-by-step explanation of how we can conclude the goal state:
+
+1. **Identify the Object of Interest**: The user wants an "apple." In the problem definition, we have an object `apple0` which is the apple in question.
+
+2. **Determine the Desired State**: The user wants to have the apple, which implies that the apple should be in a state where it can be consumed or accessed by the user. In previous examples, when the user wanted to consume something, the objects were placed in a bowl or on a table. However, since the user specifically asked for an apple without any additional preparation (like slicing), we can assume the user wants the apple directly.
+
+3. **Check the Current State**: In the initial state, `apple0` is on `table0`. The user is also at `table0`, which means the apple is already accessible to the user.
+
+4. **Formulate the Goal State**: Since the apple is already on the table where the user is located, the simplest goal state is to ensure that the apple remains on the table, accessible to the user. This aligns with the user's request to have the apple.
+
+5. **Express the Goal in PDDL**: Based on the analysis, the goal state can be expressed in PDDL as ensuring the apple is on the table. This is a straightforward goal since the apple is already in the desired location.
+
+The goal state in PDDL syntax is:
+
+```pddl
+(:goal (on apple0 table0))
+```
+
+This goal state ensures that the apple is on the table, making it accessible to the user, which satisfies the user's request.
+New Scene Memory:
+Objects: window0,table0,bowl0,salad0,sponge0,tomato0,milk0,banana0,hammer0,door0,kitchen_knife0,water0,refrigerator0,spoon0,sink0,plate0,cucumber0,spatula0,box0,watering_can0,tissue0,apple0,plastic_cup0,plastic_cup1,human0,plastic_cup2,counter0,milk_cartoon0,bottle0,cutting_board0
+Object Relations: on cutting_board0 table0,in tomato0 bowl0,on banana0 table0,on bowl0 table0,on apple0 table0,on plate0 table0,liquid_in milk0 milk_cartoon0,on plastic_cup0 table0,on plastic_cup1 table0,on plastic_cup2 table0,liquid_in water0 bottle0,opened milk_cartoon0,at human0 table0,on milk_cartoon0 table0,on bottle0 table0,at robot0 table0,closed bottle0,in cucumber0 refrigerator0,closed refrigerator0,in salad0 refrigerator0,on kitchen_knife0 counter0,on box0 counter0,on spatula0 counter0,on watering_can0 counter0,on sponge0 counter0,on tissue0 counter0,on spoon0 counter0,in hammer0 box0,on cornflakes0 counter0,closed door0,closed window0
+Unexplored Locations: 
+
+Result of last tool execution: Planning failed due to unreachable goal
+
+Available Tools:
+PLAN  - Given the scene memory and the prompt this tool finds the plan the fulfills the user request. You can only use objects for the plan that are in the List Objects: do not use unexplored locations in the plan
+INCOMPLETE_PLAN  - Given the scene memory and the prompt this tool finds a plan that fulfills a sub goal of the user request if it cannot be fully achieved with the objects in the scene.
+EXPLORE location - Moves the robot from the current location to the unexplored location location to look for undiscovered objects at that location. (Example Usage: EXPLORE counter3)
+SUGGEST_ALTERNATIVE missing_object - Ask the user to replace the object missing_object that they requested with another object with the same function. You may only ask for substitution of one object at a time. Example usage: SUGGEST_ALTERNATIVE spoon
+CORRECTION  - This tool should be called when the user asks you to remember and do the same next time
+
+Previous User Requests:
+
+
+User-Request: I want an apple
+
+Lets think step by step. Remember that unexplored locations could contain objects that are relevant to the task.
+Only call the planning tool if all utensils are there to fulfill the plan. For example if there is nothing for cutting
+the goal "cut the apple" cannot be reached. Which tool would you use? 
+End your answer with SELECTED TOOL:<TOOL> <PARAMETERS>. 
+End your answer with FAILURE if no tool is valid.
+
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Retrying request to /chat/completions in 2.296000 seconds
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+Given the current situation:
+
+1. **User Request**: The user wants an apple.
+2. **Updated Scene Memory**: 
+   - An apple is present on the table.
+   - Both the planning and incomplete planning attempts have failed due to an unreachable goal.
+
+Since the apple is present but the goal is unreachable, it suggests that there might be an issue with the current setup or the robot's ability to interact with the apple. However, there are no unexplored locations left, and no alternative objects are needed for substitution.
+
+At this point, without further context or options to explore, it seems that the current setup does not allow for fulfilling the user's request. Therefore, I must conclude with a failure to fulfill the request.
+
+FAILURE
+---------------------------------------Results:---------------------------------------------
+Task: I want an orange
+Generated Plan:
+
+; cost = 0.0 (union cost)
+Desired Goal: (or (inhand  banana0 human0) (inhand  apple0 human0) (inhand  tomato0 human0))
+Goal Reached: False
+Plan costs are: 0 -- minimal costs: 3
+Plan Costs minimal: True
+Plan Costs Rate: 1.0
+Used tools EXPLORE, EXPLORE, EXPLORE, EXPLORE, EXPLORE, SUGGEST_ALTERNATIVE, PLAN, INCOMPLETE_PLAN
+Tool Costs are: 8 -- minimal costs: 5
+Tool Costs minimal: False
+Costs Rate: 1.6
+----------------------------------------------------------------------------
+--------------------------------------NEW CASE ----------------------------------------
+You are an robotic assistant that tries to help the user to achieve his plan.
+You are given a representation of the scene and need to determine which tool to use to help the user achieve 
+his goal the best way.
+
+Scene-Memory:
+Objects: table0,milk0,bowl0,apple0,plastic_cup0,plastic_cup1,human0,plate0,plastic_cup2,milk_cartoon0,bottle0,tomato0,water0,cutting_board0
+Object Relations: on cutting_board0 table0,in tomato0 bowl0,on bowl0 table0,on apple0 table0,on plate0 table0,liquid_in milk0 milk_cartoon0,on plastic_cup0 table0,on plastic_cup1 table0,on plastic_cup2 table0,liquid_in water0 bottle0,opened milk_cartoon0,at human0 table0,on milk_cartoon0 table0,on bottle0 table0,at robot0 table0,closed bottle0
+Unexplored Locations: counter0,refrigerator0,door0,sink0,window0
+
+
+Available Tools:
+PLAN  - Given the scene memory and the prompt this tool finds the plan the fulfills the user request. You can only use objects for the plan that are in the List Objects: do not use unexplored locations in the plan
+INCOMPLETE_PLAN  - Given the scene memory and the prompt this tool finds a plan that fulfills a sub goal of the user request if it cannot be fully achieved with the objects in the scene.
+EXPLORE location - Moves the robot from the current location to the unexplored location location to look for undiscovered objects at that location. (Example Usage: EXPLORE counter3)
+SUGGEST_ALTERNATIVE missing_object - Ask the user to replace the object missing_object that they requested with another object with the same function. You may only ask for substitution of one object at a time. Example usage: SUGGEST_ALTERNATIVE spoon
+CORRECTION  - This tool should be called when the user asks you to remember and do the same next time
+
+Previous User Requests:
+
+
+User-Request: Give me a banana
+
+Lets think step by step. Remember that unexplored locations could contain objects that are relevant to the task.
+Only call the planning tool if all utensils are there to fulfill the plan. For example if there is nothing for cutting
+the goal "cut the apple" cannot be reached. 
+Which tool would you use? End your answer with SELECTED TOOL:<TOOL> <PARAMETERS>. 
+End your answer with FAILURE if no tool is valid.
+        
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+To determine the best tool to use, let's analyze the scene and the user's request step by step:
+
+1. **User Request**: The user has requested a banana.
+
+2. **Scene Analysis**:
+   - The current scene memory lists the following objects: table0, milk0, bowl0, apple0, plastic_cup0, plastic_cup1, human0, plate0, plastic_cup2, milk_cartoon0, bottle0, tomato0, water0, cutting_board0.
+   - There is no banana listed among the objects in the scene memory.
+
+3. **Unexplored Locations**: 
+   - There are unexplored locations: counter0, refrigerator0, door0, sink0, window0.
+   - A banana might be found in one of these unexplored locations, particularly in the refrigerator or on the counter.
+
+4. **Tool Selection**:
+   - Since the banana is not present in the current scene memory, and there are unexplored locations that might contain a banana, the best course of action is to explore one of these locations.
+   - The refrigerator is a likely place to find a banana.
+
+Therefore, the appropriate tool to use is to explore the refrigerator.
+
+SELECTED TOOL: EXPLORE refrigerator0
+New Scene Memory:
+Objects: table0,bowl0,tomato0,plastic_cup0,apple0,plastic_cup1,human0,plate0,plastic_cup2,cucumber0,salad0,milk_cartoon0,bottle0,milk0,water0,refrigerator0,cutting_board0
+Object Relations: on cutting_board0 table0,in tomato0 bowl0,on bowl0 table0,on apple0 table0,on plate0 table0,liquid_in milk0 milk_cartoon0,on plastic_cup0 table0,on plastic_cup1 table0,on plastic_cup2 table0,liquid_in water0 bottle0,opened milk_cartoon0,at human0 table0,on milk_cartoon0 table0,on bottle0 table0,at robot0 table0,closed bottle0,in cucumber0 refrigerator0,closed refrigerator0,in salad0 refrigerator0
+Unexplored Locations: counter0,door0,sink0,window0
+
+Result of last tool execution: explored refrigerator0
+
+Available Tools:
+PLAN  - Given the scene memory and the prompt this tool finds the plan the fulfills the user request. You can only use objects for the plan that are in the List Objects: do not use unexplored locations in the plan
+INCOMPLETE_PLAN  - Given the scene memory and the prompt this tool finds a plan that fulfills a sub goal of the user request if it cannot be fully achieved with the objects in the scene.
+EXPLORE location - Moves the robot from the current location to the unexplored location location to look for undiscovered objects at that location. (Example Usage: EXPLORE counter3)
+SUGGEST_ALTERNATIVE missing_object - Ask the user to replace the object missing_object that they requested with another object with the same function. You may only ask for substitution of one object at a time. Example usage: SUGGEST_ALTERNATIVE spoon
+CORRECTION  - This tool should be called when the user asks you to remember and do the same next time
+
+Previous User Requests:
+
+
+User-Request: Give me a banana
+
+Lets think step by step. Remember that unexplored locations could contain objects that are relevant to the task.
+Only call the planning tool if all utensils are there to fulfill the plan. For example if there is nothing for cutting
+the goal "cut the apple" cannot be reached. Which tool would you use? 
+End your answer with SELECTED TOOL:<TOOL> <PARAMETERS>. 
+End your answer with FAILURE if no tool is valid.
+
