@@ -1,0 +1,137 @@
+# Core ML and Deep Learning packages
+torch==2.2.0
+torchvision==0.17.0
+torchaudio==2.2.0
+transformers==4.40.1
+diffusers==0.33.1
+accelerate==1.8.1
+peft==0.11.1
+safetensors==0.5.3
+tokenizers==0.19.1
+timm==0.9.10
+flash-attn==2.5.5
+
+# TensorFlow and related
+tensorflow==2.15.0
+tensorflow-addons==0.23.0
+tensorflow-datasets==4.9.3
+tensorflow-estimator==2.15.0
+tensorflow-graphics==2021.12.3
+tensorflow-io-gcs-filesystem==0.37.1
+tensorflow-metadata==1.17.1
+tensorboard==2.15.2
+tensorboard-data-server==0.7.2
+
+# Robotics and Simulation
+robosuite==1.4.1
+mujoco==3.3.3
+gym==0.26.2
+
+# Computer Vision and Image Processing
+opencv-python==4.11.0.86
+pillow==11.2.1
+imageio==2.37.0
+imageio-ffmpeg==0.6.0
+
+# Scientific Computing
+numpy==1.26.4
+scipy==1.15.3
+matplotlib==3.10.3
+
+# Configuration and CLI
+draccus==0.8.0
+click==8.2.1
+
+# Logging and Monitoring
+wandb==0.20.1
+tqdm==4.67.1
+
+# Utilities
+einops==0.8.1
+easydict==1.13
+huggingface-hub==0.33.0
+fsspec==2025.5.1
+filelock==3.18.0
+packaging==25.0
+PyYAML==6.0.2
+pyyaml-include==1.4.1
+jsonlines==4.0.0
+jsonschema==4.24.0
+jsonschema-specifications==2025.4.1
+
+# Web and API
+fastapi==0.115.13
+uvicorn==0.34.3
+starlette==0.46.2
+requests==2.32.4
+requests-oauthlib==2.0.0
+
+# Development and Testing
+pytest==8.4.1
+mypy-extensions==1.1.1
+
+# Text Processing
+nltk==3.9.1
+sentencepiece==0.1.99
+regex==2024.11.6
+
+# Data Handling
+pandas
+h5py==3.14.0
+cloudpickle==3.1.1
+
+# 3D Graphics and Mesh Processing
+trimesh==4.6.12
+PyOpenGL==3.1.9
+OpenEXR==3.3.4
+
+# Google and Protobuf
+protobuf==4.21.12
+google-auth==2.40.3
+google-auth-oauthlib==1.2.2
+absl-py==2.3.0
+
+# System and Hardware
+psutil==7.0.0
+evdev==1.9.2
+pynput==1.8.1
+python-xlib==0.33
+glfw==2.9.0
+
+# Rich formatting and display
+rich==14.0.0
+Pygments==2.19.2
+markdown-it-py==3.0.0
+mdurl==0.1.2
+
+# Jupyter and Notebook support
+jupyter-core==5.8.1
+jupytext==1.17.2
+nbformat==5.10.4
+
+# Version control
+GitPython==3.1.44
+gitdb==4.0.12
+
+# NVIDIA CUDA packages (these may need special handling)
+nvidia-cublas-cu12==12.1.3.1
+nvidia-cuda-cupti-cu12==12.1.105
+nvidia-cuda-nvrtc-cu12==12.1.105
+nvidia-cuda-runtime-cu12==12.1.105
+nvidia-cudnn-cu12==8.9.2.26
+nvidia-cufft-cu12==11.0.2.54
+nvidia-curand-cu12==10.3.2.106
+nvidia-cusolver-cu12==11.4.5.107
+nvidia-cusparse-cu12==12.1.0.106
+nvidia-nccl-cu12==2.19.3
+nvidia-nvtx-cu12==12.1.105
+
+# Additional dependencies
+certifi==2025.6.15
+charset-normalizer==3.4.2
+idna==3.10
+urllib3==2.5.0
+typing-extensions==4.14.0
+six==1.17.0
+setuptools==80.9.0
+wheel==0.45.1
